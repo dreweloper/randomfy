@@ -617,6 +617,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/hoist-non-react-statics@npm:^3.3.1":
+  version: 3.3.2
+  resolution: "@types/hoist-non-react-statics@npm:3.3.2"
+  dependencies:
+    "@types/react": "*"
+    hoist-non-react-statics: ^3.3.0
+  checksum: fe5d4b751e13f56010811fd6c4e49e53e2ccbcbbdc54bb8d86a413fbd08c5a83311bca9ef75a1a88d3ba62806711b5dea3f323c0e0f932b3a283dcebc3240238
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.7.6
   resolution: "@types/prop-types@npm:15.7.6"
@@ -1933,6 +1943,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "hoist-non-react-statics@npm:3.3.2"
+  dependencies:
+    react-is: ^16.7.0
+  checksum: b1538270429b13901ee586aa44f4cc3ecd8831c061d06cb8322e50ea17b3f5ce4d0e2e66394761e6c8e152cd8c34fb3b4b690116c6ce2bd45b18c746516cb9e8
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
@@ -2932,12 +2951,25 @@ __metadata:
     eslint-plugin-react-refresh: ^0.4.3
     query-string: ^8.1.0
     react: ^18.2.0
+    react-cookie: ^6.1.1
     react-dom: ^18.2.0
     react-router-dom: ^6.16.0
-    universal-cookie: ^6.1.1
     vite: ^4.4.5
   languageName: unknown
   linkType: soft
+
+"react-cookie@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "react-cookie@npm:6.1.1"
+  dependencies:
+    "@types/hoist-non-react-statics": ^3.3.1
+    hoist-non-react-statics: ^3.3.2
+    universal-cookie: ^6.0.0
+  peerDependencies:
+    react: ">= 16.3.0"
+  checksum: d04a2be8cb1e84511ea51a51d89a1c0dca9a3d311bdd73a14a6396226dd466d3854cf36d4d1bd958e26e9c7475882de25d41e78071d1a0cb9058f47366f7e41c
+  languageName: node
+  linkType: hard
 
 "react-dom@npm:^18.2.0":
   version: 18.2.0
@@ -2951,7 +2983,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.13.1":
+"react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
@@ -3543,7 +3575,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"universal-cookie@npm:^6.1.1":
+"universal-cookie@npm:^6.0.0":
   version: 6.1.1
   resolution: "universal-cookie@npm:6.1.1"
   dependencies:
