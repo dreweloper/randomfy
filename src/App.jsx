@@ -1,9 +1,13 @@
-function App() {
+import { AppRouter } from './routes';
+
+function App () {
+
   return (
-    <>
-      <h1>Randomfy</h1>
-    </>
+
+      <AppRouter />
+
   );
+
 };
 
 export default App;
