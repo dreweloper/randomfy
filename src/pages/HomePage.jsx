@@ -1,39 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useUserStore } from '../hooks';
 
 export const HomePage = () => {
 
-    const [user, setUser] = useState({});
+    // REACT-REDUX HOOK
+    const { user } = useSelector(state => state.user);
 
-    const [cookies] = useCookies([]);
-    const token = cookies.access_token;
+    // CUSTOM HOOK
+    const { getUserProfile } = useUserStore();
 
-    const getUserProfile = async () => {
-
-        const SPOTIFY_BASE_URL = 'https://api.spotify.com';
-
-        const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
-        try {
-
-            const response = await fetch(`${SPOTIFY_BASE_URL}/v1/me`, fetchOptions);
-
-            if (response.ok) {
-
-                const data = await response.json();
-
-                setUser(data);
-
-            };
-
-        } catch (error) {
-
-            console.error(error.message);
-
-        };
-
-    };
-
+    // REACT HOOK
     useEffect(() => {
 
         getUserProfile();
