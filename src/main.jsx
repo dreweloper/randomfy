@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <CookiesProvider defaultSetOptions={{ maxAge: 60 * 60 * 24 * 7 }}>
+        <CookiesProvider>
           <App />
         </CookiesProvider>
       </Provider>

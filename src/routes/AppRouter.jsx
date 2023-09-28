@@ -2,11 +2,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { PrivateRoutes, PublicRoutes } from './index.js';
 import { HomePage, LoginPage } from '../pages';
+import { ACCESS_TOKEN_KEY } from '../utils';
 
 export const AppRouter = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies(['access_token']);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]); 
 
     const token = { access_token: cookies.access_token, refresh_token: cookies.refresh_token };
 

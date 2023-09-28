@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { useCookies } from 'react-cookie';
 import { setUser, startUserLoading } from "../store/slices";
-import { SPOTIFY_BASE_URL } from '../utils';
+import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
 
@@ -9,16 +9,14 @@ export const useUserStore = () => {
     const dispatch = useDispatch();
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies([]);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
 
     // FUNCTIONS
     const getUserProfile = async () => {
 
         dispatch(startUserLoading());
 
-        const token = cookies.access_token;
-
-        const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
+        const fetchOptions = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
 
         try {
 
@@ -30,11 +28,17 @@ export const useUserStore = () => {
 
                 dispatch(setUser({ id, display_name, images }));
 
+            } else {
+
+                throw new Error('Unexpected error');
+
             };
 
         } catch (error) {
 
             console.error(error.message);
+
+            //TODO: handle error and rendering
 
         };
 

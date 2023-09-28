@@ -1,45 +1,41 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
-import { useUserStore } from '../hooks';
-import { deleteUser } from '../store/slices';
+import { useAuth, useUserStore } from '../hooks';
+import { ACCESS_TOKEN_KEY } from '../utils';
 
 export const HomePage = () => {
 
-    // REACT-REDUX HOOKS
+    // REACT-REDUX HOOK
     const { user, isUserLoading } = useSelector(state => state.user);
 
-    const dispatch = useDispatch();
-
     // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([]);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
 
-    // CUSTOM HOOK
+    // CUSTOM HOOKS
+    const { handleLogout, requestRefreshedAccessToken } = useAuth();
+
     const { getUserProfile } = useUserStore();
 
     // REACT HOOK
     useEffect(() => {
 
-        getUserProfile();
+        // Token is expired
+        if (!cookies.access_token) {
 
-    }, []);
+            requestRefreshedAccessToken(cookies.refresh_token);
 
-    // FUNCTION
-    const handleLogout = () => {
+            // Token is valid and state 'user' is empty
+        } else if (cookies.access_token && Object.keys(user).length === 0) {
 
-        removeCookie('access_token');
+            getUserProfile();
 
-        removeCookie('refresh_token');
+        };
 
-        dispatch(deleteUser());
+    }, [cookies.access_token]); // It triggers every time the cookie expires
 
-    };
 
-    if (isUserLoading) {
-
-        return <p>Loading…</p>
-
-    };
+    if (isUserLoading) return <p>Loading…</p>
 
 
     return (
@@ -48,7 +44,7 @@ export const HomePage = () => {
 
             <button onClick={handleLogout}>Logout</button>
 
-            <h2>¡Bienvenido, {user?.display_name}!</h2>
+            <h2>Welcome, {user?.display_name}!</h2>
 
             <img src={user.images?.[1].url} alt='User avatar' title='User avatar' />
 
