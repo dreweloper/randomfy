@@ -5,9 +5,10 @@ import { HomePage, LoginPage } from '../pages';
 
 export const AppRouter = () => {
 
+    // REACT-COOKIE HOOK
     const [cookies] = useCookies(['access_token']);
 
-    const token = cookies.access_token;
+    const token = { access_token: cookies.access_token, refresh_token: cookies.refresh_token };
 
 
     return (
@@ -24,7 +25,7 @@ export const AppRouter = () => {
                     <Route path="/*" element={<Navigate to="/" />} />
 
                 </Route>
-                
+
                 {/* PUBLIC ROUTES */}
                 <Route element={<PublicRoutes token={token} />}>
 

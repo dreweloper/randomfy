@@ -3,13 +3,27 @@ import { createSlice } from '@reduxjs/toolkit';
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
-        user: {}
+        user: {},
+        isUserLoading: false
     },
     reducers: {
+        startUserLoading: (state) => {
+            state.isUserLoading = true;
+        },
+        // After login
         setUser: (state, { payload }) => {
-            state.user = { ...payload }
+            state.user = { ...payload };
+            state.isUserLoading = false;
+        },
+        // Logout
+        deleteUser: (state) => {
+            state.user = {};
         }
     }
 });
 
-export const { setUser } = userSlice.actions;
+export const {
+    startUserLoading,
+    setUser,
+    deleteUser
+} = userSlice.actions;

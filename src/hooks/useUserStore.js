@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useCookies } from 'react-cookie';
-import { setUser } from "../store/slices";
+import { setUser, startUserLoading } from "../store/slices";
 import { SPOTIFY_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
@@ -13,6 +13,8 @@ export const useUserStore = () => {
 
     // FUNCTIONS
     const getUserProfile = async () => {
+
+        dispatch(startUserLoading());
 
         const token = cookies.access_token;
 
