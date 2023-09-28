@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
-import { HomePage, LoginPage } from '../pages';
 import { PrivateRoutes, PublicRoutes } from './index.js';
+import { HomePage, LoginPage } from '../pages';
 
 export const AppRouter = () => {
 
