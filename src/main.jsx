@@ -8,7 +8,7 @@ import './index.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <CookiesProvider defaultSetOptions={{ sameSite: 'strict' }}>
+      <CookiesProvider defaultSetOptions={{ maxAge: 60*60*24*7 }}>
         <App />
       </CookiesProvider>
     </BrowserRouter>

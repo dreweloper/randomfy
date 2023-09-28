@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../hooks';
-import * as authConst from '../utils/consts.js';
 import queryString from 'query-string';
+import { useAuth } from '../hooks';
+import { URL_BASE, REDIRECT_URI, SCOPE, STATE_KEY } from '../utils/settings.js';
 
 export const LoginPage = () => {
   
   const loginUrl = queryString.stringifyUrl({
-    url: `${authConst.URL_BASE}/login`,
-    query: {
-      redirect_uri: authConst.REDIRECT_URI,
-      scope: authConst.SCOPE,
-      stateKey: authConst.STATE_KEY
-    }
+    url: `${URL_BASE}/login`,
+    query: { redirect_uri: REDIRECT_URI, scope: SCOPE, stateKey: STATE_KEY }
   });
   
     // REACT-ROUTER-DOM HOOK
