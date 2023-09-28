@@ -1,51 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
+import { useAuth, useUserStore } from '../hooks';
+import { ACCESS_TOKEN_KEY } from '../utils';
 
 export const HomePage = () => {
 
-    const [user, setUser] = useState({});
+    // REACT-REDUX HOOK
+    const { user, isUserLoading } = useSelector(state => state.user);
 
-    const [cookies] = useCookies([]);
-    const token = cookies.access_token;
+    // REACT-COOKIE HOOK
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
 
-    const getUserProfile = async () => {
+    // CUSTOM HOOKS
+    const { handleLogout, requestRefreshedAccessToken } = useAuth();
 
-        const SPOTIFY_BASE_URL = 'https://api.spotify.com';
+    const { getUserProfile } = useUserStore();
 
-        const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
+    // REACT HOOK
+    useEffect(() => {
 
-        try {
+        // Token is expired
+        if (!cookies.access_token) {
 
-            const response = await fetch(`${SPOTIFY_BASE_URL}/v1/me`, fetchOptions);
+            requestRefreshedAccessToken(cookies.refresh_token);
 
-            if (response.ok) {
+            // Token is valid and state 'user' is empty
+        } else if (cookies.access_token && Object.keys(user).length === 0) {
 
-                const data = await response.json();
-
-                setUser(data);
-
-            };
-
-        } catch (error) {
-
-            console.error(error.message);
+            getUserProfile();
 
         };
 
-    };
+    }, [cookies.access_token]); // It triggers every time the cookie expires
 
-    useEffect(() => {
 
-        getUserProfile();
-
-    }, []);
+    if (isUserLoading) return <p>Loading…</p>
 
 
     return (
 
         <>
 
-            <h2>¡Bienvenido, {user?.display_name}!</h2>
+            <button onClick={handleLogout}>Logout</button>
+
+            <h2>Welcome, {user?.display_name}!</h2>
 
             <img src={user.images?.[1].url} alt='User avatar' title='User avatar' />
 

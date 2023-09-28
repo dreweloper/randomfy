@@ -2,12 +2,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { PrivateRoutes, PublicRoutes } from './index.js';
 import { HomePage, LoginPage } from '../pages';
+import { ACCESS_TOKEN_KEY } from '../utils';
 
 export const AppRouter = () => {
 
-    const [cookies] = useCookies(['access_token']);
+    // REACT-COOKIE HOOK
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]); 
 
-    const token = cookies.access_token;
+    const token = { access_token: cookies.access_token, refresh_token: cookies.refresh_token };
 
 
     return (
@@ -24,7 +26,7 @@ export const AppRouter = () => {
                     <Route path="/*" element={<Navigate to="/" />} />
 
                 </Route>
-                
+
                 {/* PUBLIC ROUTES */}
                 <Route element={<PublicRoutes token={token} />}>
 

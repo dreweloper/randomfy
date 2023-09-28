@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
-import { REDIRECT_URI, STATE_KEY, URL_BASE } from '../utils';
+import { ACCESS_TOKEN_KEY, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, URL_BASE } from '../utils';
 
 export const useAuth = () => {
 
@@ -17,6 +17,18 @@ export const useAuth = () => {
   const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]);
 
   // FUNCTIONS
+  const handleLogout = () => {
+
+    removeCookie(ACCESS_TOKEN_KEY);
+
+    removeCookie(REFRESH_TOKEN_KEY);
+
+    dispatch(deleteUser());
+
+    //TODO: dispatch reducer that clears state 'tracks'
+
+  };
+
   const handleUserAuthResponse = (searchParams) => {
 
     setIsLoading(true);
@@ -84,9 +96,9 @@ export const useAuth = () => {
 
         const { access_token, refresh_token } = await response.json();
 
-        setCookie('access_token', access_token);
+        setCookie(ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
 
-        setCookie('refresh_token', refresh_token);
+        setCookie(REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 365 });
 
       } else {
 
@@ -102,7 +114,42 @@ export const useAuth = () => {
 
     } finally {
 
+      setQuery({});
+
       setIsLoading(false);
+
+    };
+
+  };
+
+  const requestRefreshedAccessToken = async (refresh_token) => {
+
+    const refreshTokenUrl = queryString.stringifyUrl({
+      url: `${URL_BASE}/refresh-token`,
+      query: { refresh_token }
+    });
+
+    try {
+
+      const response = await fetch(refreshTokenUrl);
+
+      if (response.ok) {
+
+        const { access_token } = await response.json();
+
+        setCookie(ACCESS_TOKEN_KEY, access_token);
+
+      } else {
+
+        throw new Error('Failed to obtain access token with refresh token');
+
+      };
+
+    } catch (error) {
+
+      console.error(error.message);
+
+      handleLogout();
 
     };
 
@@ -110,21 +157,16 @@ export const useAuth = () => {
 
   useEffect(() => {
 
-    const queryIsNotEmpty = Object.keys(query).length > 0;
-
-    if (queryIsNotEmpty) requestAccessToken(query.code, query.state, REDIRECT_URI);
-
-    return () => {
-
-      if (queryIsNotEmpty) setQuery({});
-
-    };
+    // State 'query' is not empty
+    if (Object.keys(query).length > 0) requestAccessToken(query.code, query.state, REDIRECT_URI);
 
   }, [query]);
 
 
   return {
+    handleLogout,
     handleUserAuthResponse,
+    requestRefreshedAccessToken,
     isLoading,
     isAuthError
   };
