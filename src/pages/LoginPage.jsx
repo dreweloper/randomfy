@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { useAuth } from '../hooks';
-import { REDIRECT_URI, SCOPE, STATE_KEY, URL_BASE } from '../utils/settings.js';
+import { BASE_URL, REDIRECT_URI, SCOPE, STATE_KEY } from '../utils';
 
 export const LoginPage = () => {
 
   const loginUrl = queryString.stringifyUrl({
-    url: `${URL_BASE}/login`,
+    url: `${BASE_URL}/login`,
     query: { redirect_uri: REDIRECT_URI, scope: SCOPE, stateKey: STATE_KEY }
   });
 
