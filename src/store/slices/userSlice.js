@@ -4,10 +4,11 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         user: {},
-        isUserLoading: false
+        isUserLoading: false,
+        isUserError: false
     },
     reducers: {
-        startUserLoading: (state) => {
+        startLoading: (state) => {
             state.isUserLoading = true;
         },
         // After login
@@ -15,15 +16,20 @@ export const userSlice = createSlice({
             state.user = { ...payload };
             state.isUserLoading = false;
         },
+        setError: (state) => {
+            state.isUserError = true;
+            state.isUserLoading = false;
+        },
         // Logout
         deleteUser: (state) => {
             state.user = {};
-        }
+        },
     }
 });
 
 export const {
-    startUserLoading,
+    startLoading,
     setUser,
+    setError,
     deleteUser
 } = userSlice.actions;

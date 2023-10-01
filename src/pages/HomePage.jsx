@@ -7,10 +7,10 @@ import { ACCESS_TOKEN_KEY } from '../utils';
 export const HomePage = () => {
 
     // REACT-REDUX HOOK
-    const { user, isUserLoading } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies (optional): cookie name that the component depend on or that should trigger a re-render
 
     // CUSTOM HOOKS
     const { handleLogout, requestRefreshedAccessToken } = useAuth();
@@ -25,17 +25,16 @@ export const HomePage = () => {
 
             requestRefreshedAccessToken(cookies.refresh_token);
 
-            // Token is valid and state 'user' is empty
-        } else if (cookies.access_token && Object.keys(user).length === 0) {
+        } else {
 
-            getUserProfile();
+            //TODO: an init function with 'getUserProfile' and the core feature (getUserPlaylists, getPlaylistItems…)
+
+            // State 'user' is empty
+            if (Object.keys(user).length === 0) getUserProfile();
 
         };
 
-    }, [cookies.access_token]); // It triggers every time the cookie expires
-
-
-    if (isUserLoading) return <p>Loading…</p>
+    }, [cookies]); // It triggers every time the cookie with 'access_token' key expires
 
 
     return (
