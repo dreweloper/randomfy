@@ -11,3 +11,4 @@ export const STATE_KEY = 'spotify_auth_state';
 // SPOTIFY
 export const SPOTIFY_BASE_URL = 'https://api.spotify.com';
 export const USER_ID = 'spotify';
+export const MAXIMUM_LIMIT = 100;

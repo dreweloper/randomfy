@@ -19,7 +19,7 @@ export const HomePage = () => {
 
     const { getUserProfile } = useUserStore();
 
-    const { init } = useTracksStore();
+    const { getRandomTrackFromSpotifyPlaylists } = useTracksStore();
 
     // REACT HOOK
     useEffect(() => {
@@ -31,13 +31,13 @@ export const HomePage = () => {
 
         } else {
 
-            //TODO: an init function with 'getUserProfile' and the core feature (getUserPlaylists, getPlaylistItems…)
+            //TODO: an init function with 'getUserProfile' and 'getRandomTrackFromSpotifyPlaylists'?
 
-            // The property 'user' of the state is empty
+            // First, it checks if the 'user' property of the state is empty to prevent unnecessary re-renders
             if (Object.keys(user).length === 0) getUserProfile();
 
-            // The property 'tracks' of the state is empty
-            if (tracks.length === 0) init();
+            // First, it checks if the 'tracks' property of the state is empty to prevent unnecessary re-renders
+            if (tracks.length === 0) getRandomTrackFromSpotifyPlaylists();
 
         };
 
