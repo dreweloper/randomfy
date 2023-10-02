@@ -137,7 +137,7 @@ export const useAuth = () => {
 
         const { access_token } = await response.json();
 
-        setCookie(ACCESS_TOKEN_KEY, access_token);
+        setCookie(ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
 
       } else {
 

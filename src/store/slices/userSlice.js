@@ -8,7 +8,7 @@ export const userSlice = createSlice({
         isUserError: false
     },
     reducers: {
-        startLoading: (state) => {
+        startUserLoading: (state) => {
             state.isUserLoading = true;
         },
         // After login
@@ -28,7 +28,7 @@ export const userSlice = createSlice({
 });
 
 export const {
-    startLoading,
+    startUserLoading,
     setUser,
     setError,
     deleteUser

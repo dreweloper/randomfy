@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useCookies } from 'react-cookie';
-import { setError, setUser, startLoading } from "../store/slices";
+import { setError, setUser, startUserLoading } from "../store/slices";
 import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
@@ -18,7 +18,7 @@ export const useUserStore = () => {
 
         try {
 
-            dispatch(startLoading());
+            dispatch(startUserLoading());
 
             const response = await fetch(`${SPOTIFY_BASE_URL}/v1/me`, fetchOptions);
 

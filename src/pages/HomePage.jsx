@@ -33,11 +33,10 @@ export const HomePage = () => {
 
             //TODO: an init function with 'getUserProfile' and the core feature (getUserPlaylists, getPlaylistItems…)
 
-            // State 'user' is empty
+            // The property 'user' of the state is empty
             if (Object.keys(user).length === 0) getUserProfile();
 
             // The property 'tracks' of the state is empty
-            console.log(tracks.length === 0)
             if (tracks.length === 0) init();
 
         };

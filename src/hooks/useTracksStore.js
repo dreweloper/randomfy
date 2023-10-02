@@ -1,5 +1,6 @@
 import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
+import { generateRandomNumber } from '../helpers';
 import { addTrack, setTrackError, startTrackLoading } from '../store/slices';
 import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL, USER_ID } from '../utils';
 
@@ -15,7 +16,7 @@ export const useTracksStore = () => {
     const fetchOptions = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
 
     // FUNCTIONS
-    const getUserPlaylists = async () => {
+    const getUserTotalPlaylists = async () => {
 
         try {
 
@@ -27,9 +28,9 @@ export const useTracksStore = () => {
 
             };
 
-            const data = await response.json();
+            const { total } = await response.json();
 
-            console.log(data);
+            return total;
 
         } catch (error) {
 
@@ -39,17 +40,47 @@ export const useTracksStore = () => {
 
     };
 
-    const init = () => {
+    const getRandomUserPlaylistId = async (total) => {
+
+        try {
+
+            const randomOffset = generateRandomNumber(total);
+
+            const response = await fetch(`${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`, fetchOptions);
+
+            if (!response.ok) {
+
+                throw new Error("Failed to obtain random user's playlist");
+
+            } else {
+
+                const data = await response.json();
+
+                return data.items[0].id;
+
+            };
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
+    const init = async () => {
 
         try {
 
             dispatch(startTrackLoading());
 
-            getUserPlaylists();
+            const total = await getUserTotalPlaylists();
+
+            const playlist_id = await getRandomUserPlaylistId(total);
 
         } catch (error) {
 
-            console.error(error);
+            console.error(error.message);
 
             dispatch(setTrackError());
 
