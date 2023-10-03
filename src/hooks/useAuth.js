@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import { useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
+import { deleteUser, removeTracks } from '../store/slices';
 import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY } from '../utils';
 
 export const useAuth = () => {
@@ -12,6 +14,9 @@ export const useAuth = () => {
   const [isAuthError, setIsAuthError] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // REACT-REDUX HOOK
+  const dispatch = useDispatch();
 
   // REACT-COOKIE HOOK
   const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]);
@@ -25,7 +30,7 @@ export const useAuth = () => {
 
     dispatch(deleteUser());
 
-    //TODO: dispatch reducer that clears state 'tracks'
+    dispatch(removeTracks());
 
   };
 
