@@ -1,21 +1,25 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
-import { useAuth, useUserStore } from '../hooks';
+import { useAuth, useTracksStore, useUserStore } from '../hooks';
 import { ACCESS_TOKEN_KEY } from '../utils';
 
 export const HomePage = () => {
 
     // REACT-REDUX HOOK
-    const { user, isUserLoading } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.user);
+
+    const { tracks } = useSelector(state => state.tracks);
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies (optional): cookie name that the component depend on or that should trigger a re-render
 
     // CUSTOM HOOKS
     const { handleLogout, requestRefreshedAccessToken } = useAuth();
 
     const { getUserProfile } = useUserStore();
+
+    const { getRandomTrackFromSpotifyPlaylists } = useTracksStore();
 
     // REACT HOOK
     useEffect(() => {
@@ -25,17 +29,19 @@ export const HomePage = () => {
 
             requestRefreshedAccessToken(cookies.refresh_token);
 
-            // Token is valid and state 'user' is empty
-        } else if (cookies.access_token && Object.keys(user).length === 0) {
+        } else {
 
-            getUserProfile();
+            //TODO: an init function with 'getUserProfile' and 'getRandomTrackFromSpotifyPlaylists'?
+
+            // First, it checks if the 'user' property of the state is empty to prevent unnecessary re-renders
+            if (Object.keys(user).length === 0) getUserProfile();
+
+            // First, it checks if the 'tracks' property of the state is empty to prevent unnecessary re-renders
+            if (tracks.length === 0) getRandomTrackFromSpotifyPlaylists();
 
         };
 
-    }, [cookies.access_token]); // It triggers every time the cookie expires
-
-
-    if (isUserLoading) return <p>Loading…</p>
+    }, [cookies]); // It triggers every time the cookie with 'access_token' key expires
 
 
     return (

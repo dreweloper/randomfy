@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import { useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
-import { ACCESS_TOKEN_KEY, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, URL_BASE } from '../utils';
+import { deleteUser, removeTracks } from '../store/slices';
+import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY } from '../utils';
 
 export const useAuth = () => {
 
@@ -12,6 +14,9 @@ export const useAuth = () => {
   const [isAuthError, setIsAuthError] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // REACT-REDUX HOOK
+  const dispatch = useDispatch();
 
   // REACT-COOKIE HOOK
   const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]);
@@ -25,7 +30,7 @@ export const useAuth = () => {
 
     dispatch(deleteUser());
 
-    //TODO: dispatch reducer that clears state 'tracks'
+    dispatch(removeTracks());
 
   };
 
@@ -84,7 +89,7 @@ export const useAuth = () => {
   const requestAccessToken = async (code, state, redirect_uri) => {
 
     const accessTokenUrl = queryString.stringifyUrl({
-      url: `${URL_BASE}/access-token`,
+      url: `${BASE_URL}/access-token`,
       query: { code, state, redirect_uri }
     });
 
@@ -125,7 +130,7 @@ export const useAuth = () => {
   const requestRefreshedAccessToken = async (refresh_token) => {
 
     const refreshTokenUrl = queryString.stringifyUrl({
-      url: `${URL_BASE}/refresh-token`,
+      url: `${BASE_URL}/refresh-token`,
       query: { refresh_token }
     });
 
@@ -137,7 +142,7 @@ export const useAuth = () => {
 
         const { access_token } = await response.json();
 
-        setCookie(ACCESS_TOKEN_KEY, access_token);
+        setCookie(ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
 
       } else {
 
