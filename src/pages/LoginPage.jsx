@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { Link } from 'react-router-dom';
 import queryString from 'query-string';
-import { useAuth } from '../hooks';
 import { generateRandomString } from '../helpers';
+import { useAuth } from '../hooks';
 import { BASE_URL, REDIRECT_URI, SCOPE, STATE_KEY, STATUS } from '../utils';
 
 export const LoginPage = () => {
@@ -11,26 +11,23 @@ export const LoginPage = () => {
   // REACT-COOKIE HOOK
   const [cookies, setCookie] = useCookies([STATE_KEY]);
 
+  // CUSTOM HOOK
+  const { status } = useAuth();
+
   // VARIABLES
   const storedState = cookies.spotify_auth_state;
 
-  const loginUrl = queryString.stringifyUrl({
+  const url = queryString.stringifyUrl({
     url: `${BASE_URL}/login`,
     query: { redirect_uri: REDIRECT_URI, scope: SCOPE, state: storedState }
   });
 
-  // REACT-ROUTER-DOM HOOK
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // CUSTOM HOOK
-  const { handleUserAuthResponse, status } = useAuth();
-
-  // REACT HOOKS
+  // REACT HOOK
   useEffect(() => {
 
-    //TODO: make it change when the user's login fails: status === STATUS.FAILED (bug: status is always 'idle' at this point)
-    // It will not change if the user's login succeeds.
-    if (!storedState || status === STATUS.FAILED) {
+    //TODO: make it change when the user's login fails: status === STATUS.FAILED (bug: it's not working. Status is always 'idle' at this point)
+    // It will not change if the user's login succeeds
+    if (!storedState) {
 
       const state = generateRandomString(16);
 
@@ -40,19 +37,6 @@ export const LoginPage = () => {
 
   }, [cookies]);
 
-  useEffect(() => {
-
-    // Search params is not empty
-    if (searchParams.size > 0) handleUserAuthResponse(searchParams);
-
-    return () => {
-
-      if (searchParams.size > 0) setSearchParams();
-
-    };
-
-  }, [searchParams]);
-
 
   return (
 
@@ -60,7 +44,7 @@ export const LoginPage = () => {
 
       <h1>Randomfy</h1>
 
-      <Link to={loginUrl}>Login Spotify</Link>
+      <Link to={url}>Login Spotify</Link>
 
       {
         status === STATUS.LOADING && (

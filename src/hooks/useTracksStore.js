@@ -1,7 +1,7 @@
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateRandomNumber } from '../helpers';
-import { addTrack, setTrackError, startTrackLoading } from '../store/slices';
+import { addTrack, setTrackError, startTrackLoading } from '../redux/slices';
 import { ACCESS_TOKEN_KEY, MAXIMUM_LIMIT, SPOTIFY_BASE_URL, USER_ID } from '../utils';
 
 export const useTracksStore = () => {
