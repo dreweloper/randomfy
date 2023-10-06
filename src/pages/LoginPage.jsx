@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import queryString from 'query-string';
 import { useAuth } from '../hooks';
+import { generateRandomString } from '../helpers';
 import { BASE_URL, REDIRECT_URI, SCOPE, STATE_KEY } from '../utils';
 
 export const LoginPage = () => {
 
-  const loginUrl = queryString.stringifyUrl({
-    url: `${BASE_URL}/login`,
-    query: { redirect_uri: REDIRECT_URI, scope: SCOPE, stateKey: STATE_KEY }
-  });
+  // REACT-COOKIE HOOK
+  const [cookies, setCookie] = useCookies();
 
   // REACT-ROUTER-DOM HOOK
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,16 +17,29 @@ export const LoginPage = () => {
   // CUSTOM HOOK
   const { handleUserAuthResponse, isLoading, isAuthError } = useAuth();
 
-  // REACT HOOK
+  // VARIABLES
+  const loginUrl = queryString.stringifyUrl({
+    url: `${BASE_URL}/login`,
+    query: { redirect_uri: REDIRECT_URI, scope: SCOPE, state: cookies.spotify_auth_state }
+  });
+
+  // REACT HOOKS
   useEffect(() => {
 
-    const searchParamsIsNotEmpty = searchParams.size > 0;
+    const state = generateRandomString(16);
 
-    if (searchParamsIsNotEmpty) handleUserAuthResponse(searchParams);
+    setCookie(STATE_KEY, state);
+
+  }, []);
+
+  useEffect(() => {
+
+    // Search params is not empty
+    if (searchParams.size > 0) handleUserAuthResponse(searchParams);
 
     return () => {
 
-      if (searchParamsIsNotEmpty) setSearchParams();
+      if (searchParams.size > 0) setSearchParams();
 
     };
 

@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <CookiesProvider>
+        <CookiesProvider defaultSetOptions={{ sameSite: 'strict' }}>
           <App />
         </CookiesProvider>
       </Provider>
