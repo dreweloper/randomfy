@@ -4,33 +4,41 @@ import { useCookies } from 'react-cookie';
 import queryString from 'query-string';
 import { useAuth } from '../hooks';
 import { generateRandomString } from '../helpers';
-import { BASE_URL, REDIRECT_URI, SCOPE, STATE_KEY } from '../utils';
+import { BASE_URL, REDIRECT_URI, SCOPE, STATE_KEY, STATUS } from '../utils';
 
 export const LoginPage = () => {
 
   // REACT-COOKIE HOOK
-  const [cookies, setCookie] = useCookies();
+  const [cookies, setCookie] = useCookies([STATE_KEY]);
+
+  // VARIABLES
+  const storedState = cookies.spotify_auth_state;
+
+  const loginUrl = queryString.stringifyUrl({
+    url: `${BASE_URL}/login`,
+    query: { redirect_uri: REDIRECT_URI, scope: SCOPE, state: storedState }
+  });
 
   // REACT-ROUTER-DOM HOOK
   const [searchParams, setSearchParams] = useSearchParams();
 
   // CUSTOM HOOK
-  const { handleUserAuthResponse, isLoading, isAuthError } = useAuth();
-
-  // VARIABLES
-  const loginUrl = queryString.stringifyUrl({
-    url: `${BASE_URL}/login`,
-    query: { redirect_uri: REDIRECT_URI, scope: SCOPE, state: cookies.spotify_auth_state }
-  });
+  const { handleUserAuthResponse, status } = useAuth();
 
   // REACT HOOKS
   useEffect(() => {
 
-    const state = generateRandomString(16);
+    //TODO: make it change when the user's login fails: status === STATUS.FAILED (bug: status is always 'idle' at this point)
+    // It will not change if the user's login succeeds.
+    if (!storedState || status === STATUS.FAILED) {
 
-    setCookie(STATE_KEY, state);
+      const state = generateRandomString(16);
 
-  }, []);
+      setCookie(STATE_KEY, state);
+
+    };
+
+  }, [cookies]);
 
   useEffect(() => {
 
@@ -55,11 +63,15 @@ export const LoginPage = () => {
       <Link to={loginUrl}>Login Spotify</Link>
 
       {
-        isLoading && <p>Loading…</p>
+        status === STATUS.LOADING && (
+          <p>Loading…</p>
+        )
       }
 
       {
-        isAuthError && <p>Access denied!</p>
+        status === STATUS.FAILED && (
+          <p>Access denied!</p>
+        )
       }
 
     </>

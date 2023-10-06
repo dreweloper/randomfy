@@ -4,16 +4,14 @@ import { useDispatch } from 'react-redux';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
 import { deleteUser, removeTracks } from '../store/slices';
-import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY } from '../utils';
+import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
 
 export const useAuth = () => {
 
   // REACT HOOKS
+  const [status, setStatus] = useState(STATUS.IDLE);
+
   const [query, setQuery] = useState({});
-
-  const [isAuthError, setIsAuthError] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   // REACT-REDUX HOOK
   const dispatch = useDispatch();
@@ -22,7 +20,7 @@ export const useAuth = () => {
   const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]);
 
   // FUNCTIONS
-  const handleLogout = () => {
+  const handleLogout = (status = STATUS.IDLE) => {
 
     removeCookie(ACCESS_TOKEN_KEY);
 
@@ -32,11 +30,13 @@ export const useAuth = () => {
 
     dispatch(removeTracks());
 
-  };
+    setStatus(status);
+
+  }; //!FUNC-HANDLELOGOUT
 
   const handleUserAuthResponse = (searchParams) => {
 
-    setIsLoading(true);
+    setStatus(STATUS.LOADING);
 
     const storedState = cookies.spotify_auth_state;
 
@@ -74,17 +74,11 @@ export const useAuth = () => {
 
       console.error(error.message);
 
-      setIsAuthError(true);
-
-      setIsLoading(false);
-
-    } finally {
-
-      removeCookie(STATE_KEY);
+      setStatus(STATUS.FAILED);
 
     };
 
-  };
+  }; //!FUNC-HANDLEUSERAUTHRESPONSE
 
   const requestAccessToken = async (code, state, redirect_uri) => {
 
@@ -105,6 +99,8 @@ export const useAuth = () => {
 
         setCookie(REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 365 });
 
+        setStatus(STATUS.SUCCEEDED);
+
       } else {
 
         throw new Error('Failed to obtain access token');
@@ -115,17 +111,15 @@ export const useAuth = () => {
 
       console.error(error.message);
 
-      setIsAuthError(true);
+      setStatus(STATUS.FAILED);
 
     } finally {
 
       setQuery({});
 
-      setIsLoading(false);
-
     };
 
-  };
+  }; //!FUNC-REQUESTACCESSTOKEN
 
   const requestRefreshedAccessToken = async (refresh_token) => {
 
@@ -138,15 +132,15 @@ export const useAuth = () => {
 
       const response = await fetch(refreshTokenUrl);
 
-      if (response.ok) {
+      if (!response.ok) {
+
+        throw new Error('Failed to obtain access token with refresh token');
+
+      } else {
 
         const { access_token } = await response.json();
 
         setCookie(ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
-
-      } else {
-
-        throw new Error('Failed to obtain access token with refresh token');
 
       };
 
@@ -154,11 +148,11 @@ export const useAuth = () => {
 
       console.error(error.message);
 
-      handleLogout();
+      handleLogout(STATUS.FAILED);
 
     };
 
-  };
+  }; //!FUNC-REQUESTREFRESHEDACCESSTOKEN
 
   useEffect(() => {
 
@@ -172,8 +166,7 @@ export const useAuth = () => {
     handleLogout,
     handleUserAuthResponse,
     requestRefreshedAccessToken,
-    isLoading,
-    isAuthError
+    status
   };
 
 };
