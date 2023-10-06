@@ -1,5 +1,13 @@
+// STATUS STATE
+export const STATUS = {
+    IDLE: 'idle',
+    LOADING: 'loading',
+    SUCCEEDED: 'succeeded',
+    FAILED: 'failed'
+};
+
 // AUTH
-export const BASE_URL = 'http://localhost:3000/api';
+export const BASE_URL = 'https://spotify-authorization.onrender.com/api';
 export const REDIRECT_URI = 'http://localhost:5173/login';
 export const SCOPE = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative user-library-read user-library-modify';
 

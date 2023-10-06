@@ -4,14 +4,14 @@ import App from './App.jsx';
 import { BrowserRouter } from "react-router-dom";
 import { CookiesProvider } from 'react-cookie';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
+import { store } from './redux/store.js';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <CookiesProvider>
+        <CookiesProvider defaultSetOptions={{ sameSite: 'strict' }}>
           <App />
         </CookiesProvider>
       </Provider>

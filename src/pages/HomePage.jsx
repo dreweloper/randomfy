@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
 import { useAuth, useTracksStore, useUserStore } from '../hooks';
-import { ACCESS_TOKEN_KEY } from '../utils';
+import { ACCESS_TOKEN_KEY, STATE_KEY } from '../utils';
 
 export const HomePage = () => {
 
@@ -12,7 +12,7 @@ export const HomePage = () => {
     const { tracks } = useSelector(state => state.tracks);
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies (optional): cookie name that the component depend on or that should trigger a re-render
+    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies (optional): cookie name that the component depend on or that should trigger a re-render
 
     // CUSTOM HOOKS
     const { handleLogout, requestRefreshedAccessToken } = useAuth();
@@ -21,7 +21,13 @@ export const HomePage = () => {
 
     const { getRandomTrackFromSpotifyPlaylists } = useTracksStore();
 
-    // REACT HOOK
+    // REACT HOOKS
+    useEffect(() => {
+
+        if(cookies.spotify_auth_state) removeCookie(STATE_KEY);
+
+    }, []);
+
     useEffect(() => {
 
         // Token is expired

@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useCookies } from 'react-cookie';
-import { setError, setUser, startUserLoading } from "../store/slices";
+import { setError, setUser, startUserLoading } from "../redux/slices";
 import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
