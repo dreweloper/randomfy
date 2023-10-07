@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
 import { useAuth, useTracksStore, useUserStore } from '../hooks';
 import { ACCESS_TOKEN_KEY, STATE_KEY } from '../utils';
+import { NavBar } from '../layouts/NavBar';
 
 export const HomePage = () => {
 
@@ -15,7 +16,7 @@ export const HomePage = () => {
     const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies (optional): cookie name that the component depend on or that should trigger a re-render
 
     // CUSTOM HOOKS
-    const { handleLogout, requestRefreshedAccessToken } = useAuth();
+    const { requestRefreshedAccessToken } = useAuth();
 
     const { getUserProfile } = useUserStore();
 
@@ -54,7 +55,7 @@ export const HomePage = () => {
 
         <>
 
-            <button onClick={handleLogout}>Logout</button>
+            <NavBar />
 
             <h2>Welcome, {user?.display_name}!</h2>
 
