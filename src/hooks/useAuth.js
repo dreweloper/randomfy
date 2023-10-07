@@ -147,7 +147,7 @@ export const useAuth = () => {
 
       console.error(error.message);
 
-      // The status will inform the user that access was denied
+      // The status will inform the user that access was denied //! It's not working
       handleLogout(STATUS.FAILED);
 
     };
