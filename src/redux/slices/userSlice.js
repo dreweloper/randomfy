@@ -1,35 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { STATUS } from '../../utils';
 
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
         user: {},
-        isUserLoading: false,
-        isUserError: false
+        status: STATUS.IDLE
     },
     reducers: {
-        startUserLoading: (state) => {
-            state.isUserLoading = true;
+        setStatus: (state, { payload }) => {
+            state.status = payload;
         },
         // After login
         setUser: (state, { payload }) => {
             state.user = { ...payload };
-            state.isUserLoading = false;
-        },
-        setError: (state) => {
-            state.isUserError = true;
-            state.isUserLoading = false;
+            state.status = STATUS.SUCCEEDED;
         },
         // Logout
         deleteUser: (state) => {
             state.user = {};
+            state.status = STATUS.IDLE;
         },
     }
 });
 
-export const {
-    startUserLoading,
-    setUser,
-    setError,
-    deleteUser
-} = userSlice.actions;
+export const { setStatus, setUser, deleteUser } = userSlice.actions;
