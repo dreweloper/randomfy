@@ -7,7 +7,7 @@ import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../utils';
 export const AppRouter = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies (optional): cookie name(s) that the component (PrivateRoutes) depend on or that should trigger a re-render
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the component (PrivateRoutes) depend on or that should trigger a re-render
 
     const token = { access_token: cookies.access_token, refresh_token: cookies.refresh_token };
 

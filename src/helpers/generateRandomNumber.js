@@ -7,12 +7,12 @@
  */
 export const generateRandomNumber = (range) => {
 
-    if(isNaN(parseInt(range))){
+    if (isNaN(parseInt(range))) {
 
         throw new Error('The parameter "range" must be a valid number.');
 
     };
-  
+
     return Math.floor(Math.random() * range) + 1;
 
 };

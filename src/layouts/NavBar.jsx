@@ -1,3 +1,4 @@
+import { User } from "../components";
 import { useAuth } from "../hooks";
 
 export const NavBar = () => {
@@ -8,6 +9,8 @@ export const NavBar = () => {
     return (
 
         <nav>
+
+            <User />
 
             <button onClick={handleLogout}>Logout</button>
 

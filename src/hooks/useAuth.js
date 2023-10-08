@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
 import { deleteUser, removeTracks } from '../redux/slices';
-import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATUS } from '../utils';
+import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
 
 export const useAuth = () => {
 
@@ -19,7 +19,7 @@ export const useAuth = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // REACT-COOKIE HOOK
-  const [cookies, setCookie, removeCookie] = useCookies([]);
+  const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]); // Dependencies: cookie name that the component (LoginPage) depend on or that should trigger a re-render
 
   // FUNCTIONS
   const handleLogout = (status = STATUS.IDLE) => {
@@ -42,6 +42,10 @@ export const useAuth = () => {
 
   const requestAccessToken = async (code, state, redirect_uri) => {
 
+    /**
+     * The access token endpoint on the backend server.
+     * @type {String}
+     */
     const url = queryString.stringifyUrl({ url: `${BASE_URL}/access-token`, query: { code, state, redirect_uri } });
 
     try {
@@ -74,10 +78,18 @@ export const useAuth = () => {
 
     setStatus(STATUS.LOADING);
 
+    /**
+     * The 'state' parameter stored in cookies.
+     * @type {String}
+     */
     const storedState = cookies.spotify_auth_state;
 
     try {
 
+      /**
+       * An object that represents the serialized query string from the Spotify API response obtained after user authorization.
+       * @type {Object}
+       */
       const query = serializeData(searchParams);
 
       /**
@@ -125,6 +137,10 @@ export const useAuth = () => {
 
   const requestRefreshedAccessToken = async (refresh_token) => {
 
+    /**
+     * The refresh token endpoint on the backend server.
+     * @type {String}
+     */
     const url = queryString.stringifyUrl({ url: `${BASE_URL}/refresh-token`, query: { refresh_token } });
 
     try {
@@ -156,7 +172,7 @@ export const useAuth = () => {
 
   useEffect(() => {
 
-    // Query params is not empty
+    // Search params are not empty. It indicates that the user has clicked the login button
     if (searchParams.size > 0) handleUserAuthResponse();
 
   }, [searchParams]);
@@ -165,6 +181,8 @@ export const useAuth = () => {
   return {
     handleLogout,
     requestRefreshedAccessToken,
+    cookies,
+    setCookie,
     status
   };
 
