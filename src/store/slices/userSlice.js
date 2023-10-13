@@ -5,23 +5,23 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         user: {},
-        status: STATUS.IDLE
+        userStatus: STATUS.IDLE
     },
     reducers: {
-        setStatus: (state, { payload }) => {
-            state.status = payload;
+        setUserStatus: (state, { payload }) => {
+            state.userStatus = payload;
         },
         // After login
         setUser: (state, { payload }) => {
             state.user = { ...payload };
-            state.status = STATUS.SUCCEEDED;
+            state.userStatus = STATUS.SUCCEEDED;
         },
         // Logout
         deleteUser: (state) => {
             state.user = {};
-            state.status = STATUS.IDLE;
+            state.userStatus = STATUS.IDLE;
         },
     }
 });
 
-export const { setStatus, setUser, deleteUser } = userSlice.actions;
+export const { setUserStatus, setUser, deleteUser } = userSlice.actions;

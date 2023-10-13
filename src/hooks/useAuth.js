@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
-import { deleteUser, removeTracks } from '../redux/slices';
+import { deleteUser, removeTracks } from '../store/slices';
 import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
 
 export const useAuth = () => {
