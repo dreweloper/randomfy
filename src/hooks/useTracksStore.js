@@ -1,302 +1,302 @@
-import { useCookies } from 'react-cookie';
-import { useDispatch, useSelector } from 'react-redux';
-import { generateRandomNumber } from '../helpers';
-import { addTrack, setTrackError, startTrackLoading } from '../store/slices';
-import { ACCESS_TOKEN_KEY, MAXIMUM_LIMIT, SPOTIFY_BASE_URL, USER_ID } from '../utils';
+// import { useCookies } from 'react-cookie';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { generateRandomNumber } from '../helpers';
+// import { addTrack, setTrackError, startTrackLoading } from '../store/slices';
+// import { ACCESS_TOKEN_KEY, MAXIMUM_LIMIT, SPOTIFY_BASE_URL, USER_ID } from '../utils';
 
-export const useTracksStore = () => {
+// export const useTracksStore = () => {
 
-    // REACT-REDUX HOOKS
-    const { user } = useSelector(state => state.user);
+//     // REACT-REDUX HOOKS
+//     const { user } = useSelector(state => state.user);
 
-    const dispatch = useDispatch();
+//     const dispatch = useDispatch();
 
-    // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
+//     // REACT-COOKIE HOOK
+//     const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
 
-    // VARIABLES
-    const fetchOptions = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
+//     // VARIABLES
+//     const fetchOptions = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
 
-    // FUNCTIONS
-    const getRandomItem = async (type, total, playlist_id) => {
+//     // FUNCTIONS
+//     const getRandomItem = async (type, total, playlist_id) => {
 
-        let url, message;
+//         let url, message;
 
-        if (type === 'playlist') {
+//         if (type === 'playlist') {
 
-            url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
+//             url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
-            message = "Failed to obtain random user's playlist";
+//             message = "Failed to obtain random user's playlist";
 
-        } else if (type === 'track') {
+//         } else if (type === 'track') {
 
-            url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/tracks`;
+//             url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/tracks`;
 
-            message = 'Failed to obtain random track';
+//             message = 'Failed to obtain random track';
 
-        } else {
+//         } else {
 
-            throw new Error('Invalid type');
+//             throw new Error('Invalid type');
 
-        };
+//         };
 
-        try {
+//         try {
 
-            const randomOffset = generateRandomNumber(total);
+//             const randomOffset = generateRandomNumber(total);
 
-            const queryParams = `limit=1&offset=${randomOffset}`;
+//             const queryParams = `limit=1&offset=${randomOffset}`;
 
-            const response = await fetch(`${url}?${queryParams}`, fetchOptions);
+//             const response = await fetch(`${url}?${queryParams}`, fetchOptions);
 
-            if (!response.ok) {
+//             if (!response.ok) {
 
-                throw new Error(message);
+//                 throw new Error(message);
 
-            } else {
+//             } else {
 
-                const { items } = await response.json();
+//                 const { items } = await response.json();
 
-                return type === 'playlist' ? items[0].id : items[0].track;
+//                 return type === 'playlist' ? items[0].id : items[0].track;
 
-            };
+//             };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    const checkPlaylistOrTrackStatus = async (type, id) => {
+//     const checkPlaylistOrTrackStatus = async (type, id) => {
 
-        let url, message;
+//         let url, message;
 
-        if (type === 'playlist') {
+//         if (type === 'playlist') {
 
-            url = `${SPOTIFY_BASE_URL}/v1/playlists/${id}/followers/contains?ids=${user.id}`;
+//             url = `${SPOTIFY_BASE_URL}/v1/playlists/${id}/followers/contains?ids=${user.id}`;
 
-            message = 'Failed to check if user follows the playlist';
+//             message = 'Failed to check if user follows the playlist';
 
-        } else if (type === 'track') {
+//         } else if (type === 'track') {
 
-            url = `${SPOTIFY_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
+//             url = `${SPOTIFY_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
 
-            message = 'Failed to check if user has already saved the track';
+//             message = 'Failed to check if user has already saved the track';
 
-        } else {
+//         } else {
 
-            throw new Error('Invalid type');
+//             throw new Error('Invalid type');
 
-        };
+//         };
 
-        try {
+//         try {
 
-            const response = await fetch(url, fetchOptions);
+//             const response = await fetch(url, fetchOptions);
 
-            if (!response.ok) {
+//             if (!response.ok) {
 
-                throw new Error(message);
+//                 throw new Error(message);
 
-            } else {
+//             } else {
 
-                const [data] = await response.json();
+//                 const [data] = await response.json();
 
-                return data;
+//                 return data;
 
-            };
+//             };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    /**
-     * Get a list of the playlists owned or followed by a Spotify user.
-     * @async
-     * @function getUserPlaylists
-     * @returns {Object} A paged set of playlists.
-     * @throws {Error} Throws an error if it fails to obtain the user's playlists.
-     */
-    const getUserPlaylists = async () => {
+//     /**
+//      * Get a list of the playlists owned or followed by a Spotify user.
+//      * @async
+//      * @function getUserPlaylists
+//      * @returns {Object} A paged set of playlists.
+//      * @throws {Error} Throws an error if it fails to obtain the user's playlists.
+//      */
+//     const getUserPlaylists = async () => {
 
-        /**
-         * Get user's playlists endpoint.
-         * @type {String}
-         */
-        const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
+//         /**
+//          * Get user's playlists endpoint.
+//          * @type {String}
+//          */
+//         const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
-        try {
+//         try {
 
-            /**
-             * The Spotify API response object.
-             * @type {Object}
-             */
-            const response = await fetch(url, fetchOptions);
+//             /**
+//              * The Spotify API response object.
+//              * @type {Object}
+//              */
+//             const response = await fetch(url, fetchOptions);
 
-            if (!response.ok) {
+//             if (!response.ok) {
 
-                throw new Error("Failed to obtain user's playlists");
+//                 throw new Error("Failed to obtain user's playlists");
 
-            } else {
+//             } else {
 
-                const data = await response.json();
+//                 const data = await response.json();
 
-                return data;
+//                 return data;
 
-            };
+//             };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    /**
-     * Gets full details of the items (tracks) of a playlist owned by a Spotify user.
-     * @async
-     * @function getPlaylistItems
-     * @param {String} id - The Spotify ID of the playlist.
-     * @returns {Object} Pages of tracks.
-     * @throws {Error} Throws an error if it fails to obtain the playlist items.
-     */
-    const getPlaylistItems = async (id) => {
+//     /**
+//      * Gets full details of the items (tracks) of a playlist owned by a Spotify user.
+//      * @async
+//      * @function getPlaylistItems
+//      * @param {String} id - The Spotify ID of the playlist.
+//      * @returns {Object} Pages of tracks.
+//      * @throws {Error} Throws an error if it fails to obtain the playlist items.
+//      */
+//     const getPlaylistItems = async (id) => {
 
-        /**
-         * Get playlist items endpoint.
-         * @type {String}
-         */
-        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${id}/tracks?limit=${MAXIMUM_LIMIT}`;
+//         /**
+//          * Get playlist items endpoint.
+//          * @type {String}
+//          */
+//         const url = `${SPOTIFY_BASE_URL}/v1/playlists/${id}/tracks?limit=${MAXIMUM_LIMIT}`;
 
-        try {
+//         try {
 
-            /**
-             * The Spotify API response object.
-             * @type {Object}
-             */
-            const response = await fetch(url, fetchOptions);
+//             /**
+//              * The Spotify API response object.
+//              * @type {Object}
+//              */
+//             const response = await fetch(url, fetchOptions);
 
-            if (!response.ok) {
+//             if (!response.ok) {
 
-                throw new Error('Failed to obtain playlist items');
+//                 throw new Error('Failed to obtain playlist items');
 
-            } else {
+//             } else {
 
-                const data = await response.json();
+//                 const data = await response.json();
 
-                return data;
+//                 return data;
 
-            };
+//             };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    //! STEP 1
-    const getRandomPlaylist = async () => {
+//     //! STEP 1
+//     const getRandomPlaylist = async () => {
 
-        const type = 'playlist';
+//         const type = 'playlist';
 
-        try {
+//         try {
 
-            const { total } = await getUserPlaylists();
+//             const { total } = await getUserPlaylists();
 
-            const playlist_id = await getRandomItem(type, total);
+//             const playlist_id = await getRandomItem(type, total);
 
-            const isFollowed = await checkPlaylistOrTrackStatus(type, playlist_id);
+//             const isFollowed = await checkPlaylistOrTrackStatus(type, playlist_id);
 
-            return { playlist_id, isFollowed };
+//             return { playlist_id, isFollowed };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    //! STEP 2
-    const getRandomTrack = async (playlist_id) => {
+//     //! STEP 2
+//     const getRandomTrack = async (playlist_id) => {
 
-        let track;
+//         let track;
 
-        const type = 'track';
+//         const type = 'track';
 
-        try {
+//         try {
 
-            /**
-             * @type {Object}
-             * @prop {Number} total - The total number of available tracks to return.
-             * @prop {Array} items - An array of playlist track objects.
-             */
-            const { total, items } = await getPlaylistItems(playlist_id);
+//             /**
+//              * @type {Object}
+//              * @prop {Number} total - The total number of available tracks to return.
+//              * @prop {Array} items - An array of playlist track objects.
+//              */
+//             const { total, items } = await getPlaylistItems(playlist_id);
 
-            if (total < MAXIMUM_LIMIT) {
+//             if (total < MAXIMUM_LIMIT) {
 
-                const randomIndex = generateRandomNumber(total);
+//                 const randomIndex = generateRandomNumber(total);
 
-                track = items[randomIndex].track;
+//                 track = items[randomIndex].track;
 
-            } else {
+//             } else {
 
-                track = await getRandomItem(type, total, playlist_id);
+//                 track = await getRandomItem(type, total, playlist_id);
 
-            };
+//             };
 
-            const isLiked = await checkPlaylistOrTrackStatus(type, track.id);
+//             const isLiked = await checkPlaylistOrTrackStatus(type, track.id);
 
-            return {
-                track_id: track.id,
-                artwork: track.album.images[0].url,
-                name: track.name,
-                artist: track.artists[0].name,
-                preview_url: track.preview_url,
-                isLiked
-            };
+//             return {
+//                 track_id: track.id,
+//                 artwork: track.album.images[0].url,
+//                 name: track.name,
+//                 artist: track.artists[0].name,
+//                 preview_url: track.preview_url,
+//                 isLiked
+//             };
 
-        } catch (error) {
+//         } catch (error) {
 
-            throw error;
+//             throw error;
 
-        };
+//         };
 
-    };
+//     };
 
-    //! FINAL FUNCTION
-    const getRandomTrackFromSpotifyPlaylists = async () => {
+//     //! FINAL FUNCTION
+//     const getRandomTrackFromSpotifyPlaylists = async () => {
 
-        // const playlist_id = '1tBrrDq0Pl06iG1Fh1Dbs4';
+//         // const playlist_id = '1tBrrDq0Pl06iG1Fh1Dbs4';
 
-        try {
+//         try {
 
-            dispatch(startTrackLoading());
+//             dispatch(startTrackLoading());
 
-            const playlist = await getRandomPlaylist();
+//             const playlist = await getRandomPlaylist();
 
-            const track = await getRandomTrack(playlist.playlist_id);
+//             const track = await getRandomTrack(playlist.playlist_id);
 
-            dispatch(addTrack({ playlist, track }));
+//             dispatch(addTrack({ playlist, track }));
 
-        } catch (error) {
+//         } catch (error) {
 
-            console.error(error.message);
+//             console.error(error.message);
 
-            dispatch(setTrackError());
+//             dispatch(setTrackError());
 
-        };
+//         };
 
-    };
+//     };
 
 
-    return { getRandomTrackFromSpotifyPlaylists };
+//     return { getRandomTrackFromSpotifyPlaylists };
 
-};
+// };
