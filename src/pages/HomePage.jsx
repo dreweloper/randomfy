@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useAuth } from '../hooks';
-import { NavBar } from '../layouts/NavBar';
+import { NavBar } from '../layouts';
 import { ACCESS_TOKEN_KEY, STATE_KEY } from '../utils';
 
 export const HomePage = () => {
@@ -15,8 +15,12 @@ export const HomePage = () => {
     // REACT HOOKS
     useEffect(() => {
 
-        // It only triggers one time after login
+        // Removes the cookie after login
         if (cookies.spotify_auth_state) removeCookie(STATE_KEY);
+
+    }, []);
+
+    useEffect(() => {
 
         // Token is expired
         if (!cookies.access_token) requestRefreshedAccessToken(cookies.refresh_token);
