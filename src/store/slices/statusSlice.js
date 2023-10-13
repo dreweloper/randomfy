@@ -1,13 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { STATUS } from '../../utils';
 
+/**
+ * @type {Object}
+ * @prop {String} status - The current process status, which can be one of the following: 'idle', 'loading', 'succeed', or 'failed'.
+ */
+const initialState = { status: STATUS.IDLE };
+
 export const statusSlice = createSlice({
 
     name: 'status',
-    initialState: STATUS.IDLE, // 'idle' || 'loading' || 'succeed' || 'failed'
+    initialState,
     reducers: {
         setStatus: (state, { payload }) => {
-            state = payload;
+            state.status = payload;
         }
     }
 
