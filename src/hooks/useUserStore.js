@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from "react-redux";
-import { setStatus, setUser } from "../redux/slices";
+import { setUser, setUserStatus } from "../store/slices";
 import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL, STATUS } from '../utils';
 
 export const useUserStore = () => {
 
     // REACT-REDUX HOOKS
-    const { user, status } = useSelector(state => state.user);
+    const { user, userStatus } = useSelector(state => state.user);
 
     const dispatch = useDispatch();
 
@@ -29,7 +29,7 @@ export const useUserStore = () => {
      */
     const getUserProfile = async () => {
 
-        dispatch(setStatus(STATUS.LOADING));
+        dispatch(setUserStatus(STATUS.LOADING));
 
         /**
          * Options for making authenticated requests to the Spotify API using the Fetch API.
@@ -70,7 +70,7 @@ export const useUserStore = () => {
 
             console.error(error.message);
 
-            dispatch(setStatus(STATUS.FAILED));
+            dispatch(setUserStatus(STATUS.FAILED));
 
         };
 
@@ -84,6 +84,6 @@ export const useUserStore = () => {
     }, [cookies]);
 
 
-    return { user, status };
+    return { user, userStatus };
 
 };

@@ -4,7 +4,7 @@ import { STATUS } from "../utils";
 export const User = () => {
 
     // CUSTOM HOOK
-    const { status, user: { display_name, id, image_url } } = useUserStore();
+    const { userStatus, user: { display_name, id, image_url } } = useUserStore();
 
 
     return (
@@ -12,19 +12,19 @@ export const User = () => {
         <>
 
             {
-                status === STATUS.LOADING && (
+                userStatus === STATUS.LOADING && (
                     <p>Loading…</p>
                 )
             }
 
             {
-                status === STATUS.FAILED && (
+                userStatus === STATUS.FAILED && (
                     <p>Failed to obtain user's profile</p>
                 )
             }
 
             {
-                status === STATUS.SUCCEEDED && (
+                userStatus === STATUS.SUCCEEDED && (
                     <div id={id}>
 
                         <img src={image_url} alt="User's profile image" title="User's profile image" />
