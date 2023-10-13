@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { serializeData } from '../helpers';
-import { deleteUser, removeTracks } from '../store/slices';
+import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
 import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
 
 export const useAuth = () => {
@@ -33,8 +33,11 @@ export const useAuth = () => {
     //TODO: if 'user' state is not empty
     dispatch(deleteUser());
 
-    //TODO: if 'tracks' state is not empty
-    dispatch(removeTracks());
+    //TODO: if 'playlist' state is not empty
+    dispatch(resetPlaylistState());
+
+    //TODO: if 'track' state is not empty
+    dispatch(resetTrackState());
 
     setStatus(status);
 
@@ -163,7 +166,7 @@ export const useAuth = () => {
 
       console.error(error.message);
 
-      // The status will inform the user that access was denied //! It's not working
+      // The status will inform the user that access was denied //! Status is not working
       handleLogout(STATUS.FAILED);
 
     };

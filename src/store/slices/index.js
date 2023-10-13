@@ -1,4 +1,4 @@
 export * from './playlistSlice';
 export * from './statusSlice';
-export * from './tracksSlice';
+export * from './trackSlice';
 export * from './userSlice';
