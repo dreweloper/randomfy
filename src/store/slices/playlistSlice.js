@@ -22,6 +22,7 @@ export const playlistSlice = createSlice({
         setPlaylist: (state, { payload }) => {
             state.playlist_id = payload.playlist_id;
             state.total_tracks = payload.total_tracks;
+            state.isFollowed = payload.isFollowed;
             state.isDone = true;
         },
         isPlaylistFollowed: (state, { payload }) => {
