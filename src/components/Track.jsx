@@ -1,78 +1,53 @@
-import { useCookies } from 'react-cookie';
 import { useSelector } from "react-redux";
-import { STATUS } from '../utils';
-import { useEffect } from "react";
 import { usePlaylistStore, useTrackStore } from "../hooks";
+import { STATUS } from '../utils';
 
-export const Track = () => {
+export const Track = ({ token }) => {
 
-  // REACT-REDUX HOOKS
-  const playlist = useSelector(state => state.playlist);
-
-  const { track } = useSelector(state => state.track);
-
-  // REACT-COOKIE
-  const [cookies] = useCookies([]);
-
-  // REACT-REDUX HOOKS
+  // REACT-REDUX HOOK
   const { status } = useSelector(state => state.status);
 
-  // CUSTOM HOOKS
-  const { getRandomPlaylist } = usePlaylistStore(cookies.access_token);
+  // REACT-REDUX CUSTOM HOOKS
+  const { playlist, getRandomPlaylist } = usePlaylistStore(token);
 
-  const { getRandomTrack } = useTrackStore(cookies.access_token);
+  const { track } = useTrackStore({ token, playlist, status });
 
-  // REACT HOOK
-  useEffect(() => {
+  // VARIABLE
+  /**
+   * Indicates whether the 'track' object is not empty.
+   * @type {Boolean}
+   */
+  const trackIsNotEmpty = Object.keys(track).length > 0;
 
-    const playlistIsEmpty = playlist.playlist_id.length === 0;
-
-    if (playlistIsEmpty) getRandomPlaylist();
-
-  }, []);
-
-  useEffect(() => {
-
-    const playlistIsNotEmpty = playlist.playlist_id.length > 0;
-
-    const trackIsEmpty = Object.keys(track).length === 0;
-
-    if (playlistIsNotEmpty && trackIsEmpty) getRandomTrack();
-
-  }, [playlist]);
+  // EVENT
+  const handleGenerateNewRandomTrack = () => getRandomPlaylist();
 
 
   return (
 
     <>
 
-      {
+      <button disabled={status === STATUS.LOADING} onClick={handleGenerateNewRandomTrack}>RANDOM TRACK</button>
+
+      { //TODO: skeleton loader
         status === STATUS.LOADING && (
           <p>Loading…</p>
         )
       }
 
-      {
+      { //TODO: toast notification (or snackbar)
         status === STATUS.FAILED && (
           <p>ERROR!</p>
         )
       }
 
       {
-        status !== STATUS.LOADING && Object.keys(track).length > 0 && (
-          <article id={track.track_id}>
+        status !== STATUS.LOADING && trackIsNotEmpty && (
+          <>
 
-            <div>
-              <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
-            </div>
+            <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
 
-            <h2>{track.name}</h2>
-
-            <h2>{track.artist}</h2>
-
-            <p>{track.preview_url}</p>
-
-          </article>
+          </>
         )
       }
 

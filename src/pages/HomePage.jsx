@@ -8,7 +8,7 @@ import { ACCESS_TOKEN_KEY, STATE_KEY } from '../utils';
 export const HomePage = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies: cookie names that the component depend on or that should trigger a re-render
+    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies: cookie name that the component depend on or that should trigger a re-render
 
     // CUSTOM HOOKS
     const { requestRefreshedAccessToken } = useAuth();
@@ -31,7 +31,7 @@ export const HomePage = () => {
 
             <NavBar />
 
-            <Track />
+            <Track token={cookies.access_token} />
 
         </>
 

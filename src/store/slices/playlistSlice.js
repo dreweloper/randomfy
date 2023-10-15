@@ -22,12 +22,13 @@ export const playlistSlice = createSlice({
         setPlaylist: (state, { payload }) => {
             state.playlist_id = payload.playlist_id;
             state.total_tracks = payload.total_tracks;
+            state.isDone = true;
         },
-        setPlaylistFollowStatus: (state, { payload }) => {
+        isPlaylistFollowed: (state, { payload }) => {
             state.isFollowed = payload;
         },
-        setPlaylistDone: (state) => {
-            state.isDone = true;
+        isPlaylistDone: (state, { payload }) => {
+            state.isDone = payload;
         },
         resetPlaylistState: (state) => {
             state.playlist_id = '';
@@ -41,6 +42,7 @@ export const playlistSlice = createSlice({
 
 export const {
     setPlaylist,
-    setPlaylistFollowStatus,
+    isPlaylistFollowed,
+    isPlaylistDone,
     resetPlaylistState
 } = playlistSlice.actions;

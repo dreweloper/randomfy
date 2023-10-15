@@ -1,16 +1,19 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from "../helpers";
 import { setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS } from "../utils";
 
-export const useTrackStore = (token) => {
+export const useTrackStore = ({ token, playlist, status }) => {
 
     // REACT-REDUX HOOKS
-    const { playlist_id, total_tracks } = useSelector(state => state.playlist);
+    const { track } = useSelector(state => state.track);
 
     const dispatch = useDispatch();
 
     // VARIABLES
+    const { playlist_id, total_tracks } = playlist;
+
     const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // FUNCTIONS
@@ -30,15 +33,15 @@ export const useTrackStore = (token) => {
 
             };
 
-            const { items: [{ track }] } = await response.json();
+            const { items: [{ track: { id, album, name, artists, preview_url } }] } = await response.json();
 
             const payload = {
-                track_id: track.id,
-                artwork: track.album.images[0].url,
-                name: track.name,
-                artist: track.artists[0].name, //! could be more than one artist (filter or map)
-                preview_url: track.preview_url,
-            }
+                track_id: id,
+                artwork: album.images[0].url,
+                name,
+                artists: artists.map(artist => artist.name), // There can be more than one artist
+                preview_url
+            };
 
             dispatch(setTrack(payload));
 
@@ -54,7 +57,14 @@ export const useTrackStore = (token) => {
 
     };
 
+    useEffect(() => {
 
-    return { getRandomTrack };
+        // The second conditional avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
+        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack();
+
+    }, [playlist]);
+
+
+    return { track };
 
 };

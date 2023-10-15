@@ -1,11 +1,14 @@
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from '../helpers';
-import { setPlaylist, setStatus } from '../store/slices';
+import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
 export const usePlaylistStore = (token) => {
 
-    // REACT-REDUX HOOK
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+
     const dispatch = useDispatch();
 
     // VARIABLES
@@ -17,8 +20,11 @@ export const usePlaylistStore = (token) => {
         let url, response;
 
         try {
-
+            
             dispatch(setStatus(STATUS.LOADING));
+
+            // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone')
+            if (playlist.isDone) dispatch(isPlaylistDone(false));
 
             url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
@@ -60,7 +66,14 @@ export const usePlaylistStore = (token) => {
 
     };
 
+    useEffect(() => {
+        
+        // Avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
+        if (!playlist.isDone) getRandomPlaylist();
 
-    return { getRandomPlaylist };
+    }, []);
+
+
+    return { playlist, getRandomPlaylist };
 
 };
