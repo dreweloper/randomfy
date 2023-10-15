@@ -4,55 +4,97 @@ import { generateRandomNumber } from '../helpers';
 import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = (token) => {
+export const usePlaylistStore = (props) => {
+
+    // VARIABLES
+    const { token, user } = props;
+
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // REACT-REDUX HOOKS
     const playlist = useSelector(state => state.playlist);
 
     const dispatch = useDispatch();
 
-    // VARIABLES
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
     // FUNCTIONS
-    const getRandomPlaylist = async () => {
+    const fetchUserTotalPlaylists = async () => {
 
-        let url, response;
+        const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
         try {
-            
+
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) throw new Error("Failed to obtain user's playlists");
+
+            else return await response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
+    const fetchRandomUserPlaylist = async (randomOffset) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
+
+        try {
+
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) throw new Error("Failed to obtain user's random playlist");
+
+            else return await response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
+    const checkIsPlaylistFollowed = async (playlistId) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
+
+        try {
+
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) throw new Error('Failed to check if user follows the playlist');
+
+            else return await response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
+    const getRandomPlaylist = async () => {
+
+        try {
+
             dispatch(setStatus(STATUS.LOADING));
 
             // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone')
             if (playlist.isDone) dispatch(isPlaylistDone(false));
 
-            url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
-
-            response = await fetch(url, fetchOptions);
-
-            if (!response.ok) {
-
-                throw new Error("Failed to obtain user's playlists");
-
-            };
-
-            const { total } = await response.json();
+            const { total } = await fetchUserTotalPlaylists();
 
             const randomOffset = generateRandomNumber(total);
 
-            url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchRandomUserPlaylist(randomOffset);
 
-            response = await fetch(url, fetchOptions);
+            const [isFollowed] = await checkIsPlaylistFollowed(playlist_id);
 
-            if (!response.ok) {
-
-                throw new Error("Failed to obtain user's random playlist");
-
-            };
-
-            const { items: [{ id, tracks }] } = await response.json();
-
-            const payload = { playlist_id: id, total_tracks: tracks.total };
+            const payload = { playlist_id, total_tracks, isFollowed };
 
             dispatch(setPlaylist(payload));
 
@@ -67,7 +109,7 @@ export const usePlaylistStore = (token) => {
     };
 
     useEffect(() => {
-        
+
         // Avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
         if (!playlist.isDone) getRandomPlaylist();
 
