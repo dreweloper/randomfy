@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { PrivateRoutes, PublicRoutes } from './index.js';
 import { HomePage, LoginPage } from '../pages';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../utils';

@@ -5,11 +5,13 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {String} playlist_id - The Spotify ID of the playlist.
  * @prop {Number} total_tracks - Number of tracks in the playlist.
  * @prop {Boolean} isFollowed - Indicates whether the user follows the playlist with the provided ID.
+ * @prop {Boolean} isDone - Indicates whether the process is completed.
  */
 const initialState = {
     playlist_id: '',
     total_tracks: 0,
-    isFollowed: false
+    isFollowed: false,
+    isDone: false
 };
 
 export const playlistSlice = createSlice({
@@ -24,10 +26,14 @@ export const playlistSlice = createSlice({
         setPlaylistFollowStatus: (state, { payload }) => {
             state.isFollowed = payload;
         },
+        setPlaylistDone: (state) => {
+            state.isDone = true;
+        },
         resetPlaylistState: (state) => {
             state.playlist_id = '';
             state.total_tracks = 0;
             state.isFollowed = false;
+            state.isDone = false;
         }
     }
 

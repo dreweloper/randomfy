@@ -1,23 +1,20 @@
-import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from "../helpers";
 import { setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS } from "../utils";
 
-export const useTrackStore = () => {
+export const useTrackStore = (token) => {
 
     // REACT-REDUX HOOKS
     const { playlist_id, total_tracks } = useSelector(state => state.playlist);
 
     const dispatch = useDispatch();
 
-    // REACT-COOKIE
-    const [cookies] = useCookies([]);
+    // VARIABLES
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // FUNCTIONS
     const getRandomTrack = async () => {
-
-        const options = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
 
         try {
 
@@ -25,7 +22,7 @@ export const useTrackStore = () => {
 
             const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/tracks?limit=1&offset=${randomOffset}`;
 
-            const response = await fetch(url, options);
+            const response = await fetch(url, fetchOptions);
 
             if (!response.ok) {
 
