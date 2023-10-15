@@ -4,23 +4,45 @@ import { generateRandomNumber } from '../helpers';
 import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = (token) => {
+export const usePlaylistStore = (props) => {
+
+    // VARIABLES
+    const { token, user } = props;
+
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // REACT-REDUX HOOKS
     const playlist = useSelector(state => state.playlist);
 
     const dispatch = useDispatch();
 
-    // VARIABLES
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
     // FUNCTIONS
+    const checkIsPlaylistFollowed = async (playlist_id) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/followers/contains?ids=${user.id}`;
+
+        try {
+
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) throw new Error('Failed to check if user follows the playlist');
+
+            else return await response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
     const getRandomPlaylist = async () => {
 
         let url, response;
 
         try {
-            
+
             dispatch(setStatus(STATUS.LOADING));
 
             // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone')
@@ -50,9 +72,11 @@ export const usePlaylistStore = (token) => {
 
             };
 
-            const { items: [{ id, tracks }] } = await response.json();
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await response.json();
 
-            const payload = { playlist_id: id, total_tracks: tracks.total };
+            const [isFollowed] = await checkIsPlaylistFollowed(playlist_id);
+
+            const payload = { playlist_id, total_tracks, isFollowed };
 
             dispatch(setPlaylist(payload));
 
@@ -67,7 +91,7 @@ export const usePlaylistStore = (token) => {
     };
 
     useEffect(() => {
-        
+
         // Avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
         if (!playlist.isDone) getRandomPlaylist();
 
