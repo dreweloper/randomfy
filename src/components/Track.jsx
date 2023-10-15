@@ -14,22 +14,12 @@ export const Track = ({ token }) => {
 
   const { track } = useTrackStore({ token, playlist, status });
 
-  // VARIABLE
-  /**
-   * Indicates whether the 'track' object is not empty.
-   * @type {Boolean}
-   */
-  const trackIsNotEmpty = Object.keys(track).length > 0;
-
-  // EVENT
-  const handleGenerateNewRandomTrack = () => getRandomPlaylist();
-
 
   return (
 
     <>
 
-      <button disabled={status === STATUS.LOADING} onClick={handleGenerateNewRandomTrack}>RANDOM TRACK</button>
+      <button disabled={status === STATUS.LOADING} onClick={() => { getRandomPlaylist() }}>RANDOM TRACK</button>
 
       { //TODO: skeleton loader
         status === STATUS.LOADING && (
@@ -43,8 +33,8 @@ export const Track = ({ token }) => {
         )
       }
 
-      {
-        status !== STATUS.LOADING && trackIsNotEmpty && (
+      { // The 'track' object is not empty
+        status !== STATUS.LOADING && Object.keys(track).length > 0 && (
           <>
 
             <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />

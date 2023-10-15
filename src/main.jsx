@@ -8,7 +8,7 @@ import { store } from './store/store.js';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <CookiesProvider defaultSetOptions={{ sameSite: 'strict' }}>
@@ -16,5 +16,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </CookiesProvider>
       </Provider>
     </BrowserRouter>
-  // </React.StrictMode>,
+  </React.StrictMode>,
 )
