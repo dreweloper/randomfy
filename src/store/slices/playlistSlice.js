@@ -8,8 +8,7 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {Boolean} isDone - Indicates whether the process is completed.
  */
 const initialState = {
-    playlist_id: '',
-    total_tracks: 0,
+    playlist: {},
     isFollowed: false,
     isDone: false
 };
@@ -20,8 +19,10 @@ export const playlistSlice = createSlice({
     initialState,
     reducers: {
         setPlaylist: (state, { payload }) => {
-            state.playlist_id = payload.playlist_id;
-            state.total_tracks = payload.total_tracks;
+            state.playlist = {
+                playlist_id: payload.playlist_id,
+                total_tracks: payload.total_tracks
+            };
             state.isFollowed = payload.isFollowed;
             state.isDone = true;
         },
@@ -32,8 +33,7 @@ export const playlistSlice = createSlice({
             state.isDone = payload;
         },
         resetPlaylistState: (state) => {
-            state.playlist_id = '';
-            state.total_tracks = 0;
+            state.playlist = {};
             state.isFollowed = false;
             state.isDone = false;
         }
