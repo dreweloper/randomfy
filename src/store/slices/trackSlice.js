@@ -1,8 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+/**
+ * @type {Object}
+ * @prop {Object} track - Information about the track.
+ * @prop {Boolean} isLiked - Indicates whether the track is already saved in the current Spotify user's 'Your Music' library.
+ */
 const initialState = {
     track: {},
-    isLiked: false
+    isLiked: false,
 };
 
 export const trackSlice = createSlice({
@@ -12,7 +17,7 @@ export const trackSlice = createSlice({
         setTrack: (state, { payload }) => {
             state.track = { ...payload };
         },
-        setTrackLikeStatus: (state, { payload }) => {
+        isTrackLiked: (state, { payload }) => {
             state.isLiked = payload;
         },
         resetTrackState: (state) => {
@@ -24,6 +29,6 @@ export const trackSlice = createSlice({
 
 export const {
     setTrack,
-    setTrackLikeStatus,
+    isTrackLiked,
     resetTrackState
 } = trackSlice.actions;

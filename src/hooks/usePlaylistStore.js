@@ -1,30 +1,34 @@
-import { useCookies } from 'react-cookie';
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from '../helpers';
-import { setPlaylist, setStatus } from '../store/slices';
+import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = () => {
+export const usePlaylistStore = (token) => {
 
-    // REACT-REDUX HOOK
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+
     const dispatch = useDispatch();
 
-    // REACT-COOKIE HOOK
-    const [cookies] = useCookies([]);
+    // VARIABLES
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
+    // FUNCTIONS
     const getRandomPlaylist = async () => {
 
         let url, response;
 
-        const options = { headers: { Authorization: `Bearer ${cookies.access_token}` } };
-
         try {
-
+            
             dispatch(setStatus(STATUS.LOADING));
+
+            // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone')
+            if (playlist.isDone) dispatch(isPlaylistDone(false));
 
             url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
-            response = await fetch(url, options);
+            response = await fetch(url, fetchOptions);
 
             if (!response.ok) {
 
@@ -38,7 +42,7 @@ export const usePlaylistStore = () => {
 
             url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
 
-            response = await fetch(url, options);
+            response = await fetch(url, fetchOptions);
 
             if (!response.ok) {
 
@@ -62,7 +66,14 @@ export const usePlaylistStore = () => {
 
     };
 
+    useEffect(() => {
+        
+        // Avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
+        if (!playlist.isDone) getRandomPlaylist();
 
-    return { getRandomPlaylist };
+    }, []);
+
+
+    return { playlist, getRandomPlaylist };
 
 };
