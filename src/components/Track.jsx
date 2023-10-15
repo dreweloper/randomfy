@@ -12,7 +12,7 @@ export const Track = ({ token }) => {
   // REACT-REDUX CUSTOM HOOKS
   const { playlist, getRandomPlaylist } = usePlaylistStore({ token, user });
 
-  const { track } = useTrackStore({ token, playlist, status });
+  const { track } = useTrackStore({ playlist, status, token });
 
 
   return (
