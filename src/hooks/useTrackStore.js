@@ -4,19 +4,39 @@ import { generateRandomNumber } from "../helpers";
 import { setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS } from "../utils";
 
-export const useTrackStore = ({ token, playlist, status }) => {
-
-    // REACT-REDUX HOOKS
-    const { track } = useSelector(state => state.track);
-
-    const dispatch = useDispatch();
+export const useTrackStore = ({ playlist, status, token }) => {
 
     // VARIABLES
     const { playlist_id, total_tracks } = playlist;
 
     const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
+    // REACT-REDUX HOOKS
+    const { track } = useSelector(state => state.track);
+
+    const dispatch = useDispatch();
+
     // FUNCTIONS
+    const checkIsTrackLiked = async (trackId) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/me/tracks/contains?ids=${trackId}`;
+
+        try {
+
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) throw new Error('Failed to check if user has already liked the track');
+
+            else return await response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
     const getRandomTrack = async () => {
 
         try {
@@ -33,14 +53,19 @@ export const useTrackStore = ({ token, playlist, status }) => {
 
             };
 
-            const { items: [{ track: { id, album, name, artists, preview_url } }] } = await response.json();
+            const { items: [{ track: { id: track_id, album: { images: [{ url: artwork }] }, name, artists, preview_url } }] } = await response.json();
+
+            const [isLiked] = await checkIsTrackLiked(track_id);
 
             const payload = {
-                track_id: id,
-                artwork: album.images[0].url,
-                name,
-                artists: artists.map(artist => artist.name), // There can be more than one artist
-                preview_url
+                track: {
+                    track_id,
+                    artwork,
+                    name,
+                    artists: artists.map(artist => artist.name), // There can be more than one artist
+                    preview_url,
+                },
+                isLiked
             };
 
             dispatch(setTrack(payload));

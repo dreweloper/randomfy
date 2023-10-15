@@ -15,7 +15,8 @@ export const trackSlice = createSlice({
     initialState,
     reducers: {
         setTrack: (state, { payload }) => {
-            state.track = { ...payload };
+            state.track = payload.track;
+            state.isLiked = payload.isLiked;
         },
         isTrackLiked: (state, { payload }) => {
             state.isLiked = payload;
