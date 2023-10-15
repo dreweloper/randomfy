@@ -4,11 +4,9 @@ import { generateRandomNumber } from '../helpers';
 import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = (props) => {
+export const usePlaylistStore = ({ token, user }) => {
 
     // VARIABLES
-    const { token, user } = props;
-
     const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // REACT-REDUX HOOKS
@@ -116,6 +114,6 @@ export const usePlaylistStore = (props) => {
     }, []);
 
 
-    return { playlist, getRandomPlaylist };
+    return { getRandomPlaylist };
 
 };

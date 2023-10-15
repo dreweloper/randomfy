@@ -1,47 +1,90 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { generateRandomNumber } from "../helpers";
 import { setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS } from "../utils";
 
-export const useTrackStore = ({ token, playlist, status }) => {
-
-    // REACT-REDUX HOOKS
-    const { track } = useSelector(state => state.track);
-
-    const dispatch = useDispatch();
+export const useTrackStore = (token) => {
 
     // VARIABLES
-    const { playlist_id, total_tracks } = playlist;
-
     const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
+    // REACT-REDUX HOOK
+    const dispatch = useDispatch();
+
     // FUNCTIONS
-    const getRandomTrack = async () => {
+    const fetchPlaylistItemsById = async (playlistId, randomOffset) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlistId}/tracks?limit=1&offset=${randomOffset}`;
 
         try {
 
-            const randomOffset = generateRandomNumber(total_tracks);
+            const response = await fetch(url, fetchOptions);
 
-            const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/tracks?limit=1&offset=${randomOffset}`;
+            if (!response.ok) throw new Error('Failed to obtain playlist items');
+
+            else return response.json();
+
+        } catch (error) {
+
+            throw error;
+
+        };
+
+    };
+
+    const checkIsTrackLiked = async (trackId) => {
+
+        const url = `${SPOTIFY_BASE_URL}/v1/me/tracks/contains?ids=${trackId}`;
+
+        try {
 
             const response = await fetch(url, fetchOptions);
 
-            if (!response.ok) {
+            if (!response.ok) throw new Error('Failed to check if user has already liked the track');
 
-                throw new Error('Failed to obtain random track');
+            else return await response.json();
 
-            };
+        } catch (error) {
 
-            const { items: [{ track: { id, album, name, artists, preview_url } }] } = await response.json();
+            throw error;
 
-            const payload = {
-                track_id: id,
-                artwork: album.images[0].url,
+        };
+
+    };
+
+    const getRandomTrack = async (playlistId, totalTracks) => {
+
+        try {
+
+            const randomOffset = generateRandomNumber(totalTracks);
+
+            const {
+                items: [{
+                    track: {
+                        id: track_id,
+                        album: {
+                            images: [{
+                                url: artwork
+                            }]
+                        },
+                        name,
+                        artists,
+                        preview_url
+                    }
+                }]
+            } = await fetchPlaylistItemsById(playlistId, randomOffset);
+
+            const [isLiked] = await checkIsTrackLiked(track_id);
+
+            const track = {
+                track_id,
+                artwork,
                 name,
                 artists: artists.map(artist => artist.name), // There can be more than one artist
-                preview_url
-            };
+                preview_url,
+            }
+
+            const payload = { track, isLiked };
 
             dispatch(setTrack(payload));
 
@@ -57,14 +100,7 @@ export const useTrackStore = ({ token, playlist, status }) => {
 
     };
 
-    useEffect(() => {
 
-        // The second conditional avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
-        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack();
-
-    }, [playlist]);
-
-
-    return { track };
+    return { getRandomTrack };
 
 };
