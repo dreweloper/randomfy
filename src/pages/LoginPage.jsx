@@ -52,15 +52,11 @@ export const LoginPage = () => {
       <Link to={url}>Login Spotify</Link>
 
       {
-        status === STATUS.LOADING && (
-          <p>Loading…</p>
-        )
+        status === STATUS.LOADING && <p>Loading…</p>
       }
 
       {
-        status === STATUS.FAILED && (
-          <p>Access denied!</p>
-        )
+        status === STATUS.FAILED && <p>Access denied!</p>
       }
 
     </>

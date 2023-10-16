@@ -1,39 +1,27 @@
-import { useEffect } from "react";
+import { useCookies } from 'react-cookie';
 import { useSelector } from "react-redux";
 import { usePlaylistStore, useTrackStore } from "../hooks";
-import { STATUS } from '../utils';
+import { ACCESS_TOKEN_KEY, STATUS } from '../utils';
 
-export const Track = ({ token }) => {
+export const Track = () => {
 
-  // REACT-REDUX HOOKS
-  const { playlist, status: { status }, track: { track }, user: { user } } = useSelector(state => state);
+  // REACT-COOKIE
+  const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
+
+  // REACT-REDUX HOOK
+  const { status } = useSelector(state => state.process);
+
+  // REACT-REDUX CUSTOM HOOKS
+  const { getRandomPlaylist } = usePlaylistStore(cookies.access_token);
+
+  const { track } = useTrackStore(cookies.access_token);
 
   // VARIABLES
   /**
-   * @type {Object}
-   * @prop {Object} playlist
-   * @prop {String} playlist_id - The Spotify ID of the playlist.
-   * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
-   */
-  const { playlist: { playlist_id, total_tracks } } = playlist;
-  /**
-   * Indicates whether the 'track' object is  empty.
+   * Indicates whether the 'track' state is empty, based on the length of its 'track_id' property.
    * @type {Boolean}
    */
-  const trackIsEmpty = Object.keys(track).length === 0;
-
-  // REACT-REDUX CUSTOM HOOKS
-  const { getRandomPlaylist } = usePlaylistStore({ token, user });
-
-  const { getRandomTrack } = useTrackStore(token);
-
-  // REACT HOOK
-  useEffect(() => {
-
-    // The second conditional avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
-    if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
-
-  }, [playlist]);
+  const trackIsEmpty = Object.keys(track.track_id).length === 0;
 
 
   return (
@@ -50,8 +38,12 @@ export const Track = ({ token }) => {
         status === STATUS.FAILED && <p>ERROR!</p>
       }
 
-      {
-        status !== STATUS.LOADING && !trackIsEmpty && <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
+      { // Track information will be rendered whether the 'status' is 'succeeded' or 'failed', but always when the 'track' state is not empty.
+        status !== STATUS.LOADING && !trackIsEmpty && (
+
+          <img src={track.album_cover} alt='Album cover' title='Album cover' width='100' />
+
+        )
       }
 
     </>

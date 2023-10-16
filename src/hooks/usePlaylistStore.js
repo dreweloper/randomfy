@@ -1,18 +1,24 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from '../helpers';
-import { isPlaylistDone, setPlaylist, setStatus } from '../store/slices';
+import { setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = ({ token, user }) => {
-
-    // VARIABLES
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
+export const usePlaylistStore = (token) => {
 
     // REACT-REDUX HOOKS
-    const playlist = useSelector(state => state.playlist);
+    const { playlist, user } = useSelector(state => state);
 
     const dispatch = useDispatch();
+
+    // VARIABLES
+    /**
+     * Options for making authenticated requests to the Spotify API using the Fetch API.
+     * @type {Object}
+     * @prop {Object} headers - Headers for the request.
+     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
+     */
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // FUNCTIONS
     const fetchUserTotalPlaylists = async () => {
@@ -81,8 +87,8 @@ export const usePlaylistStore = ({ token, user }) => {
 
             dispatch(setStatus(STATUS.LOADING));
 
-            // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone')
-            if (playlist.isDone) dispatch(isPlaylistDone(false));
+            // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone').
+            if (playlist.isDone) dispatch(setPlaylistUndone());
 
             const { total } = await fetchUserTotalPlaylists();
 
@@ -92,9 +98,7 @@ export const usePlaylistStore = ({ token, user }) => {
 
             const [isFollowed] = await checkIsPlaylistFollowed(playlist_id);
 
-            const payload = { playlist_id, total_tracks, isFollowed };
-
-            dispatch(setPlaylist(payload));
+            dispatch(setPlaylist({ playlist_id, total_tracks, isFollowed }));
 
         } catch (error) {
 
@@ -108,12 +112,23 @@ export const usePlaylistStore = ({ token, user }) => {
 
     useEffect(() => {
 
-        // Avoids unnecessary re-renders (e.g., during navigation with web browser arrows)
-        if (!playlist.isDone) getRandomPlaylist();
+        /**
+         * Indicates whether the 'user' state is not empty, based on the length of its 'id' property.
+         * @type {Boolean}
+         */
+        const userIsNotEmpty = user.id.length > 0;
 
-    }, []);
+        /**
+         * This 'useEffect' should only be triggered during the initial loading of the 'playlist' state.
+         * First condition: it will trigger for the first time, i.e., when the 'initialState' has not been modified.
+         * Second condition: it allows the 'user' state to load first, preventing errors in 'checkIsPlaylistFollowed' which depends on 'user.id'.
+         * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
+         */
+        if (!playlist.isDone && userIsNotEmpty) getRandomPlaylist();
+
+    }, [user]); // It will trigger once more after the initial component mount when the user is loaded.
 
 
-    return { getRandomPlaylist };
+    return { playlist, getRandomPlaylist };
 
 };
