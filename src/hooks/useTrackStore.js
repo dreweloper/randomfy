@@ -1,15 +1,24 @@
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from "../helpers";
 import { setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS } from "../utils";
 
 export const useTrackStore = (token) => {
 
-    // VARIABLES
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
+    // REACT-REDUX HOOKS
+    const { playlist, process: { status }, track } = useSelector(state => state);
 
-    // REACT-REDUX HOOK
     const dispatch = useDispatch();
+
+    // VARIABLES
+    /**
+     * Options for making authenticated requests to the Spotify API using the Fetch API.
+     * @type {Object}
+     * @prop {Object} headers - Headers for the request.
+     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
+     */
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // FUNCTIONS
     const fetchPlaylistItemsById = async (playlistId, randomOffset) => {
@@ -58,35 +67,11 @@ export const useTrackStore = (token) => {
 
             const randomOffset = generateRandomNumber(totalTracks);
 
-            const {
-                items: [{
-                    track: {
-                        id: track_id,
-                        album: {
-                            images: [{
-                                url: artwork
-                            }]
-                        },
-                        name,
-                        artists,
-                        preview_url
-                    }
-                }]
-            } = await fetchPlaylistItemsById(playlistId, randomOffset);
+            const { items: [{ track: { id: track_id, album: { images: [{ url: album_cover }] }, name, artists, preview_url } }] } = await fetchPlaylistItemsById(playlistId, randomOffset);
 
             const [isLiked] = await checkIsTrackLiked(track_id);
 
-            const track = {
-                track_id,
-                artwork,
-                name,
-                artists: artists.map(artist => artist.name), // There can be more than one artist
-                preview_url,
-            }
-
-            const payload = { track, isLiked };
-
-            dispatch(setTrack(payload));
+            dispatch(setTrack({ track_id, album_cover, name, artists, preview_url, isLiked }));
 
             dispatch(setStatus(STATUS.SUCCEEDED));
 
@@ -100,7 +85,25 @@ export const useTrackStore = (token) => {
 
     };
 
+    // REACT HOOK
+    useEffect(() => {
 
-    return { getRandomTrack };
+        /**
+         * @type {Object}
+         * @prop {String} playlist_id - The Spotify ID of the playlist.
+         * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
+         */
+        const { playlist_id, total_tracks } = playlist;
+
+        /**
+         * First condition: 'getRandomPlaylist' succeeds.
+         * Second condition: prevents unnecessary re-renders when navigating with web browser arrows.
+         */
+        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
+
+    }, [playlist]);
+
+
+    return { track };
 
 };

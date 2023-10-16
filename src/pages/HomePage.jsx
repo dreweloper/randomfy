@@ -8,7 +8,7 @@ import { ACCESS_TOKEN_KEY, STATE_KEY } from '../utils';
 export const HomePage = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies: cookie name that the component depend on or that should trigger a re-render
+    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY]); // Dependencies: cookie name that the component depend on or that should trigger a re-render.
 
     // CUSTOM HOOKS
     const { requestRefreshedAccessToken } = useAuth();
@@ -16,13 +16,13 @@ export const HomePage = () => {
     // REACT HOOKS
     useEffect(() => {
 
-        // Removes the cookie after login
+        // Removes the cookie after the login is successful.
         if (cookies.spotify_auth_state) removeCookie(STATE_KEY);
 
-        // Token is expired
+        // The token has expired.
         if (!cookies.access_token) requestRefreshedAccessToken(cookies.refresh_token);
 
-    }, [cookies]); // It triggers every time the cookie with 'access_token' key expires
+    }, [cookies]); // It triggers every time the cookie with 'access_token' key expires.
 
 
     return (
@@ -31,7 +31,7 @@ export const HomePage = () => {
 
             <NavBar />
 
-            <Track token={cookies.access_token} />
+            <Track />
 
         </>
 

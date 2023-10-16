@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setUserStatus } from "../store/slices";
-import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL, STATUS } from '../utils';
+import { finishLoading, setError, setUser, startLoading } from "../store/slices";
+import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
 
     // REACT-REDUX HOOKS
-    const { user, userStatus } = useSelector(state => state.user);
+    const user = useSelector(state => state.user);
 
     const dispatch = useDispatch();
 
@@ -21,6 +21,14 @@ export const useUserStore = () => {
      */
     const token = cookies.access_token;
 
+    /**
+     * Options for making authenticated requests to the Spotify API using the Fetch API.
+     * @type {Object}
+     * @prop {Object} headers - Headers for the request.
+     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
+     */
+    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
+
     // FUNCTIONS
     /**
      * Get detailed profile information about the current user.
@@ -29,17 +37,9 @@ export const useUserStore = () => {
      */
     const getUserProfile = async () => {
 
-        dispatch(setUserStatus(STATUS.LOADING));
-
-        /**
-         * Options for making authenticated requests to the Spotify API using the Fetch API.
-         * @type {Object}
-         * @prop {Object} headers - Headers for the request.
-         * @prop {String} headers.Authorization - The Authorization header with a bearer token.
-         */
-        const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
         try {
+
+            dispatch(startLoading());
 
             /**
              * The Spotify API response object.
@@ -58,11 +58,11 @@ export const useUserStore = () => {
                  * @type {Object}
                  * @prop {String} id - The Spotify user ID.
                  * @prop {String} display_name - The name displayed on the user's profile.
-                 * @prop {String} image_url - The source URL of the user's profile image.
+                 * @prop {String} avatar - The source URL of the user's profile image.
                  */
-                const { id, display_name, images: [, { url: image_url }] } = await response.json();
+                const { id, display_name, images: [, { url: avatar }] } = await response.json();
 
-                dispatch(setUser({ id, display_name, image_url }));
+                dispatch(setUser({ id, display_name, avatar }));
 
             };
 
@@ -70,7 +70,11 @@ export const useUserStore = () => {
 
             console.error(error.message);
 
-            dispatch(setUserStatus(STATUS.FAILED));
+            dispatch(setError());
+
+        } finally {
+
+            dispatch(finishLoading());
 
         };
 
@@ -78,12 +82,23 @@ export const useUserStore = () => {
 
     useEffect(() => {
 
-        // The token is both valid and not expired. It also checks whether the 'user' property of the state is empty to prevent unnecessary re-renders.
-        if (token && Object.keys(user).length === 0) getUserProfile();
+        /**
+         * Indicates whether the 'user' state is empty, based on the length of its 'id' property.
+         * @type {Boolean}
+         */
+        const userIsEmpty = user.id.length === 0;
 
-    }, [cookies]);
+        /**
+         * This 'useEffect' should be triggered only once, during the initial loading of the 'user' state.
+         * First condition: the token is valid and not expired.
+         * Second condition: the 'user' state is empty, so the function will be invoked only once.
+         * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
+         */
+        if (token && userIsEmpty) getUserProfile();
+
+    }, [cookies]); // It will trigger again if the token has expired when the component is initially mounted.
 
 
-    return { user, userStatus };
+    return { user };
 
 };

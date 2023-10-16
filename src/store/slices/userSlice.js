@@ -1,27 +1,55 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { STATUS } from '../../utils';
+
+/**
+ * @type {Object}
+ * @prop {String} id - The Spotify user ID for the user.
+ * @prop {String | null} display_name - The name displayed on the user's profile. 'null' if not available.
+ * @prop {String} avatar - The user's profile image.
+ * @prop {Boolean} isLoading - Indicates whether user data is currently being loaded.
+ * @prop {Boolean} isError - Indicates whether an error has occurred while loading user data.
+ */
+const initialState = {
+    id: '',
+    display_name: '',
+    avatar: '',
+    isLoading: false,
+    isError: false
+};
 
 export const userSlice = createSlice({
     name: 'user',
-    initialState: {
-        user: {},
-        userStatus: STATUS.IDLE
-    },
+    initialState,
     reducers: {
-        setUserStatus: (state, { payload }) => {
-            state.userStatus = payload;
+        startLoading: (state) => {
+            state.isLoading = true;
         },
-        // After login
+        // After the login is successful
         setUser: (state, { payload }) => {
-            state.user = { ...payload };
-            state.userStatus = STATUS.SUCCEEDED;
+            state.id = payload.id;
+            state.display_name = payload.display_name;
+            state.avatar = payload.avatar;
         },
-        // Logout
+        setError: (state) => {
+            state.isError = true;
+        },
+        finishLoading: (state) => {
+            state.isLoading = false;
+        },
+        // Logout (state reset)
         deleteUser: (state) => {
-            state.user = {};
-            state.userStatus = STATUS.IDLE;
+            state.id = '';
+            state.display_name = '';
+            state.avatar = '';
+            if (state.isLoading) state.isLoading = false;
+            if (state.isError) state.isError = false;
         },
     }
 });
 
-export const { setUserStatus, setUser, deleteUser } = userSlice.actions;
+export const {
+    startLoading,
+    setUser,
+    setError,
+    finishLoading,
+    deleteUser
+} = userSlice.actions;
