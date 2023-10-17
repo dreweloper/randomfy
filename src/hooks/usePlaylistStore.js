@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from '../helpers';
-import { setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
+import { isPlaylistFollowed, setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
 import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
 
 export const usePlaylistStore = (token) => {
@@ -110,6 +110,80 @@ export const usePlaylistStore = (token) => {
 
     };
 
+    /**
+     * Adds (follow) or removes (unfollow) the current user as a follower of a playlist.
+     * @async
+     * @function handlePlaylistFollowStatus
+     * @param {Object} playlist - Redux 'playlist' state object.
+     */
+    const handlePlaylistFollowStatus = async (playlist) => {
+
+        /**
+         * @type {Object}
+         * @prop {String} playlist_id - The Spotify ID of the playlist.
+         * @prop {Boolean} isFollowed - Indicates whether the user follows the playlist with the provided ID.
+         */
+        const { playlist_id, isFollowed } = playlist;
+
+        /**
+         * The URL for the follow/unfollow playlist Spotify API endpoint.
+         * @type {String}
+         */
+        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/followers`;
+
+        /**
+         * The HTTP method to be used for the Spotify API request, based on the 'isFollowed' property.
+         * @type {String}
+         */
+        const method = isFollowed ? 'DELETE' : 'PUT';
+
+        /**
+         * Fetch options for making a request to the Spotify API.
+         * @type {Object}
+         * @property {String} method - The HTTP method for the request.
+         * @property {Object} headers - Headers for the request, including 'Authorization' and 'Content-Type'.
+         */
+        const options = {
+            method,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        try {
+
+            /**
+             * The Spotify API response object.
+             * @type {Object}
+             */
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+
+                throw new Error('Failed to follow the playlist');
+
+            };
+
+            /**
+             * The reducer works as a toggle for the playlist follow status.
+             * @param {Boolean} isFollowed - The current follow status of the playlist.
+             * @returns {Boolean} The new follow status after toggling.
+             */
+            const payload = isFollowed ? false : true;
+
+            dispatch(isPlaylistFollowed(payload));
+
+        } catch (error) {
+
+            console.error(error);
+
+            //TODO: handle error to show an alert.
+
+        };
+
+    }; //!FUNC-HANDLEPLAYLISTFOLLOWSTATUS
+
     useEffect(() => {
 
         /**
@@ -129,6 +203,10 @@ export const usePlaylistStore = (token) => {
     }, [user]); // It will trigger once more after the initial component mount when the user is loaded.
 
 
-    return { playlist, getRandomPlaylist };
+    return {
+        playlist,
+        getRandomPlaylist,
+        handlePlaylistFollowStatus
+    };
 
 };

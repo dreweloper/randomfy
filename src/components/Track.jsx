@@ -12,7 +12,7 @@ export const Track = () => {
   const { status } = useSelector(state => state.process);
 
   // REACT-REDUX CUSTOM HOOKS
-  const { getRandomPlaylist } = usePlaylistStore(cookies.access_token);
+  const { playlist, getRandomPlaylist, handlePlaylistFollowStatus } = usePlaylistStore(cookies.access_token);
 
   const { track } = useTrackStore(cookies.access_token);
 
@@ -41,7 +41,13 @@ export const Track = () => {
       { // Track information will be rendered whether the 'status' is 'succeeded' or 'failed', but always when the 'track' state is not empty.
         status !== STATUS.LOADING && !trackIsEmpty && (
 
-          <img src={track.album_cover} alt='Album cover' title='Album cover' width='100' />
+          <>
+
+            <img src={track.album_cover} alt='Album cover' title='Album cover' width='100' />
+
+            <button onClick={() => handlePlaylistFollowStatus(playlist)}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+
+          </>
 
         )
       }
