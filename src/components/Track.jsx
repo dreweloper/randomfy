@@ -12,9 +12,9 @@ export const Track = () => {
   const { status } = useSelector(state => state.process);
 
   // REACT-REDUX CUSTOM HOOKS
-  const { playlist, getRandomPlaylist, handlePlaylistFollowStatus } = usePlaylistStore(cookies.access_token);
+  const { playlist, getRandomPlaylist, handleFollow } = usePlaylistStore(cookies.access_token);
 
-  const { track } = useTrackStore(cookies.access_token);
+  const { track, handleLike } = useTrackStore(cookies.access_token);
 
   // VARIABLES
   /**
@@ -45,7 +45,10 @@ export const Track = () => {
 
             <img src={track.album_cover} alt='Album cover' title='Album cover' width='100' />
 
-            <button onClick={() => handlePlaylistFollowStatus(playlist)}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+            <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+
+            <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
+            {/* <button id={track.track_id} data-state={track.isLiked} onClick={() => handleTrackLikeStatus(track)}>{track.isLiked ? 'Dislike track' : 'Like track'}</button> */}
 
           </>
 
