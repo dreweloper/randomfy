@@ -41,7 +41,7 @@ export const usePlaylistStore = (token) => {
 
     };
 
-    const fetchRandomUserPlaylist = async (randomOffset) => {
+    const fetchUserRandomPlaylist = async (randomOffset) => {
 
         const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
 
@@ -94,7 +94,7 @@ export const usePlaylistStore = (token) => {
 
             const randomOffset = generateRandomNumber(total);
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchRandomUserPlaylist(randomOffset);
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchUserRandomPlaylist(randomOffset);
 
             const [isFollowed] = await checkIsPlaylistFollowed(playlist_id);
 
@@ -113,10 +113,9 @@ export const usePlaylistStore = (token) => {
     /**
      * Adds (follow) or removes (unfollow) the current user as a follower of a playlist.
      * @async
-     * @function handlePlaylistFollowStatus
-     * @param {Object} playlist - Redux 'playlist' state object.
+     * @function handleFollow
      */
-    const handlePlaylistFollowStatus = async (playlist) => {
+    const handleFollow = async () => {
 
         /**
          * @type {Object}
@@ -161,7 +160,7 @@ export const usePlaylistStore = (token) => {
 
             if (!response.ok) {
 
-                throw new Error('Failed to follow the playlist');
+                throw new Error('Failed to add/remove the user as a follower of the playlist');
 
             };
 
@@ -182,7 +181,7 @@ export const usePlaylistStore = (token) => {
 
         };
 
-    }; //!FUNC-HANDLEPLAYLISTFOLLOWSTATUS
+    }; //!FUNC-HANDLEFOLLOW
 
     useEffect(() => {
 
@@ -206,7 +205,7 @@ export const usePlaylistStore = (token) => {
     return {
         playlist,
         getRandomPlaylist,
-        handlePlaylistFollowStatus
+        handleFollow
     };
 
 };
