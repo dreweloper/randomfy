@@ -1,27 +1,13 @@
-import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useAudioPlayer } from "../hooks";
 
 export const AudioPlayer = () => {
 
     // REACT-REDUX HOOK
     const { preview_url } = useSelector(state => state.track);
 
-    // REACT HOOKS
-    const [isPlaying, setIsPlaying] = useState(false);
-
-    const audioRef = useRef();
-
-    // EVENTS
-    const handleControls = () => !isPlaying ? audioRef.current.play() : audioRef.current.pause();
-
-    // After 'pause' method ('handleControls').
-    const onPause = () => setIsPlaying(false);
-
-    // After 'play' method ('handleControls').
-    const onPlay = () => setIsPlaying(true);
-
-    // Reset state once the track has ended.
-    const onEnded = () => setIsPlaying(false);
+    // CUSTOM HOOK
+    const { audioRef, isPlaying, handleControls, onEnded, onPause, onPlay } = useAudioPlayer();
 
 
     return (
