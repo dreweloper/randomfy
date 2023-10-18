@@ -11,7 +11,7 @@ import { createSlice } from '@reduxjs/toolkit';
  */
 const initialState = {
     track_id: '',
-    album_cover: '',
+    artwork: '',
     name: '',
     artists: [],
     preview_url: '',
@@ -24,7 +24,7 @@ export const trackSlice = createSlice({
     reducers: {
         setTrack: (state, { payload }) => {
             state.track_id = payload.track_id;
-            state.album_cover = payload.album_cover;
+            state.artwork = payload.artwork;
             state.name = payload.name;
             if (state.artists.length > 0) state.artists = []; // State reset after the first successful load
             payload.artists.forEach(artist => state.artists.push(artist.name)); // There can be more than one artist
@@ -36,7 +36,7 @@ export const trackSlice = createSlice({
         },
         resetTrackState: (state) => {
             state.track_id = '';
-            state.album_cover = '';
+            state.artwork = '';
             state.name = '';
             state.artist = [];
             state.preview_url = '';
