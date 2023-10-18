@@ -111,7 +111,7 @@ export const useTrackStore = (token) => {
              */
             const randomOffset = generateRandomNumber(total);
 
-            const { items: [{ track: { id: track_id, album: { images: [{ url: album_cover }] }, name, artists, preview_url } }] } = await fetchPlaylistItemsById(id, randomOffset);
+            const { items: [{ track: { id: track_id, album: { images: [{ url: artwork }] }, name, artists, preview_url } }] } = await fetchPlaylistItemsById(id, randomOffset);
 
             /**
              * An array with destructured value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
@@ -119,7 +119,7 @@ export const useTrackStore = (token) => {
              */
             const [isLiked] = await checkIsTrackLiked(track_id);
 
-            dispatch(setTrack({ track_id, album_cover, name, artists, preview_url, isLiked }));
+            dispatch(setTrack({ track_id, artwork, name, artists, preview_url, isLiked }));
 
             dispatch(setStatus(STATUS.SUCCEEDED));
 

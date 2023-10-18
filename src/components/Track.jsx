@@ -1,6 +1,7 @@
 import { useCookies } from 'react-cookie';
 import { useSelector } from "react-redux";
 import { usePlaylistStore, useTrackStore } from "../hooks";
+import { AudioPlayer } from './index';
 import { ACCESS_TOKEN_KEY, STATUS } from '../utils';
 
 export const Track = () => {
@@ -26,7 +27,7 @@ export const Track = () => {
 
   return (
 
-    <>
+    <main>
 
       <button disabled={status === STATUS.LOADING} onClick={() => { getRandomPlaylist() }}>RANDOM TRACK</button>
 
@@ -43,19 +44,20 @@ export const Track = () => {
 
           <>
 
-            <img src={track.album_cover} alt='Album cover' title='Album cover' width='100' />
+            <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
+
+            <AudioPlayer />
 
             <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
 
             <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
-            {/* <button id={track.track_id} data-state={track.isLiked} onClick={() => handleTrackLikeStatus(track)}>{track.isLiked ? 'Dislike track' : 'Like track'}</button> */}
 
           </>
 
         )
       }
 
-    </>
+    </main>
 
   );
 
