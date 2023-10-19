@@ -3,7 +3,7 @@ import { useAuth } from "../hooks";
 
 export const NavBar = () => {
 
-    const { handleLogout } = useAuth();
+    const { logout } = useAuth();
 
 
     return (
@@ -12,7 +12,7 @@ export const NavBar = () => {
 
             <User />
 
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={logout}>Logout</button>
 
         </nav>
 

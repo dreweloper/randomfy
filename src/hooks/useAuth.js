@@ -3,7 +3,7 @@ import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import queryString from 'query-string';
-import { serializeData } from '../helpers';
+import { generateRandomString, serializeData } from '../helpers';
 import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
 import { ACCESS_TOKEN_KEY, BASE_URL, REDIRECT_URI, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
 
@@ -21,8 +21,15 @@ export const useAuth = () => {
   // REACT-COOKIE HOOK
   const [cookies, setCookie, removeCookie] = useCookies([STATE_KEY]); // Dependencies: cookie name that the component (LoginPage) depend on or that should trigger a re-render
 
+  // VARIABLES
+  /**
+   * The 'state' parameter stored in cookies.
+   * @type {String}
+   */
+  const storedState = cookies.spotify_auth_state;
+
   // FUNCTIONS
-  const handleLogout = (status = STATUS.IDLE) => {
+  const logout = (status = STATUS.IDLE) => {
 
     //TODO: if 'cookie.access_token' is not undefined
     removeCookie(ACCESS_TOKEN_KEY);
@@ -80,12 +87,6 @@ export const useAuth = () => {
   const handleUserAuthResponse = async () => {
 
     setStatus(STATUS.LOADING);
-
-    /**
-     * The 'state' parameter stored in cookies.
-     * @type {String}
-     */
-    const storedState = cookies.spotify_auth_state;
 
     try {
 
@@ -167,11 +168,29 @@ export const useAuth = () => {
       console.error(error.message);
 
       // The status will inform the user that access was denied //! Status is not working
-      handleLogout(STATUS.FAILED);
+      logout(STATUS.FAILED);
 
     };
 
   }; //!FUNC-REQUESTREFRESHEDACCESSTOKEN
+
+  useEffect(() => {
+
+    //TODO: make it change when the user's login fails: status === STATUS.FAILED (bug: it's not working. Status is always 'idle' at this point)
+    // It will not change if the user's login succeeds
+    if (!storedState) {
+
+      /**
+       * A random string used as a 'state' parameter to provide protection against attacks like cross-site request forgery (CSRF).
+       * @type {String}
+       */
+      const state = generateRandomString(16);
+
+      setCookie(STATE_KEY, state);
+
+    };
+
+  }, [cookies]);
 
   useEffect(() => {
 
@@ -182,11 +201,10 @@ export const useAuth = () => {
 
 
   return {
-    handleLogout,
+    logout,
     requestRefreshedAccessToken,
-    cookies,
-    setCookie,
-    status
+    status,
+    storedState
   };
 
 };
