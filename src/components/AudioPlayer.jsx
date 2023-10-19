@@ -7,20 +7,50 @@ export const AudioPlayer = () => {
     const { preview_url } = useSelector(state => state.track);
 
     // CUSTOM HOOK
-    const { audioRef, isPlaying, handleControls, onEnded, onPause, onPlay } = useAudioPlayer();
+    const {
+        audioRef,
+        progressBarRef,
+        currentTime,
+        duration,
+        isPlaying,
+        handlePlayback,
+        onEnded,
+        onLoadedMetadata,
+        onPause,
+        onPlay,
+        onTimeUpdate
+    } = useAudioPlayer();
 
 
     return (
 
-        <section>
+        <section className="audioPlayer">
 
-            <audio src={preview_url} onEnded={onEnded} onPause={onPause} onPlay={onPlay} ref={audioRef}></audio>
+            <audio
+                src={preview_url}
+                onEnded={onEnded}
+                onLoadedMetadata={onLoadedMetadata}
+                onPause={onPause}
+                onPlay={onPlay}
+                onTimeUpdate={onTimeUpdate}
+                ref={audioRef}
+            ></audio>
 
-            <button onClick={handleControls} disabled={!preview_url}>
+            <button onClick={handlePlayback} disabled={!preview_url}>
 
                 {isPlaying ? 'Pause' : 'Play'}
 
             </button>
+
+            <div className="progressBar">
+
+                <span>{currentTime}</span>
+
+                <input type="range" defaultValue='0' disabled={true} ref={progressBarRef} />
+
+                <span>{duration}</span>
+
+            </div>
 
         </section>
 
