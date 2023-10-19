@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from '../helpers';
 import { isPlaylistFollowed, setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
-import { SPOTIFY_BASE_URL, STATUS, USER_ID } from "../utils";
+import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
 
 export const usePlaylistStore = (token) => {
 
@@ -23,7 +23,7 @@ export const usePlaylistStore = (token) => {
     // FUNCTIONS
     const fetchUserTotalPlaylists = async () => {
 
-        const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
         try {
 
@@ -43,7 +43,7 @@ export const usePlaylistStore = (token) => {
 
     const fetchUserRandomPlaylist = async (randomOffset) => {
 
-        const url = `${SPOTIFY_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
 
         try {
 
@@ -63,7 +63,7 @@ export const usePlaylistStore = (token) => {
 
     const checkIsPlaylistFollowed = async (playlistId) => {
 
-        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
 
         try {
 
@@ -128,7 +128,7 @@ export const usePlaylistStore = (token) => {
          * The URL for the follow/unfollow playlist Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${playlist_id}/followers`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/followers`;
 
         /**
          * The HTTP method to be used for the Spotify API request, based on the 'isFollowed' property.

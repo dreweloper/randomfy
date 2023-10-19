@@ -1,19 +1,10 @@
-import { Link } from 'react-router-dom';
-import queryString from 'query-string';
 import { useAuth } from '../hooks';
-import { BASE_URL, REDIRECT_URI, SCOPE, STATUS } from '../utils';
+import { STATUS } from '../utils';
 
 export const LoginPage = () => {
 
   // CUSTOM HOOK
-  const { status, storedState } = useAuth();
-
-  // VARIABLES
-  /**
-   * The login endpoint on the backend server.
-   * @type {String}
-   */
-  const url = queryString.stringifyUrl({ url: `${BASE_URL}/login`, query: { redirect_uri: REDIRECT_URI, scope: SCOPE, state: storedState } });
+  const { status, requestUserAuth } = useAuth();
 
 
   return (
@@ -22,7 +13,7 @@ export const LoginPage = () => {
 
       <h1>Randomfy</h1>
 
-      <Link to={url}>Login Spotify</Link>
+      <button onClick={requestUserAuth}>Login</button>
 
       {
         status === STATUS.LOADING && <p>Loading…</p>

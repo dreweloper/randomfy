@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 //TODO: PropTypes
-export const PublicRoutes = ({ token }) => {
+export const PublicRoutes = ({ access_token, refresh_token }) => {
 
-    return (!token.access_token && !token.refresh_token) ? <Outlet /> : <Navigate to="/" />
+    return (!access_token && !refresh_token) ? <Outlet /> : <Navigate to="/" />
 
 };

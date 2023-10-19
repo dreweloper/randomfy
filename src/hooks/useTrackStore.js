@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRandomNumber } from "../helpers";
 import { isTrackLiked, setStatus, setTrack } from '../store/slices';
-import { SPOTIFY_BASE_URL, STATUS } from "../utils";
+import { SPOTIFY_API_BASE_URL, STATUS } from "../utils";
 
 export const useTrackStore = (token) => {
 
@@ -36,7 +36,7 @@ export const useTrackStore = (token) => {
          * The URL for the get playlist items Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_BASE_URL}/v1/playlists/${id}/tracks?limit=1&offset=${offset}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${id}/tracks?limit=1&offset=${offset}`;
 
         try {
 
@@ -72,7 +72,7 @@ export const useTrackStore = (token) => {
          * The URL for the check user's saved tracks Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
 
         try {
 
@@ -151,7 +151,7 @@ export const useTrackStore = (token) => {
          * The URL for the save/remove track Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_BASE_URL}/v1/me/tracks`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/me/tracks`;
 
         /**
          * The HTTP method to be used for the Spotify API request, based on the 'isLiked' property.

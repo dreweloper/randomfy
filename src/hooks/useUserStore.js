@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from "react-redux";
 import { finishLoading, setError, setUser, startLoading } from "../store/slices";
-import { ACCESS_TOKEN_KEY, SPOTIFY_BASE_URL } from '../utils';
+import { ACCESS_TOKEN_KEY, SPOTIFY_API_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
 
@@ -45,7 +45,7 @@ export const useUserStore = () => {
              * The Spotify API response object.
              * @type {Object}
              */
-            const response = await fetch(`${SPOTIFY_BASE_URL}/v1/me`, fetchOptions);
+            const response = await fetch(`${SPOTIFY_API_BASE_URL}/v1/me`, fetchOptions);
 
             if (!response.ok) {
 
