@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 //TODO: PropTypes
-export const PrivateRoutes = ({ token }) => {
+export const PrivateRoutes = ({ access_token, refresh_token }) => {
 
-    return (token.access_token || token.refresh_token) ? <Outlet /> : <Navigate to="login" />
+    return (access_token || refresh_token) ? <Outlet /> : <Navigate to="login" />
 
 };
