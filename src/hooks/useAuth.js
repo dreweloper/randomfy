@@ -1,21 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
 import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
 import * as Constants from "../utils";
 
 export const useAuth = () => {
 
-  // REACT HOOK
+  // REACT HOOKS
   const [status, setStatus] = useState(Constants.STATUS.IDLE);
 
   // REACT-COOKIE
   const [cookies, setCookie, removeCookie] = useCookies([Constants.ACCESS_TOKEN_KEY, Constants.REFRESH_TOKEN_KEY]);
-
-  // REACT-ROUTER-DOM HOOK
-  const [searchParams, setSearchParams] = useSearchParams();
 
   // REACT-REDUX HOOK
   const dispatch = useDispatch();
@@ -141,7 +137,7 @@ export const useAuth = () => {
 
   }; //!FUNC-REQUESTREFRESHEDACCESSTOKEN
 
-  const handleUserAuthResponse = async () => {
+  const handleUserAuthResponse = async (searchParams) => {
 
     try {
 
@@ -204,19 +200,10 @@ export const useAuth = () => {
 
   }; //!FUNC-HANDLELOGOUT
 
-  useEffect(() => {
-    //TODO: logic to prevent multiple calls to 'requestAccessToken' in 'handleUserAuthResponse' (with and w/o 'React.StrictMode').
-    /**
-     * Search params are not empty. It indicates that the user has clicked the login button.
-     * Once the user accepts or denied the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field.
-     */
-    if (searchParams.size > 0) handleUserAuthResponse();
-
-  }, [searchParams]);
-
 
   return {
     status,
+    handleUserAuthResponse,
     logout,
     requestUserAuth,
     requestRefreshedAccessToken
