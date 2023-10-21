@@ -8,6 +8,7 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {Array} artists - The artists who performed the track.
  * @prop {String | null} preview_url - A link to a 30 second preview (MP3 format) of the track. Can be 'null'.
  * @prop {Boolean} isLiked - Indicates whether the track is already saved in the current Spotify user's 'Your Music' library.
+ * @prop {Boolean} isEmpty - Indicates whether the track is empty.
  */
 const initialState = {
     track_id: '',
@@ -16,6 +17,7 @@ const initialState = {
     artists: [],
     preview_url: '',
     isLiked: false,
+    isEmpty: true
 };
 
 export const trackSlice = createSlice({
@@ -26,10 +28,11 @@ export const trackSlice = createSlice({
             state.track_id = payload.track_id;
             state.artwork = payload.artwork;
             state.name = payload.name;
-            if (state.artists.length > 0) state.artists = []; // State reset after the first successful load
-            payload.artists.forEach(artist => state.artists.push(artist.name)); // There can be more than one artist
+            if (state.artists.length > 0) state.artists = []; // State reset after the first successful load.
+            payload.artists.forEach(artist => state.artists.push(artist.name)); // There can be more than one artist.
             state.preview_url = payload.preview_url;
             state.isLiked = payload.isLiked;
+            if (state.isEmpty) state.isEmpty = false; // Ensures that the track is displayed only when it is not empty.
         },
         isTrackLiked: (state, { payload }) => {
             state.isLiked = payload;
@@ -41,6 +44,7 @@ export const trackSlice = createSlice({
             state.artist = [];
             state.preview_url = '';
             if (state.isLiked) state.isLiked = false;
+            if (!state.isEmpty) state.isEmpty = true;
         },
     }
 });

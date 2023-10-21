@@ -17,13 +17,6 @@ export const Track = () => {
 
   const { track, handleLike } = useTrackStore(cookies.access_token);
 
-  // VARIABLES
-  /**
-   * Indicates whether the 'track' state is empty, based on the length of its 'track_id' property.
-   * @type {Boolean}
-   */
-  const trackIsEmpty = Object.keys(track.track_id).length === 0;
-
 
   return (
 
@@ -32,29 +25,35 @@ export const Track = () => {
       <button disabled={status === STATUS.LOADING} onClick={() => { getRandomPlaylist() }}>RANDOM TRACK</button>
 
       { //TODO: skeleton loader
-        status === STATUS.LOADING && <p>Loading…</p>
+        status === STATUS.LOADING ? (
+
+          <p>Loading…</p>
+
+        ) : (
+
+          // Track information will be rendered whether the 'status' state is 'succeeded' or 'failed', but always when the 'track' state is not empty.
+          !track.isEmpty && (
+
+            <>
+
+              <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
+
+              <AudioPlayer trackPreview={track.preview_url} />
+
+              <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+
+              <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
+
+            </>
+
+          )
+
+        )
+
       }
 
       { //TODO: toast notification (or snackbar)
         status === STATUS.FAILED && <p>ERROR!</p>
-      }
-
-      { // Track information will be rendered whether the 'status' is 'succeeded' or 'failed', but always when the 'track' state is not empty.
-        status !== STATUS.LOADING && !trackIsEmpty && (
-
-          <>
-
-            <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
-
-            <AudioPlayer />
-
-            <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
-
-            <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
-
-          </>
-
-        )
       }
 
     </main>

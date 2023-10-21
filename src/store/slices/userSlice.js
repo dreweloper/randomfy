@@ -7,6 +7,7 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {String} avatar - The user's profile image.
  * @prop {Boolean} isLoading - Indicates whether user data is currently being loaded.
  * @prop {Boolean} isError - Indicates whether an error has occurred while loading user data.
+ * @prop {Boolean} isEmpty - Indicates whether the user is not empty.
  */
 const initialState = {
     id: '',

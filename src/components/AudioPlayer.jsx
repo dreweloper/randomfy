@@ -1,10 +1,6 @@
-import { useSelector } from "react-redux";
 import { useAudioPlayer } from "../hooks";
-
-export const AudioPlayer = () => {
-
-    // REACT-REDUX HOOK
-    const { preview_url } = useSelector(state => state.track);
+//TODO: PropTypes
+export const AudioPlayer = ({ trackPreview }) => {
 
     // CUSTOM HOOK
     const {
@@ -27,7 +23,7 @@ export const AudioPlayer = () => {
         <section className="audioPlayer">
 
             <audio
-                src={preview_url}
+                src={trackPreview}
                 onEnded={onEnded}
                 onLoadedMetadata={onLoadedMetadata}
                 onPause={onPause}
@@ -36,7 +32,7 @@ export const AudioPlayer = () => {
                 ref={audioRef}
             ></audio>
 
-            <button onClick={handlePlayback} disabled={!preview_url}>
+            <button onClick={handlePlayback} disabled={!trackPreview}>
 
                 {isPlaying ? 'Pause' : 'Play'}
 
@@ -46,7 +42,7 @@ export const AudioPlayer = () => {
 
                 <span>{currentTime}</span>
 
-                <input type="range" defaultValue='0' disabled={true} ref={progressBarRef} />
+                <input type="range" defaultValue='0' ref={progressBarRef} />
 
                 <span>{duration}</span>
 
