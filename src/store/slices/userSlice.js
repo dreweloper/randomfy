@@ -13,7 +13,8 @@ const initialState = {
     display_name: '',
     avatar: '',
     isLoading: false,
-    isError: false
+    isError: false,
+    isEmpty: true
 };
 
 export const userSlice = createSlice({
@@ -28,6 +29,7 @@ export const userSlice = createSlice({
             state.id = payload.id;
             state.display_name = payload.display_name;
             state.avatar = payload.avatar;
+            state.isEmpty = false;
         },
         setError: (state) => {
             state.isError = true;
@@ -42,6 +44,7 @@ export const userSlice = createSlice({
             state.avatar = '';
             if (state.isLoading) state.isLoading = false;
             if (state.isError) state.isError = false;
+            if (!state.isEmpty) state.isEmpty = true;
         },
     }
 });

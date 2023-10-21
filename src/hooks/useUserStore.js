@@ -21,14 +21,6 @@ export const useUserStore = () => {
      */
     const token = cookies.access_token;
 
-    /**
-     * Options for making authenticated requests to the Spotify API using the Fetch API.
-     * @type {Object}
-     * @prop {Object} headers - Headers for the request.
-     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
-     */
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
     // FUNCTIONS
     /**
      * Get detailed profile information about the current user.
@@ -36,6 +28,20 @@ export const useUserStore = () => {
      * @function getUserProfile
      */
     const getUserProfile = async () => {
+
+        /**
+         * The URL for the get current user's profile Spotify API endpoint.
+         * @type {String}
+         */
+        const url = `${SPOTIFY_API_BASE_URL}/v1/me`;
+
+        /**
+         * Options for making authenticated requests to the Spotify API using the Fetch API.
+         * @type {Object}
+         * @prop {Object} headers - Headers for the request.
+         * @prop {String} headers.Authorization - The Authorization header with a bearer token.
+         */
+        const options = { headers: { Authorization: `Bearer ${token}` } };
 
         try {
 
@@ -45,7 +51,7 @@ export const useUserStore = () => {
              * The Spotify API response object.
              * @type {Object}
              */
-            const response = await fetch(`${SPOTIFY_API_BASE_URL}/v1/me`, fetchOptions);
+            const response = await fetch(url, options);
 
             if (!response.ok) {
 
@@ -83,18 +89,12 @@ export const useUserStore = () => {
     useEffect(() => {
 
         /**
-         * Indicates whether the 'user' state is empty, based on the length of its 'id' property.
-         * @type {Boolean}
-         */
-        const userIsEmpty = user.id.length === 0;
-
-        /**
          * This 'useEffect' should be triggered only once, during the initial loading of the 'user' state.
          * First condition: the token is valid and not expired.
          * Second condition: the 'user' state is empty, so the function will be invoked only once.
          * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
          */
-        if (token && userIsEmpty) getUserProfile();
+        if (token && user.isEmpty) getUserProfile();
 
     }, [cookies]); // It will trigger again if the token has expired when the component is initially mounted.
 

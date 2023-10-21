@@ -19,7 +19,7 @@ export const User = () => {
             }
 
             {
-                !user.isLoading && (
+                !user.isEmpty && (
                     <div id={user.id}>
 
                         <img src={user.avatar} alt="User's profile image" title="User's profile image" />

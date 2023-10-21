@@ -186,18 +186,12 @@ export const usePlaylistStore = (token) => {
     useEffect(() => {
 
         /**
-         * Indicates whether the 'user' state is not empty, based on the length of its 'id' property.
-         * @type {Boolean}
-         */
-        const userIsNotEmpty = user.id.length > 0;
-
-        /**
          * This 'useEffect' should only be triggered during the initial loading of the 'playlist' state.
          * First condition: it will trigger for the first time, i.e., when the 'initialState' has not been modified.
          * Second condition: it allows the 'user' state to load first, preventing errors in 'checkIsPlaylistFollowed' which depends on 'user.id'.
          * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
          */
-        if (!playlist.isDone && userIsNotEmpty) getRandomPlaylist();
+        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
 
     }, [user]); // It will trigger once more after the initial component mount when the user is loaded.
 
