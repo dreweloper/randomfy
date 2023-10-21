@@ -84,9 +84,9 @@ export const useAuth = () => {
 
       const { access_token, refresh_token } = await response.json();
 
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
+      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 7 });
+      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
 
@@ -126,9 +126,9 @@ export const useAuth = () => {
 
       const { access_token, refresh_token } = await response.json();
 
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
+      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 7 });
+      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
       
