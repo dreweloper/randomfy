@@ -1,6 +1,7 @@
 import { useCookies } from 'react-cookie';
 import { useSelector } from "react-redux";
 import { usePlaylistStore, useTrackStore } from "../hooks";
+import { LikeIcon } from './icons';
 import { AudioPlayer } from './index';
 import { ACCESS_TOKEN_KEY, STATUS } from '../utils';
 
@@ -29,7 +30,6 @@ export const Track = () => {
       </button>
 
       {
-        // Track information will be rendered whether the 'status' state is 'succeeded' or 'failed', but always when the 'track' state is not empty.
         !track.isEmpty && (
 
           <>
@@ -40,7 +40,14 @@ export const Track = () => {
 
             <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
 
-            <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
+            <button onClick={handleLike}>
+              {
+                <>
+                  <span>{track.isLiked ? 'Dislike' : 'Like'}</span>
+                  <LikeIcon />
+                </>
+              }
+            </button>
 
           </>
 
