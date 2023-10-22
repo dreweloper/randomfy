@@ -22,31 +22,27 @@ export const Track = () => {
 
     <main>
 
-      <button disabled={status === STATUS.LOADING} onClick={() => { getRandomPlaylist() }}>RANDOM TRACK</button>
+      <button
+        disabled={status === STATUS.LOADING}
+        onClick={getRandomPlaylist}>
+        {status === STATUS.LOADING ? 'Loading…' : 'RANDOM TRACK'}
+      </button>
 
-      { //TODO: skeleton loader
-        status === STATUS.LOADING ? (
+      {
+        // Track information will be rendered whether the 'status' state is 'succeeded' or 'failed', but always when the 'track' state is not empty.
+        !track.isEmpty && (
 
-          <p>Loading…</p>
+          <>
 
-        ) : (
+            <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
 
-          // Track information will be rendered whether the 'status' state is 'succeeded' or 'failed', but always when the 'track' state is not empty.
-          !track.isEmpty && (
+            <AudioPlayer trackPreview={track.preview_url} />
 
-            <>
+            <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
 
-              <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
+            <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
 
-              <AudioPlayer trackPreview={track.preview_url} />
-
-              <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
-
-              <button onClick={handleLike}>{track.isLiked ? 'Dislike track' : 'Like track'}</button>
-
-            </>
-
-          )
+          </>
 
         )
 

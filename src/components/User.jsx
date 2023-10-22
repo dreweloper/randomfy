@@ -8,26 +8,41 @@ export const User = () => {
 
     return (
 
+        //TODO: use the 'status' property in the 'process' Redux state to prevent loading other components in case of an error.
+
         <>
 
             {
-                user.isLoading && <p>Loading…</p>
-            }
+                user.isLoading ? (
 
-            {
-                user.isError && <p>Failed to obtain user's profile</p>
-            }
+                    <p>Loading…</p>
 
-            {
-                !user.isEmpty && (
-                    <div id={user.id}>
+                ) : (
 
-                        <img src={user.avatar} alt="User's profile image" title="User's profile image" />
+                    user.isError ? (
 
-                        <h3>{user.display_name}</h3>
+                        //TODO: display a toast notification to indicate the error and provide an option to reload the call or refresh the page (?).
+                        //? Display a fake avatar or skeleton loader in case of an error.
+                        <p>ERROR!</p>
 
-                    </div>
+                    ) : (
+
+                        !user.isEmpty && (
+
+                            <div id={user.id}>
+
+                                <img src={user.avatar} alt="User's profile image" title="User's profile image" />
+
+                                <h3>{user.display_name}</h3>
+
+                            </div>
+
+                        )
+
+                    )
+
                 )
+
             }
 
         </>

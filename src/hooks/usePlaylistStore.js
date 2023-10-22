@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from '../helpers';
 import { isPlaylistFollowed, setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
@@ -11,27 +12,18 @@ export const usePlaylistStore = (token) => {
 
     const dispatch = useDispatch();
 
-    // VARIABLES
-    /**
-     * Options for making authenticated requests to the Spotify API using the Fetch API.
-     * @type {Object}
-     * @prop {Object} headers - Headers for the request.
-     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
-     */
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
-
     // FUNCTIONS
     const fetchUserTotalPlaylists = async () => {
 
         const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
+        const method = 'GET';
+
         try {
 
-            const response = await fetch(url, fetchOptions);
+            const { total } = await fetchSpotifyData({ url, method, token });
 
-            if (!response.ok) throw new Error("Failed to obtain user's playlists");
-
-            else return await response.json();
+            return total;
 
         } catch (error) {
 
@@ -39,19 +31,19 @@ export const usePlaylistStore = (token) => {
 
         };
 
-    };
+    }; //!FUNC-FETCHUSERTOTALPLAYLISTS
 
     const fetchUserRandomPlaylist = async (randomOffset) => {
 
         const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
 
+        const method = 'GET';
+
         try {
 
-            const response = await fetch(url, fetchOptions);
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchSpotifyData({ url, method, token });
 
-            if (!response.ok) throw new Error("Failed to obtain user's random playlist");
-
-            else return await response.json();
+            return { playlist_id, total_tracks };
 
         } catch (error) {
 
@@ -59,19 +51,19 @@ export const usePlaylistStore = (token) => {
 
         };
 
-    };
+    }; //!FUNC-FETCHUSERRANDOMPLAYLIST
 
     const checkIsPlaylistFollowed = async (playlistId) => {
 
         const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
 
+        const method = 'GET';
+
         try {
 
-            const response = await fetch(url, fetchOptions);
+            const [response] = await fetchSpotifyData({ url, method, token });
 
-            if (!response.ok) throw new Error('Failed to check if user follows the playlist');
-
-            else return await response.json();
+            return response;
 
         } catch (error) {
 
@@ -79,7 +71,7 @@ export const usePlaylistStore = (token) => {
 
         };
 
-    };
+    }; //!FUNC-CHECKISPLAYLISTFOLLOWED
 
     const getRandomPlaylist = async () => {
 
@@ -90,25 +82,27 @@ export const usePlaylistStore = (token) => {
             // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone').
             if (playlist.isDone) dispatch(setPlaylistUndone());
 
-            const { total } = await fetchUserTotalPlaylists();
+            const total = await fetchUserTotalPlaylists();
 
             const randomOffset = generateRandomNumber(total);
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchUserRandomPlaylist(randomOffset);
+            const { playlist_id, total_tracks } = await fetchUserRandomPlaylist(randomOffset);
 
-            const [isFollowed] = await checkIsPlaylistFollowed(playlist_id);
+            const isFollowed = await checkIsPlaylistFollowed(playlist_id);
 
-            dispatch(setPlaylist({ playlist_id, total_tracks, isFollowed }));
+            const payload = { playlist_id, total_tracks, isFollowed };
+
+            dispatch(setPlaylist(payload));
 
         } catch (error) {
 
-            console.error(error);
+            console.error(`Error: ${error.message}`);
 
             dispatch(setStatus(STATUS.FAILED));
 
         };
 
-    };
+    }; //!FUNC-GETRANDOMPLAYLIST
 
     /**
      * Adds (follow) or removes (unfollow) the current user as a follower of a playlist.
@@ -136,33 +130,9 @@ export const usePlaylistStore = (token) => {
          */
         const method = isFollowed ? 'DELETE' : 'PUT';
 
-        /**
-         * Fetch options for making a request to the Spotify API.
-         * @type {Object}
-         * @property {String} method - The HTTP method for the request.
-         * @property {Object} headers - Headers for the request, including 'Authorization' and 'Content-Type'.
-         */
-        const options = {
-            method,
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        };
-
         try {
 
-            /**
-             * The Spotify API response object.
-             * @type {Object}
-             */
-            const response = await fetch(url, options);
-
-            if (!response.ok) {
-
-                throw new Error('Failed to add/remove the user as a follower of the playlist');
-
-            };
+            await fetchSpotifyData({ url, method, token });
 
             /**
              * The reducer works as a toggle for the playlist follow status.
@@ -175,7 +145,7 @@ export const usePlaylistStore = (token) => {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(`Error: ${error.message}`);
 
             //TODO: handle error to show an alert.
 

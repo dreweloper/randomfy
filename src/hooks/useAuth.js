@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
+import { fetchSpotifyData } from '../api';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
 import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
 import * as Constants from "../utils";
@@ -60,25 +61,19 @@ export const useAuth = () => {
      */
     const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams({
-        grant_type: Constants.GRANT_TYPE.ACCESS_TOKEN,
-        code: code,
-        redirect_uri: Constants.REDIRECT_URI,
-        client_id: Constants.CLIENT_ID,
-        code_verifier: cookies.code_verifier
-      }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const method = 'POST';
+
+    const data = {
+      grant_type: Constants.GRANT_TYPE.ACCESS_TOKEN,
+      code: code,
+      redirect_uri: Constants.REDIRECT_URI,
+      client_id: Constants.CLIENT_ID,
+      code_verifier: cookies.code_verifier
     };
 
     try {
 
-      const response = await fetch(url, options);
-
-      if (!response.ok) throw new Error('Failed to obtain access token');
-
-      const { access_token, refresh_token } = await response.json();
+      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
       setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
@@ -100,35 +95,25 @@ export const useAuth = () => {
      */
     const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
-    /**
-     * Options for making authenticated requests to the Spotify API using the Fetch API.
-     * @type {Object}
-     */
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams({
-        grant_type: Constants.GRANT_TYPE.REFRESH_TOKEN,
-        refresh_token: cookies.refresh_token,
-        client_id: Constants.CLIENT_ID
-      }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const method = 'POST';
+
+    const data = {
+      grant_type: Constants.GRANT_TYPE.REFRESH_TOKEN,
+      refresh_token: cookies.refresh_token,
+      client_id: Constants.CLIENT_ID
     };
 
     try {
 
-      const response = await fetch(url, options);
-
-      if (!response.ok) throw new Error('Failed to obtain access token with refresh token');
-
-      const { access_token, refresh_token } = await response.json();
+      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
       setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
       setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
-      
-      console.error(error.message);
+
+      console.error(`Error: ${error.message}`);
 
       // The status will inform the user that access was denied //! Status is not working
       logout(Constants.STATUS.FAILED);
@@ -171,7 +156,7 @@ export const useAuth = () => {
 
     } catch (error) {
 
-      console.error(error.message);
+      console.error(`Error: ${error.message}`);
 
       setStatus(Constants.STATUS.FAILED);
 
