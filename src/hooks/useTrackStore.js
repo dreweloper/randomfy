@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from "../helpers";
 import { isTrackLiked, setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS } from "../utils";
@@ -10,15 +11,6 @@ export const useTrackStore = (token) => {
     const { playlist, process: { status }, track } = useSelector(state => state);
 
     const dispatch = useDispatch();
-
-    // VARIABLES
-    /**
-     * Options for making authenticated requests to the Spotify API using the Fetch API.
-     * @type {Object}
-     * @prop {Object} headers - Headers for the request.
-     * @prop {String} headers.Authorization - The Authorization header with a bearer token.
-     */
-    const fetchOptions = { headers: { Authorization: `Bearer ${token}` } };
 
     // FUNCTIONS
     /**
@@ -38,17 +30,31 @@ export const useTrackStore = (token) => {
          */
         const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${id}/tracks?limit=1&offset=${offset}`;
 
+        const method = 'GET';
+
         try {
 
             /**
              * The Spotify API response object.
              * @type {Object}
              */
-            const response = await fetch(url, fetchOptions);
+            const {
+                items: [{
+                    track: {
+                        id: track_id,
+                        album: {
+                            images: [{
+                                url: artwork
+                            }]
+                        },
+                        name,
+                        artists,
+                        preview_url
+                    }
+                }]
+            } = await fetchSpotifyData({ url, method, token });
 
-            if (!response.ok) throw new Error('Failed to obtain playlist items');
-
-            else return await response.json();
+            return { track_id, artwork, name, artists, preview_url };
 
         } catch (error) {
 
@@ -74,17 +80,13 @@ export const useTrackStore = (token) => {
          */
         const url = `${SPOTIFY_API_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
 
+        const method = 'GET';
+
         try {
 
-            /**
-             * The Spotify API response object.
-             * @type {Object}
-             */
-            const response = await fetch(url, fetchOptions);
+            const [response] = await fetchSpotifyData({ url, method, token });
 
-            if (!response.ok) throw new Error('Failed to check if user has already saved the track');
-
-            else return await response.json();
+            return response;
 
         } catch (error) {
 
@@ -111,21 +113,23 @@ export const useTrackStore = (token) => {
              */
             const randomOffset = generateRandomNumber(total);
 
-            const { items: [{ track: { id: track_id, album: { images: [{ url: artwork }] }, name, artists, preview_url } }] } = await fetchPlaylistItemsById(id, randomOffset);
+            const items = await fetchPlaylistItemsById(id, randomOffset);
 
             /**
-             * An array with destructured value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
+             * Value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
              * @type {Boolean}
              */
-            const [isLiked] = await checkIsTrackLiked(track_id);
+            const isLiked = await checkIsTrackLiked(items.track_id);
 
-            dispatch(setTrack({ track_id, artwork, name, artists, preview_url, isLiked }));
+            const payload = { ...items, isLiked };
+
+            dispatch(setTrack(payload));
 
             dispatch(setStatus(STATUS.SUCCEEDED));
 
         } catch (error) {
 
-            console.error(error);
+            console.error(`Error: ${error.message}`);
 
             dispatch(setStatus(STATUS.FAILED));
 
@@ -159,35 +163,11 @@ export const useTrackStore = (token) => {
          */
         const method = isLiked ? 'DELETE' : 'PUT';
 
-        /**
-         * Fetch options for making a request to the Spotify API.
-         * @type {Object}
-         * @prop {String} method - The HTTP method for the request.
-         * @prop {String} body - The request body data.
-         * @prop {Object} headers - Headers for the request, including 'Authorization' and 'Content-Type'.
-         */
-        const options = {
-            method,
-            body: JSON.stringify({ ids: [track_id] }),
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        };
+        const data = { ids: [track_id] };
 
         try {
 
-            /**
-             * The Spotify API response object.
-             * @type {Object}
-             */
-            const response = await fetch(url, options);
-
-            if (!response.ok) {
-
-                throw new Error("Failed to save/remove track to/from the current user's 'Your Music' library.");
-
-            };
+            await fetchSpotifyData({ url, method, data, token });
 
             /**
              * The reducer works as a toggle for the track like status.
@@ -200,7 +180,7 @@ export const useTrackStore = (token) => {
 
         } catch (error) {
 
-            console.log(error);
+            console.error(`Error: ${error.message}`);
 
             //TODO: handle error to show an alert.
 

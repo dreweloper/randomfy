@@ -1,21 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { fetchSpotifyData } from '../api';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
 import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
 import * as Constants from "../utils";
 
 export const useAuth = () => {
 
-  // REACT HOOK
+  // REACT HOOKS
   const [status, setStatus] = useState(Constants.STATUS.IDLE);
 
   // REACT-COOKIE
   const [cookies, setCookie, removeCookie] = useCookies([Constants.ACCESS_TOKEN_KEY, Constants.REFRESH_TOKEN_KEY]);
-
-  // REACT-ROUTER-DOM HOOK
-  const [searchParams, setSearchParams] = useSearchParams();
 
   // REACT-REDUX HOOK
   const dispatch = useDispatch();
@@ -64,29 +61,23 @@ export const useAuth = () => {
      */
     const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams({
-        grant_type: Constants.GRANT_TYPE.ACCESS_TOKEN,
-        code: code,
-        redirect_uri: Constants.REDIRECT_URI,
-        client_id: Constants.CLIENT_ID,
-        code_verifier: cookies.code_verifier
-      }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const method = 'POST';
+
+    const data = {
+      grant_type: Constants.GRANT_TYPE.ACCESS_TOKEN,
+      code: code,
+      redirect_uri: Constants.REDIRECT_URI,
+      client_id: Constants.CLIENT_ID,
+      code_verifier: cookies.code_verifier
     };
 
     try {
 
-      const response = await fetch(url, options);
+      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
-      if (!response.ok) throw new Error('Failed to obtain access token');
+      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
-      const { access_token, refresh_token } = await response.json();
-
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
-
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 7 });
+      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
 
@@ -104,35 +95,25 @@ export const useAuth = () => {
      */
     const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
-    /**
-     * Options for making authenticated requests to the Spotify API using the Fetch API.
-     * @type {Object}
-     */
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams({
-        grant_type: Constants.GRANT_TYPE.REFRESH_TOKEN,
-        refresh_token: cookies.refresh_token,
-        client_id: Constants.CLIENT_ID
-      }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    const method = 'POST';
+
+    const data = {
+      grant_type: Constants.GRANT_TYPE.REFRESH_TOKEN,
+      refresh_token: cookies.refresh_token,
+      client_id: Constants.CLIENT_ID
     };
 
     try {
 
-      const response = await fetch(url, options);
+      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
-      if (!response.ok) throw new Error('Failed to obtain access token with refresh token');
+      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
 
-      const { access_token, refresh_token } = await response.json();
-
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: 3600 });
-
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: 60 * 60 * 24 * 7 });
+      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
-      
-      console.error(error.message);
+
+      console.error(`Error: ${error.message}`);
 
       // The status will inform the user that access was denied //! Status is not working
       logout(Constants.STATUS.FAILED);
@@ -141,7 +122,7 @@ export const useAuth = () => {
 
   }; //!FUNC-REQUESTREFRESHEDACCESSTOKEN
 
-  const handleUserAuthResponse = async () => {
+  const handleUserAuthResponse = async (searchParams) => {
 
     try {
 
@@ -175,7 +156,7 @@ export const useAuth = () => {
 
     } catch (error) {
 
-      console.error(error.message);
+      console.error(`Error: ${error.message}`);
 
       setStatus(Constants.STATUS.FAILED);
 
@@ -204,19 +185,10 @@ export const useAuth = () => {
 
   }; //!FUNC-HANDLELOGOUT
 
-  useEffect(() => {
-    //TODO: logic to prevent multiple calls to 'requestAccessToken' in 'handleUserAuthResponse' (with and w/o 'React.StrictMode').
-    /**
-     * Search params are not empty. It indicates that the user has clicked the login button.
-     * Once the user accepts or denied the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field.
-     */
-    if (searchParams.size > 0) handleUserAuthResponse();
-
-  }, [searchParams]);
-
 
   return {
     status,
+    handleUserAuthResponse,
     logout,
     requestUserAuth,
     requestRefreshedAccessToken

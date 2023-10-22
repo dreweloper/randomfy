@@ -7,13 +7,15 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {String} avatar - The user's profile image.
  * @prop {Boolean} isLoading - Indicates whether user data is currently being loaded.
  * @prop {Boolean} isError - Indicates whether an error has occurred while loading user data.
+ * @prop {Boolean} isEmpty - Indicates whether the user is not empty.
  */
 const initialState = {
     id: '',
     display_name: '',
     avatar: '',
     isLoading: false,
-    isError: false
+    isError: false,
+    isEmpty: true
 };
 
 export const userSlice = createSlice({
@@ -28,6 +30,7 @@ export const userSlice = createSlice({
             state.id = payload.id;
             state.display_name = payload.display_name;
             state.avatar = payload.avatar;
+            state.isEmpty = false;
         },
         setError: (state) => {
             state.isError = true;
@@ -42,6 +45,7 @@ export const userSlice = createSlice({
             state.avatar = '';
             if (state.isLoading) state.isLoading = false;
             if (state.isError) state.isError = false;
+            if (!state.isEmpty) state.isEmpty = true;
         },
     }
 });
