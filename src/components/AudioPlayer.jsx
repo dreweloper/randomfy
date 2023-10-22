@@ -1,4 +1,5 @@
 import { useAudioPlayer } from "../hooks";
+import { PauseIcon, PlayIcon } from '../components/icons';
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
 
@@ -34,7 +35,7 @@ export const AudioPlayer = ({ trackPreview }) => {
 
             <button onClick={handlePlayback} disabled={!trackPreview}>
 
-                {isPlaying ? 'Pause' : 'Play'}
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
 
             </button>
 
