@@ -4,7 +4,7 @@ export const LikeIcon = () => {
 
     return (
 
-        <span class="material-symbols-rounded">
+        <span className="material-symbols-rounded">
             favorite
         </span>
 

@@ -9,13 +9,15 @@ export const AudioPlayer = ({ trackPreview }) => {
         progressBarRef,
         currentTime,
         duration,
+        hasEnded,
         isPlaying,
         handlePlayback,
         onEnded,
         onLoadedMetadata,
         onPause,
         onPlay,
-        onTimeUpdate
+        onTimeUpdate,
+        handleProgressBarChange
     } = useAudioPlayer();
 
 
@@ -35,7 +37,7 @@ export const AudioPlayer = ({ trackPreview }) => {
 
             <button onClick={handlePlayback} disabled={!trackPreview}>
 
-                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+                { hasEnded ? <PlayIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
 
             </button>
 
@@ -43,7 +45,12 @@ export const AudioPlayer = ({ trackPreview }) => {
 
                 <span>{currentTime}</span>
 
-                <input type="range" defaultValue='0' ref={progressBarRef} />
+                <input
+                    type="range"
+                    defaultValue='0'
+                    onChange={handleProgressBarChange}
+                    ref={progressBarRef}
+                />
 
                 <span>{duration}</span>
 

@@ -25,31 +25,42 @@ export const Track = () => {
 
       <button
         disabled={status === STATUS.LOADING}
-        onClick={getRandomPlaylist}>
-        {status === STATUS.LOADING ? 'Loading…' : 'RANDOM TRACK'}
+        onClick={getRandomPlaylist}
+      >
+
+        {status === STATUS.LOADING ? '(spinner)' : 'RANDOM TRACK'}
+
       </button>
 
       {
-        !track.isEmpty && (
+        status === STATUS.LOADING ? (
 
-          <>
+          <p>(skeleton)</p>
 
-            <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
+        ) : (
 
-            <AudioPlayer trackPreview={track.preview_url} />
+          !track.isEmpty && (
 
-            <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+            <>
 
-            <button onClick={handleLike}>
-              {
-                <>
-                  <span>{track.isLiked ? 'Dislike' : 'Like'}</span>
-                  <LikeIcon />
-                </>
-              }
-            </button>
+              <img src={track.artwork} alt='Album cover' title='Album cover' width='100' />
 
-          </>
+              <AudioPlayer trackPreview={track.preview_url} />
+
+              <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+
+              <button onClick={handleLike}>
+                {
+                  <>
+                    <span>{track.isLiked ? 'Dislike' : 'Like'}</span>
+                    <LikeIcon />
+                  </>
+                }
+              </button>
+
+            </>
+
+          )
 
         )
 

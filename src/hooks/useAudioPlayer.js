@@ -1,13 +1,15 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useAudioPlayer = () => {
 
     // REACT HOOKS
+    const [isPlaying, setIsPlaying] = useState(false);
+
     const [currentTime, setCurrentTime] = useState('00:00');
 
     const [duration, setDuration] = useState('00:00');
 
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [hasEnded, setHasEnded] = useState(false);
 
     /**
      * A reference used to access and control the audio element.
@@ -50,7 +52,14 @@ export const useAudioPlayer = () => {
      * Callback function executed when the audio starts playing.
      * @function onPlay
      */
-    const onPlay = () => setIsPlaying(true);
+    const onPlay = () => {
+
+        setIsPlaying(true);
+
+        // Resets the state to its initial value so the icons can be displayed correctly.
+        if (hasEnded) setHasEnded(false);
+
+    };
 
     /**
      * Callback function executed when the audio is paused.
@@ -62,7 +71,16 @@ export const useAudioPlayer = () => {
      * Callback function executed when the audio track has ended.
      * @function onEnded
      */
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => {
+
+        setIsPlaying(false);
+
+        setHasEnded(true);
+
+        // Resets playback to the beginning.
+        audioRef.current.currentTime = 0;
+
+    };
 
     /**
      * Callback function executed when the audio track's metadata is loaded.
@@ -105,9 +123,55 @@ export const useAudioPlayer = () => {
     };
 
 
+    const handleProgressBarChange = (event) => {
+
+        const newTime = parseFloat(event.target.value);
+
+        if (!isNaN(newTime)) {
+
+            audioRef.current.currentTime = newTime;
+
+            const formattedTime = formatSeconds(newTime);
+
+            setCurrentTime(formattedTime);
+
+        };
+
+    };
+
+    useEffect(() => {
+
+        const intervalId = isPlaying && requestAnimationFrame(() => {
+
+            const audioElement = audioRef.current;
+
+            if (audioElement) {
+
+                const currentTime = audioElement.currentTime;
+
+                const formattedTime = formatSeconds(currentTime);
+
+                setCurrentTime(formattedTime);
+
+                progressBarRef.current.value = currentTime;
+
+            };
+
+        });
+
+        return () => {
+
+            cancelAnimationFrame(intervalId);
+
+        };
+
+    }, [isPlaying]);
+
+
     return {
         currentTime,
         duration,
+        hasEnded,
         isPlaying,
         audioRef,
         progressBarRef,
@@ -116,7 +180,8 @@ export const useAudioPlayer = () => {
         onLoadedMetadata,
         onPause,
         onPlay,
-        onTimeUpdate
+        onTimeUpdate,
+        handleProgressBarChange
     };
 
 };
