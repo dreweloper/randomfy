@@ -1,5 +1,6 @@
 import { useCookies } from 'react-cookie';
 import { useSelector } from "react-redux";
+import { Button } from './buttons';
 import { usePlaylistStore, useTrackStore } from "../hooks";
 import { LikeIcon } from './icons';
 import { AudioPlayer } from './index';
@@ -21,25 +22,22 @@ export const Track = () => {
 
   return (
 
-    <main>
+    <>
 
-      <button
-        disabled={status === STATUS.LOADING}
-        onClick={getRandomPlaylist}
-      >
+      <Button onClick={getRandomPlaylist} disabled={status === STATUS.LOADING}>
 
-        {status === STATUS.LOADING ? '(spinner)' : 'RANDOM TRACK'}
+        {status === STATUS.LOADING ? '(SPINNER LOADER)' : 'RANDOM TRACK'}
 
-      </button>
+      </Button>
 
       {
         status === STATUS.LOADING ? (
 
-          <p>(skeleton)</p>
+          <p>(SKELETON LOADER)</p>
 
         ) : (
 
-          !track.isEmpty && (
+          !track.isEmpty ? (
 
             <>
 
@@ -47,18 +45,23 @@ export const Track = () => {
 
               <AudioPlayer trackPreview={track.preview_url} />
 
-              <button onClick={handleFollow}>{playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}</button>
+              <Button onClick={handleFollow}>
 
-              <button onClick={handleLike}>
-                {
-                  <>
-                    <span>{track.isLiked ? 'Dislike' : 'Like'}</span>
-                    <LikeIcon />
-                  </>
-                }
-              </button>
+                {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
+
+              </Button>
+
+              <Button onClick={handleLike}>
+
+                <LikeIcon />
+
+              </Button>
 
             </>
+
+          ) : (
+
+            <p>(SKELETON LOADER)</p>
 
           )
 
@@ -66,11 +69,11 @@ export const Track = () => {
 
       }
 
-      { //TODO: toast notification (or snackbar)
+      { //TODO: alert (or toast or snackbar) notification
         status === STATUS.FAILED && <p>ERROR!</p>
       }
 
-    </main>
+    </>
 
   );
 
