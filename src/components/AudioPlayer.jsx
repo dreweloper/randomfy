@@ -14,8 +14,6 @@ export const AudioPlayer = ({ trackPreview }) => {
         handlePlayback,
         onEnded,
         onLoadedMetadata,
-        onPause,
-        onPlay,
         onTimeUpdate,
         handleProgressBarChange
     } = useAudioPlayer();
@@ -29,8 +27,6 @@ export const AudioPlayer = ({ trackPreview }) => {
                 src={trackPreview}
                 onEnded={onEnded}
                 onLoadedMetadata={onLoadedMetadata}
-                onPause={onPause}
-                onPlay={onPlay}
                 onTimeUpdate={onTimeUpdate}
                 ref={audioRef}
             ></audio>

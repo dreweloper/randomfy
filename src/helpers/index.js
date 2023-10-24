@@ -1,3 +1,4 @@
+export * from './formatSeconds';
 export * from './generateCodeChallenge';
 export * from './generateRandomNumber';
 export * from './generateRandomString';

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { formatSeconds } from "../helpers";
 
 export const useAudioPlayer = () => {
 
@@ -25,47 +26,10 @@ export const useAudioPlayer = () => {
 
     // FUNCTIONS
     /**
-     * Formats a number of seconds as a string in the "mm:ss" format.
-     * @param {Number} time - The number of seconds to format.
-     * @returns {String} A string representation of the seconds in "mm:ss" format.
-     */
-    const formatSeconds = (time) => {
-
-        /**
-         * The integer part of the time, obtained by removing any fractional digits.
-         * @type {Number}
-         */
-        const seconds = Math.trunc(time);
-
-        return seconds < 10 ? `00:0${seconds}` : `00:${seconds}`;
-
-    };
-
-    // EVENTS
-    /**
      * Handles audio playback control.
-     * If not playing, it plays the audio; otherwise, it pauses it.
+     * @function handlePlayback
      */
-    const handlePlayback = () => !isPlaying ? audioRef.current.play() : audioRef.current.pause();
-
-    /**
-     * Callback function executed when the audio starts playing.
-     * @function onPlay
-     */
-    const onPlay = () => {
-
-        setIsPlaying(true);
-
-        // Resets the state to its initial value so the icons can be displayed correctly.
-        if (hasEnded) setHasEnded(false);
-
-    };
-
-    /**
-     * Callback function executed when the audio is paused.
-     * @function onPause
-     */
-    const onPause = () => setIsPlaying(false);
+    const handlePlayback = () => setIsPlaying(prevState => !prevState);
 
     /**
      * Callback function executed when the audio track has ended.
@@ -80,66 +44,75 @@ export const useAudioPlayer = () => {
         // Resets playback to the beginning.
         audioRef.current.currentTime = 0;
 
-    };
+    }; //!FUNC-ONENDED
 
     /**
      * Callback function executed when the audio track's metadata is loaded.
      * @function onLoadedMetadata
-     * @param {Event} event - The event object containing playback time information.
      */
-    const onLoadedMetadata = (event) => {
+    const onLoadedMetadata = () => {
 
         // Sets the audio duration as the 'max' property of the input range element.
-        progressBarRef.current.max = event.target.duration;
+        progressBarRef.current.max = audioRef.current.duration;
 
         /**
          * The seconds in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(event.target.duration);
+        const seconds = formatSeconds(audioRef.current.duration);
 
         setDuration(seconds);
 
-    };
+    }; //!FUNC-ONLOADEDMETADATA
 
     /**
      * Callback function executed when the audio time updates during playback.
      * @function onTimeUpdate
-     * @param {Event} event - The event object containing playback time information.
      */
-    const onTimeUpdate = (event) => {
+    const onTimeUpdate = () => {
 
         // Sets the current playback time as the 'value' property of the input range element.
-        progressBarRef.current.value = event.target.currentTime;
+        progressBarRef.current.value = audioRef.current.currentTime;
 
         /**
          * The seconds in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(event.target.currentTime);
+        const seconds = formatSeconds(audioRef.current.currentTime);
 
         setCurrentTime(seconds);
 
-    };
+    }; //!FUNC-ONTIMEUPDATE
 
+    const handleProgressBarChange = () => {
 
-    const handleProgressBarChange = (event) => {
+        // Sets the current playback time as the 'currentTime' property of the audio element.
+        audioRef.current.currentTime = progressBarRef.current.value;
 
-        const newTime = parseFloat(event.target.value);
+        /**
+         * The seconds in "mm:ss" format.
+         * @type {String}
+         */
+        const seconds = formatSeconds(progressBarRef.current.value);
 
-        if (!isNaN(newTime)) {
+        setCurrentTime(seconds);
 
-            audioRef.current.currentTime = newTime;
-
-            const formattedTime = formatSeconds(newTime);
-
-            setCurrentTime(formattedTime);
-
-        };
-
-    };
+    }; //!FUNC-HANDLEPROGRESSBARCHANGE
 
     useEffect(() => {
+
+        if (isPlaying) {
+
+            audioRef.current.play();
+
+            // Resets the state to its initial value so the icons can be displayed correctly.
+            if (hasEnded) setHasEnded(false);
+
+        } else {
+
+            audioRef.current.pause();
+
+        };
 
         const intervalId = isPlaying && requestAnimationFrame(() => {
 
@@ -178,8 +151,6 @@ export const useAudioPlayer = () => {
         handlePlayback,
         onEnded,
         onLoadedMetadata,
-        onPause,
-        onPlay,
         onTimeUpdate,
         handleProgressBarChange
     };
