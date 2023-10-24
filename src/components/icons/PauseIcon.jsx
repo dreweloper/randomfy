@@ -4,7 +4,7 @@ export const PauseIcon = () => {
 
     return (
 
-        <span class="material-symbols-rounded">
+        <span className="material-symbols-rounded">
             pause
         </span>
 

@@ -1,5 +1,5 @@
 import { useAudioPlayer } from "../hooks";
-import { PauseIcon, PlayIcon } from '../components/icons';
+import { ProgressBar, Controls } from "./index";
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
 
@@ -9,13 +9,12 @@ export const AudioPlayer = ({ trackPreview }) => {
         progressBarRef,
         currentTime,
         duration,
+        hasEnded,
         isPlaying,
         handlePlayback,
         onEnded,
         onLoadedMetadata,
-        onPause,
-        onPlay,
-        onTimeUpdate
+        handleProgressBarChange
     } = useAudioPlayer();
 
 
@@ -23,31 +22,11 @@ export const AudioPlayer = ({ trackPreview }) => {
 
         <section className="audioPlayer">
 
-            <audio
-                src={trackPreview}
-                onEnded={onEnded}
-                onLoadedMetadata={onLoadedMetadata}
-                onPause={onPause}
-                onPlay={onPlay}
-                onTimeUpdate={onTimeUpdate}
-                ref={audioRef}
-            ></audio>
+            <audio src={trackPreview} onEnded={onEnded} onLoadedMetadata={onLoadedMetadata} ref={audioRef}></audio>
 
-            <button onClick={handlePlayback} disabled={!trackPreview}>
+            <Controls {...{ handlePlayback, hasEnded, isPlaying, trackPreview }} />
 
-                {isPlaying ? <PauseIcon /> : <PlayIcon />}
-
-            </button>
-
-            <div className="progressBar">
-
-                <span>{currentTime}</span>
-
-                <input type="range" defaultValue='0' ref={progressBarRef} />
-
-                <span>{duration}</span>
-
-            </div>
+            <ProgressBar {...{ currentTime, duration, handleProgressBarChange, progressBarRef }} />
 
         </section>
 

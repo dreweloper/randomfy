@@ -1,13 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { formatTime } from "../helpers";
 
 export const useAudioPlayer = () => {
 
     // REACT HOOKS
+    const [isPlaying, setIsPlaying] = useState(false);
+
     const [currentTime, setCurrentTime] = useState('00:00');
 
     const [duration, setDuration] = useState('00:00');
 
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [hasEnded, setHasEnded] = useState(false);
 
     /**
      * A reference used to access and control the audio element.
@@ -21,102 +24,153 @@ export const useAudioPlayer = () => {
      */
     const progressBarRef = useRef();
 
+    /**
+     * A reference used for scheduling and controlling animation frames to update the playback time progress continuously.
+     * @type {React.RefObject<Number>}
+     */
+    const playbackAnimationRef = useRef();
+
     // FUNCTIONS
     /**
-     * Formats a number of seconds as a string in the "mm:ss" format.
-     * @param {Number} time - The number of seconds to format.
-     * @returns {String} A string representation of the seconds in "mm:ss" format.
+     * Toggles the playback state between playing and paused.
+     * @function handlePlayback
      */
-    const formatSeconds = (time) => {
-
-        /**
-         * The integer part of the time, obtained by removing any fractional digits.
-         * @type {Number}
-         */
-        const seconds = Math.trunc(time);
-
-        return seconds < 10 ? `00:0${seconds}` : `00:${seconds}`;
-
-    };
-
-    // EVENTS
-    /**
-     * Handles audio playback control.
-     * If not playing, it plays the audio; otherwise, it pauses it.
-     */
-    const handlePlayback = () => !isPlaying ? audioRef.current.play() : audioRef.current.pause();
-
-    /**
-     * Callback function executed when the audio starts playing.
-     * @function onPlay
-     */
-    const onPlay = () => setIsPlaying(true);
-
-    /**
-     * Callback function executed when the audio is paused.
-     * @function onPause
-     */
-    const onPause = () => setIsPlaying(false);
+    const handlePlayback = () => setIsPlaying(prevState => !prevState); //!FUNC-HANDLEPLAYBACK
 
     /**
      * Callback function executed when the audio track has ended.
      * @function onEnded
      */
-    const onEnded = () => setIsPlaying(false);
+    const onEnded = () => {
+
+        setIsPlaying(false);
+
+        setHasEnded(true);
+
+        // Resets playback to the beginning. //! It is not working after the first trigger.
+        audioRef.current.currentTime = 0;
+
+    }; //!FUNC-ONENDED
 
     /**
      * Callback function executed when the audio track's metadata is loaded.
      * @function onLoadedMetadata
-     * @param {Event} event - The event object containing playback time information.
      */
-    const onLoadedMetadata = (event) => {
+    const onLoadedMetadata = () => {
 
         // Sets the audio duration as the 'max' property of the input range element.
-        progressBarRef.current.max = event.target.duration;
+        progressBarRef.current.max = audioRef.current.duration;
 
         /**
-         * The seconds in "mm:ss" format.
+         * The duration time in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(event.target.duration);
+        const formattedTime = formatTime(audioRef.current.duration);
 
-        setDuration(seconds);
+        // Update the displayed duration time.
+        setDuration(formattedTime);
 
-    };
+    }; //!FUNC-ONLOADEDMETADATA
 
     /**
-     * Callback function executed when the audio time updates during playback.
-     * @function onTimeUpdate
-     * @param {Event} event - The event object containing playback time information.
+     * Updates the current time display in "mm:ss" format.
+     * @function updateTimeProgress
+     * @param {Number} time - The time value to be formatted and displayed.
      */
-    const onTimeUpdate = (event) => {
-
-        // Sets the current playback time as the 'value' property of the input range element.
-        progressBarRef.current.value = event.target.currentTime;
+    const updateTimeProgress = (time) => {
 
         /**
-         * The seconds in "mm:ss" format.
+         * The current time in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(event.target.currentTime);
+        const formattedTime = formatTime(time);
 
-        setCurrentTime(seconds);
+        // Update the current time display.
+        setCurrentTime(formattedTime);
 
-    };
+    }; //!FUNC-UPDATETIMEPROGRESS
+
+    /**
+     * Handles changes in the progress bar's value and updates the audio playback time accordingly.
+     * 
+     * This function sets the current playback time of the audio element to match the value of the progress bar,
+     * and then updates the displayed time to reflect the change.
+     * 
+     * @function handleProgressBarChange
+     */
+    const handleProgressBarChange = () => {
+
+        // Sets the current playback time as the 'currentTime' property of the audio element.
+        audioRef.current.currentTime = progressBarRef.current.value;
+
+        // Updates the displayed time.
+        updateTimeProgress(audioRef.current.currentTime);
+
+    }; //!FUNC-HANDLEPROGRESSBARCHANGE
+
+    /**
+     * Animates the current time display and progress bar while the audio track is playing.
+     * 
+     * This function updates the current playback time on the progress bar element,
+     * calls the 'updateTimeProgress' function to update the displayed time,
+     * and schedules a request for the next frame to continuously update the time progress.
+     * 
+     * @function animateTimeProgress
+     */
+    const animateTimeProgress = () => {
+
+        // Sets the current playback time as the 'value' property of the input range element.
+        progressBarRef.current.value = audioRef.current.currentTime;
+
+        // Updates the displayed time.
+        updateTimeProgress(progressBarRef.current.value);
+
+        // Schedules a request for the next frame to update the time progress continuously.
+        playbackAnimationRef.current = requestAnimationFrame(animateTimeProgress);
+
+    }; //!FUNC-ANIMATETIMEPROGRESS
+
+    useEffect(() => {
+
+        if (isPlaying) {
+
+            /**
+             * Reset the track's state to its initial value if it has ended and the user plays the track again.
+             * This ensures that icons are displayed correctly in the component.
+             */
+            if (hasEnded) setHasEnded(false);
+
+            audioRef.current.play();
+
+            animateTimeProgress();
+
+        } else {
+
+            audioRef.current.pause();
+
+        };
+
+        return () => {
+
+            // Cancels the previously scheduled animation request.
+            cancelAnimationFrame(playbackAnimationRef.current);
+
+        };
+
+    }, [isPlaying]);
 
 
     return {
         currentTime,
         duration,
+        hasEnded,
         isPlaying,
         audioRef,
         progressBarRef,
         handlePlayback,
         onEnded,
         onLoadedMetadata,
-        onPause,
-        onPlay,
-        onTimeUpdate
+        handleProgressBarChange
     };
 
 };

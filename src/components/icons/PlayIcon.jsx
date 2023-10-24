@@ -4,7 +4,7 @@ export const PlayIcon = () => {
 
     return (
 
-        <span class="material-symbols-rounded">
+        <span className="material-symbols-rounded">
             play_arrow
         </span>
 
