@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Button } from '../components';
 import { useAuth } from '../hooks';
 import { STATUS } from '../utils';
 
@@ -13,7 +14,7 @@ export const LoginPage = () => {
 
   // REACT HOOK
   useEffect(() => {
-    
+
     /**
      * Search params are not empty. It indicates that the user has clicked the login button.
      * Once the user accepts or denied the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
@@ -36,7 +37,7 @@ export const LoginPage = () => {
 
       <h1>Randomfy</h1>
 
-      <button onClick={requestUserAuth}>Login</button>
+      <Button onClick={requestUserAuth} disabled={status === STATUS.LOADING}>Login</Button>
 
       {
         status === STATUS.LOADING && <p>Loading…</p>

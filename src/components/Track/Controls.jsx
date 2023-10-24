@@ -1,4 +1,6 @@
-import { PauseIcon, PlayIcon } from '../components/icons';
+import { Button } from '../Buttons';
+import { PauseIcon, PlayIcon } from '../Icons';
+
 //TODO: PropTypes
 export const Controls = ({
     handlePlayback,
@@ -9,11 +11,11 @@ export const Controls = ({
 
     return (
 
-        <button onClick={handlePlayback} disabled={!trackPreview}>
+        <Button onClick={handlePlayback} disabled={!trackPreview}>
 
             {hasEnded ? <PlayIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
 
-        </button>
+        </Button>
 
     );
 
