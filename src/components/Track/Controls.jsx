@@ -1,5 +1,6 @@
-import { Button } from './buttons';
-import { PauseIcon, PlayIcon } from './icons';
+import { Button } from '../Buttons';
+import { PauseIcon, PlayIcon } from '../Icons';
+
 //TODO: PropTypes
 export const Controls = ({
     handlePlayback,

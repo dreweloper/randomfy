@@ -45,16 +45,20 @@ export const useTrackStore = (token) => {
                         album: {
                             images: [{
                                 url: artwork
-                            }]
+                            }],
+                            name: album
                         },
                         name,
                         artists,
+                        external_urls: {
+                            spotify: track_url
+                        },
                         preview_url
                     }
                 }]
             } = await fetchSpotifyData({ url, method, token });
 
-            return { track_id, artwork, name, artists, preview_url };
+            return { track_id, artwork, album, name, artists, track_url, preview_url };
 
         } catch (error) {
 

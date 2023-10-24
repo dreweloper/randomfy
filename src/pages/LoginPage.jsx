@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from '../components/buttons';
+import { Button } from '../components';
 import { useAuth } from '../hooks';
 import { STATUS } from '../utils';
 

@@ -1,5 +1,5 @@
-import { useAudioPlayer } from "../hooks";
-import { ProgressBar, Controls } from "./index";
+import { useAudioPlayer } from "../../hooks";
+import { ProgressBar, Controls } from "../index";
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
 

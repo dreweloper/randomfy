@@ -1,2 +1,2 @@
 export * from './Button';
-export * from './TextButton.jsx';
+export * from './TextButton';

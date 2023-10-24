@@ -1,5 +1,4 @@
-import { User } from "../components";
-import { TextButton } from "../components/buttons";
+import { TextButton, User } from "../components";
 import { useAuth } from "../hooks";
 
 export const NavBar = () => {

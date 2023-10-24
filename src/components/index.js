@@ -1,5 +1,4 @@
-export * from './AudioPlayer';
-export * from './Controls';
-export * from './ProgressBar';
+export * from './Buttons';
+export * from './Icons';
 export * from './Track';
 export * from './User';

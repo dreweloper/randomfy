@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { Track } from '../components';
+import { DisplayTrack } from '../components';
 import { NavBar } from '../layouts';
 import { CODE_VERIFIER_KEY, STATE_KEY } from '../utils';
 
@@ -29,7 +29,7 @@ export const HomePage = () => {
 
             <main>
                 
-                <Track />
+                <DisplayTrack />
                 
             </main>
 
