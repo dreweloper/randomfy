@@ -27,7 +27,11 @@ export const HomePage = () => {
 
             <NavBar />
 
-            <Track />
+            <main>
+                
+                <Track />
+                
+            </main>
 
         </>
 
