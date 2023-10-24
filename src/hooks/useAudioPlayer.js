@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { formatSeconds } from "../helpers";
+import { formatTime } from "../helpers";
 
 export const useAudioPlayer = () => {
 
@@ -24,12 +24,18 @@ export const useAudioPlayer = () => {
      */
     const progressBarRef = useRef();
 
+    /**
+     * A reference used for scheduling and controlling animation frames to update the playback time progress continuously.
+     * @type {React.RefObject<Number>}
+     */
+    const playbackAnimationRef = useRef();
+
     // FUNCTIONS
     /**
-     * Handles audio playback control.
+     * Toggles the playback state between playing and paused.
      * @function handlePlayback
      */
-    const handlePlayback = () => setIsPlaying(prevState => !prevState);
+    const handlePlayback = () => setIsPlaying(prevState => !prevState); //!FUNC-HANDLEPLAYBACK
 
     /**
      * Callback function executed when the audio track has ended.
@@ -41,7 +47,7 @@ export const useAudioPlayer = () => {
 
         setHasEnded(true);
 
-        // Resets playback to the beginning.
+        // Resets playback to the beginning. //! It is not working after the first trigger.
         audioRef.current.currentTime = 0;
 
     }; //!FUNC-ONENDED
@@ -56,57 +62,87 @@ export const useAudioPlayer = () => {
         progressBarRef.current.max = audioRef.current.duration;
 
         /**
-         * The seconds in "mm:ss" format.
+         * The duration time in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(audioRef.current.duration);
+        const formattedTime = formatTime(audioRef.current.duration);
 
-        setDuration(seconds);
+        // Update the displayed duration time.
+        setDuration(formattedTime);
 
     }; //!FUNC-ONLOADEDMETADATA
 
     /**
-     * Callback function executed when the audio time updates during playback.
-     * @function onTimeUpdate
+     * Updates the current time display in "mm:ss" format.
+     * @function updateTimeProgress
+     * @param {Number} time - The time value to be formatted and displayed.
      */
-    const onTimeUpdate = () => {
-
-        // Sets the current playback time as the 'value' property of the input range element.
-        progressBarRef.current.value = audioRef.current.currentTime;
+    const updateTimeProgress = (time) => {
 
         /**
-         * The seconds in "mm:ss" format.
+         * The current time in "mm:ss" format.
          * @type {String}
          */
-        const seconds = formatSeconds(audioRef.current.currentTime);
+        const formattedTime = formatTime(time);
 
-        setCurrentTime(seconds);
+        // Update the current time display.
+        setCurrentTime(formattedTime);
 
-    }; //!FUNC-ONTIMEUPDATE
+    }; //!FUNC-UPDATETIMEPROGRESS
 
+    /**
+     * Handles changes in the progress bar's value and updates the audio playback time accordingly.
+     * 
+     * This function sets the current playback time of the audio element to match the value of the progress bar,
+     * and then updates the displayed time to reflect the change.
+     * 
+     * @function handleProgressBarChange
+     */
     const handleProgressBarChange = () => {
 
         // Sets the current playback time as the 'currentTime' property of the audio element.
         audioRef.current.currentTime = progressBarRef.current.value;
 
-        /**
-         * The seconds in "mm:ss" format.
-         * @type {String}
-         */
-        const seconds = formatSeconds(progressBarRef.current.value);
-
-        setCurrentTime(seconds);
+        // Updates the displayed time.
+        updateTimeProgress(audioRef.current.currentTime);
 
     }; //!FUNC-HANDLEPROGRESSBARCHANGE
+
+    /**
+     * Animates the current time display and progress bar while the audio track is playing.
+     * 
+     * This function updates the current playback time on the progress bar element,
+     * calls the 'updateTimeProgress' function to update the displayed time,
+     * and schedules a request for the next frame to continuously update the time progress.
+     * 
+     * @function animateTimeProgress
+     */
+    const animateTimeProgress = () => {
+
+        // Sets the current playback time as the 'value' property of the input range element.
+        progressBarRef.current.value = audioRef.current.currentTime;
+
+        // Updates the displayed time.
+        updateTimeProgress(progressBarRef.current.value);
+
+        // Schedules a request for the next frame to update the time progress continuously.
+        playbackAnimationRef.current = requestAnimationFrame(animateTimeProgress);
+
+    }; //!FUNC-ANIMATETIMEPROGRESS
 
     useEffect(() => {
 
         if (isPlaying) {
 
+            /**
+             * Reset the track's state to its initial value if it has ended and the user plays the track again.
+             * This ensures that icons are displayed correctly in the component.
+             */
+            if (hasEnded) setHasEnded(false);
+
             audioRef.current.play();
 
-            // Resets the state to its initial value so the icons can be displayed correctly.
-            if (hasEnded) setHasEnded(false);
+            animateTimeProgress();
 
         } else {
 
@@ -114,27 +150,10 @@ export const useAudioPlayer = () => {
 
         };
 
-        const intervalId = isPlaying && requestAnimationFrame(() => {
-
-            const audioElement = audioRef.current;
-
-            if (audioElement) {
-
-                const currentTime = audioElement.currentTime;
-
-                const formattedTime = formatSeconds(currentTime);
-
-                setCurrentTime(formattedTime);
-
-                progressBarRef.current.value = currentTime;
-
-            };
-
-        });
-
         return () => {
 
-            cancelAnimationFrame(intervalId);
+            // Cancels the previously scheduled animation request.
+            cancelAnimationFrame(playbackAnimationRef.current);
 
         };
 
@@ -151,7 +170,6 @@ export const useAudioPlayer = () => {
         handlePlayback,
         onEnded,
         onLoadedMetadata,
-        onTimeUpdate,
         handleProgressBarChange
     };
 
