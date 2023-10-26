@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyData } from "../api";
-import { generateRandomNumber } from "../helpers";
+import { generateRandomNumber, mapArtists } from "../helpers";
 import { isTrackLiked, setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS } from "../utils";
 
@@ -49,7 +49,7 @@ export const useTrackStore = (token) => {
                             name: album
                         },
                         name,
-                        artists,
+                        artists: arrArtists,
                         external_urls: {
                             spotify: track_url
                         },
@@ -57,6 +57,12 @@ export const useTrackStore = (token) => {
                     }
                 }]
             } = await fetchSpotifyData({ url, method, token });
+
+            /**
+             * The artists names.
+             * @type {String}
+             */
+            const artists = mapArtists(arrArtists); // There can be more than one artist.
 
             return { track_id, artwork, album, name, artists, track_url, preview_url };
 
