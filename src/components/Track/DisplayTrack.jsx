@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import { usePlaylistStore, useTrackStore } from "../../hooks";
 import { AudioPlayer, Button, LikeIcon } from '../../components';
-import { ACCESS_TOKEN_KEY, STATUS } from '../../utils';
+import { ACCESS_TOKEN_KEY, DESKTOP, STATUS } from '../../utils';
 
 export const DisplayTrack = () => {
 
@@ -11,7 +11,7 @@ export const DisplayTrack = () => {
     const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
 
     // REACT-REDUX HOOK
-    const { status } = useSelector(state => state.process);
+    const { process: { status }, user } = useSelector(state => state);
 
     // REACT-REDUX CUSTOM HOOKS
     const { playlist, getRandomPlaylist, handleFollow } = usePlaylistStore(cookies.access_token);
@@ -21,56 +21,107 @@ export const DisplayTrack = () => {
 
     return (
 
-        <>
+        <section className='displayTrack'>
 
-            <Button onClick={getRandomPlaylist} disabled={status === STATUS.LOADING}>
+            <Button
+                onClick={getRandomPlaylist}
+                disabled={user.isError || status === STATUS.LOADING}
+            >
 
-                {status === STATUS.LOADING ? '(SPINNER LOADER)' : 'RANDOM TRACK'}
+                {status === STATUS.LOADING ? 'SPINNER LOADER' : 'RANDOM TRACK'}
 
             </Button>
 
             {
                 status === STATUS.LOADING ? (
 
-                    <p>(SKELETON LOADER)</p>
+                    //TODO: Skeleton component
+                    <span>SKELETON LOADER</span>
 
                 ) : (
 
                     !track.isEmpty ? (
 
-                        <>
+                        <article className='trackCard'>
 
-                            <img
-                                src={track.artwork}
-                                alt={`Album artwork for "${track.album}"`}
-                                title={`Album artwork for "${track.album}"`}
-                                width='100'
-                            />
+                            <div className='cardContainer'>
 
-                            <AudioPlayer trackPreview={track.preview_url} />
+                                <div className='artwork'>
 
-                            <span>{!track.preview_url && 'Track preview is not available'}</span>
+                                    <img
+                                        src={track.artwork}
+                                        alt={`Album artwork for "${track.album}"`}
+                                        title={`Album artwork for "${track.album}"`}
+                                        width='100'
+                                    />
 
-                            <Button onClick={handleFollow}>
+                                </div>
 
-                                {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
+                                <div className='trackContainer'>
 
-                            </Button>
+                                    <div className='trackDetails'>
 
-                            <Button onClick={handleLike}>
+                                        <h2 className='trackName'>{track.name}</h2>
 
-                                <LikeIcon />
+                                        <h2 className='trackArtists'>{JSON.stringify(track.artists)}</h2>
 
-                            </Button>
+                                    </div>
 
-                            {/* //TODO: Spotify logo and 'ExternalLink' (or Button(?) component (?) */}
-                            <Link to={track.track_url}>PLAY ON SPOTIFY</Link>
+                                    {/* TODO: !DESKTOP && visible */}
+                                    <div className='nonDesktopContainer'>
 
-                        </>
+                                        <AudioPlayer trackPreview={track.preview_url} />
+
+                                    </div>
+
+                                    <nav className='trackNav'>
+
+                                        {/* OUTLINED BUTTON COMPONENT */}
+                                        <Button onClick={handleFollow}>
+
+                                            {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
+
+                                        </Button>
+
+                                        {/* OUTLINED BUTTON COMPONENT */}
+                                        <Button onClick={handleLike}>
+
+                                            <LikeIcon />
+
+                                        </Button>
+
+                                        {/* OUTLINED BUTTON STYLES */}
+                                        <Link
+                                            to={track.track_url}
+                                            target={DESKTOP ? '_blank' : '_self'}
+                                        >
+
+                                            <span>PLAY ON</span>
+
+                                            {/* IMG: SPOTIFY LOGO */}
+                                            <span>SPOTIFY</span>
+
+                                        </Link>
+
+                                    </nav>
+
+                                </div>
+
+                            </div>
+
+                            {/* TODO: DESKTOP && visible */}
+                            <div className='desktopContainer' style={{ display: 'none' }}>
+
+                                <AudioPlayer trackPreview={track.preview_url} />
+
+                            </div>
+
+                        </article>
 
                     ) : (
 
-                        <p>(SKELETON LOADER)</p>
+                        //TODO: Skeleton component
+                        <span>SKELETON LOADER</span>
 
                     )
 
@@ -78,11 +129,12 @@ export const DisplayTrack = () => {
 
             }
 
-            { //TODO: alert (or toast or snackbar) notification
-                status === STATUS.FAILED && <p>ERROR!</p>
+            {
+                //TODO: Toast component
+                status === STATUS.FAILED && <span>ERROR TOAST</span>
             }
 
-        </>
+        </section>
 
     );
 

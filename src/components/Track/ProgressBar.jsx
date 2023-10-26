@@ -1,25 +1,20 @@
 //TODO: PropTypes
-export const ProgressBar = ({
-    currentTime,
-    duration,
-    handleProgressBarChange,
-    progressBarRef
-}) => {
+export const ProgressBar = ({ currentTime, duration, handleProgressBarChange, progressBarRef }) => {
 
     return (
 
-        <div className="progressBar">
+        <div className='progressBar'>
 
-            <span>{currentTime}</span>
+            <span className='time'>{currentTime}</span>
 
             <input
-                type="range"
+                type='range'
                 defaultValue='0'
                 onChange={handleProgressBarChange}
                 ref={progressBarRef}
             />
 
-            <span>{duration}</span>
+            <span className='time'>{duration}</span>
 
         </div>
 

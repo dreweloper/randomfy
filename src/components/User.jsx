@@ -1,9 +1,5 @@
-import { useUserStore } from "../hooks";
-
-export const User = () => {
-
-    // CUSTOM HOOK
-    const { user } = useUserStore();
+//TODO: PropTypes
+export const User = ({ user }) => {
 
 
     return (
@@ -15,25 +11,30 @@ export const User = () => {
             {
                 user.isLoading ? (
 
-                    <p>Loading…</p>
+                    // OVERLAY
+                    <span>SPINNER</span>
 
                 ) : (
 
                     user.isError ? (
 
-                        //TODO: display a toast notification to indicate the error and provide an option to reload the call or refresh the page (?).
-                        //? Display a fake avatar or skeleton loader in case of an error.
-                        <p>ERROR!</p>
+                        //TODO: Alert. Display a notification to indicate the error and (perhaps) provide an option to reload the call or refresh the page.
+                        //? Display a fake avatar (and display name?) or skeleton loader in case of an error.
+                        <span>ERROR!</span>
 
                     ) : (
 
                         !user.isEmpty && (
 
-                            <div id={user.id}>
+                            <div className='userCard'>
 
-                                <img src={user.avatar} alt="User's profile image" title="User's profile image" />
+                                <div className='avatar'>
 
-                                <h3>{user.display_name}</h3>
+                                    <img src={user.avatar} alt="User's profile image" title="User's profile image" />
+
+                                </div>
+
+                                <span className="displayName">{user.display_name}</span>
 
                             </div>
 

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from '../components';
 import { useAuth } from '../hooks';
 import { STATUS } from '../utils';
+import { NavBar } from '../layouts';
 
 export const LoginPage = () => {
 
@@ -35,17 +36,49 @@ export const LoginPage = () => {
 
     <>
 
-      <h1>Randomfy</h1>
+      <header>
 
-      <Button onClick={requestUserAuth} disabled={status === STATUS.LOADING}>Login</Button>
+        <NavBar />
 
-      {
-        status === STATUS.LOADING && <p>Loading…</p>
-      }
+      </header>
 
-      {
-        status === STATUS.FAILED && <p>Access denied!</p>
-      }
+      <main>
+
+        <section className='hero'>
+
+          <div className='container'>
+
+            <h1 className='title'>Randomfy: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta, quia!</h1>
+
+            <p className='description'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus labore ratione quae soluta quidem corrupti similique eaque facere magni voluptates.</p>
+
+          </div>
+
+          <Button
+            onClick={requestUserAuth}
+            disabled={status === STATUS.LOADING}>
+            LOGIN
+          </Button>
+
+          {
+            status === STATUS.LOADING ? (
+
+              // OVERLAY
+              <span>SPINNER LOADER</span>
+
+            ) : (
+
+              status === STATUS.FAILED && <p>Access denied. Please try again.</p>
+
+            )
+
+          }
+
+        </section>
+
+      </main>
+
+      {/* FOOTER */}
 
     </>
 

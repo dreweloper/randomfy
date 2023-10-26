@@ -25,13 +25,24 @@ export const HomePage = () => {
 
         <>
 
-            <NavBar />
+            <header>
+
+                <NavBar />
+
+            </header>
 
             <main>
-                
+
+                {/* SECTION */}
+
+                {/* CORE FUNCTION BUTTON (?) */}
+
+                {/* CHANGE FOR TRACKCARD */}
                 <DisplayTrack />
-                
+
             </main>
+
+            {/* FOOTER */}
 
         </>
 

@@ -20,15 +20,22 @@ export const AudioPlayer = ({ trackPreview }) => {
 
     return (
 
-        <section className="audioPlayer">
+        <>
 
-            <audio src={trackPreview} onEnded={onEnded} onLoadedMetadata={onLoadedMetadata} ref={audioRef}></audio>
+            <div className="audioPlayer">
 
-            <Controls {...{ handlePlayback, hasEnded, isPlaying, trackPreview }} />
+                <audio src={trackPreview} onEnded={onEnded} onLoadedMetadata={onLoadedMetadata} ref={audioRef}></audio>
 
-            <ProgressBar {...{ currentTime, duration, handleProgressBarChange, progressBarRef }} />
+                <Controls {...{ handlePlayback, hasEnded, isPlaying, trackPreview }} />
 
-        </section>
+                <ProgressBar {...{ currentTime, duration, handleProgressBarChange, progressBarRef }} />
+
+            </div>
+
+            {/* TODO: Toast */}
+            {!trackPreview && <span>Track preview is not available</span>}
+
+        </>
 
     );
 

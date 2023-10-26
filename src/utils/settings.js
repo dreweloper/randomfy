@@ -20,3 +20,6 @@ export const USER_ID = 'spotify';
 
 // STATUS STATE
 export const STATUS = { IDLE: 'idle', LOADING: 'loading', SUCCEEDED: 'succeeded', FAILED: 'failed' };
+
+// WINDOW SIZES
+export const DESKTOP = window.innerWidth >= 992;
