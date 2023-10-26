@@ -13,14 +13,14 @@ export const serializeData = (data) => {
 
     };
 
-    const dataObj = {};
+    const objData = {};
     
     for(const [key, value] of data) {
         
-        dataObj[key] = value;
+        objData[key] = value;
   
     };
 
-    return dataObj;
+    return objData;
 
 };

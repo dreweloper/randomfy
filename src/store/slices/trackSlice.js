@@ -5,7 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {String} track_id - The Spotify ID for the track.
  * @prop {String} album_cover - The source URL of the album cover image.
  * @prop {String} name - The name of the track.
- * @prop {Array} artists - The artists who performed the track.
+ * @prop {String} artists - The artists who performed the track.
  * @prop {String} album - The name of the album.
  * @prop {String} track_url - 
  * @prop {String | null} preview_url - A link to a 30 second preview (MP3 format) of the track. Can be 'null'.
@@ -16,7 +16,7 @@ const initialState = {
     track_id: '',
     artwork: '',
     name: '',
-    artists: [],
+    artists: '',
     album: '',
     track_url: '',
     preview_url: '',
@@ -32,8 +32,7 @@ export const trackSlice = createSlice({
             state.track_id = payload.track_id;
             state.artwork = payload.artwork;
             state.name = payload.name;
-            if (state.artists.length > 0) state.artists = []; // State reset after the first successful load.
-            payload.artists.forEach(artist => state.artists.push(artist.name)); // There can be more than one artist.
+            state.artists = payload.artists;
             state.album = payload.album;
             state.track_url = payload.track_url;
             state.preview_url = payload.preview_url;
@@ -47,7 +46,7 @@ export const trackSlice = createSlice({
             state.track_id = '';
             state.artwork = '';
             state.name = '';
-            state.artist = [];
+            state.artist = '';
             state.album = '';
             state.track_url = '';
             state.preview_url = '';

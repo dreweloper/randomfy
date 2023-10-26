@@ -63,7 +63,7 @@ export const DisplayTrack = () => {
 
                                         <h2 className='trackName'>{track.name}</h2>
 
-                                        <h2 className='trackArtists'>{JSON.stringify(track.artists)}</h2>
+                                        <h2 className='trackArtists'>{track.artists}</h2>
 
                                     </div>
 
