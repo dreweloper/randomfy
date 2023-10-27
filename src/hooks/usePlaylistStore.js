@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from '../helpers';
 import { isPlaylistFollowed, setPlaylist, setStatus } from '../store/slices';
@@ -6,9 +6,7 @@ import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
 
 export const usePlaylistStore = (token) => {
 
-    // REACT-REDUX HOOKS
-    const user = useSelector(state => state.user);
-
+    // REACT-REDUX HOOK
     const dispatch = useDispatch();
 
     // FUNCTIONS
@@ -52,9 +50,9 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-FETCHUSERRANDOMPLAYLIST
 
-    const checkIsPlaylistFollowed = async (playlist_id) => {
+    const checkIsPlaylistFollowed = async (playlist_id, userId) => {
 
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/followers/contains?ids=${user.id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/followers/contains?ids=${userId}`;
 
         const method = 'GET';
 
@@ -72,7 +70,7 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-CHECKISPLAYLISTFOLLOWED
 
-    const getRandomPlaylist = async () => {
+    const getRandomPlaylist = async (userId) => {
 
         try {
 
@@ -84,7 +82,7 @@ export const usePlaylistStore = (token) => {
 
             const { playlist_id, total_tracks } = await fetchUserRandomPlaylist(randomOffset);
 
-            const isFollowed = await checkIsPlaylistFollowed(playlist_id);
+            const isFollowed = await checkIsPlaylistFollowed(playlist_id, userId);
 
             const payload = { playlist_id, total_tracks, isFollowed };
 

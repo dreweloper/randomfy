@@ -61,7 +61,7 @@ export const HomePage = () => {
     //* Sets 'playlist' state.
     useEffect(() => {
 
-        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
+        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist(user.id);
 
     }, [user, playlist]);
 
