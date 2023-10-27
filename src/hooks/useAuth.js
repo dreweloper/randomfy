@@ -113,6 +113,8 @@ export const useAuth = () => {
 
     } catch (error) {
 
+      console.log('BUG:', error);
+
       console.error(`Error: ${error.message}`);
 
       // The status will inform the user that access was denied //! Status is not working

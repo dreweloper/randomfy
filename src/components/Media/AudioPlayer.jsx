@@ -1,5 +1,5 @@
+import { ProgressBar, Controls } from "./index";
 import { useAudioPlayer } from "../../hooks";
-import { ProgressBar, Controls } from "../index";
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
 
@@ -33,7 +33,7 @@ export const AudioPlayer = ({ trackPreview }) => {
             </div>
 
             {/* TODO: Toast */}
-            {!trackPreview && <span>Track preview is not available</span>}
+            {!trackPreview && <p>Track preview is not available.</p>}
 
         </>
 
