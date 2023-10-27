@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserCard } from '../components/Cards';
+import { UserCard } from '../components';
 import { useAuth, useUserStore } from "../hooks";
 
 export const NavBar = () => {

@@ -1,4 +1,5 @@
 import { ProgressBar, Controls } from "./index";
+import { Toast } from "../Notifications";
 import { useAudioPlayer } from "../../hooks";
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
@@ -32,8 +33,16 @@ export const AudioPlayer = ({ trackPreview }) => {
 
             </div>
 
-            {/* TODO: Toast */}
-            {!trackPreview && <p>Track preview is not available.</p>}
+            {
+                !trackPreview && (
+
+                    <Toast
+                        type={'warning'}
+                        text={'Track preview is not available.'}
+                    />
+
+                )
+            }
 
         </>
 

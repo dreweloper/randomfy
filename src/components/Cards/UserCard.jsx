@@ -1,3 +1,5 @@
+import { Image } from '../Assets';
+import { Spinner } from '../Loading';
 import { Overlay } from '../../layouts';
 //TODO: PropTypes
 export const UserCard = ({ user }) => {
@@ -14,7 +16,7 @@ export const UserCard = ({ user }) => {
 
                     <Overlay>
 
-                        <span>SPINNER LOADER</span>
+                        <Spinner />
 
                     </Overlay>
 
@@ -32,22 +34,19 @@ export const UserCard = ({ user }) => {
 
                             <div className='userCard'>
 
-                                <div className='avatar'>
-
-                                    <img src={user.avatar} alt="User's profile image" title="User's profile image" />
-
-                                </div>
+                                <Image
+                                    className={'avatar'}
+                                    description={"User's profile image"}
+                                    source={user.avatar}
+                                />
 
                                 <span className="username">{user.display_name}</span>
 
                             </div>
 
                         )
-
                     )
-
                 )
-
             }
 
         </>

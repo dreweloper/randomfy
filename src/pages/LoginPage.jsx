@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, Overlay } from '../layouts';
 import { STATUS } from '../utils';
@@ -59,7 +60,9 @@ export const LoginPage = () => {
             status === STATUS.LOADING ? (
 
               <Overlay>
-                <span>SPINNER LOADER</span>
+
+                <Spinner />
+
               </Overlay>
 
             ) : (

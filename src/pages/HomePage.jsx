@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { AudioPlayer } from '../components/Media';
+import { Skeleton, Spinner, Toast, TrackCard } from '../components';
 import { usePlaylistStore, useTrackStore } from '../hooks';
 import { Footer, NavBar } from '../layouts';
-import { CODE_VERIFIER_KEY, DESKTOP, STATE_KEY, STATUS } from '../utils';
+import { CODE_VERIFIER_KEY, STATE_KEY, STATUS } from '../utils';
 
 export const HomePage = () => {
 
@@ -42,119 +41,37 @@ export const HomePage = () => {
 
             </header>
 
-            <main>
+            <main className='main'>
 
                 <section className='displayTrack'>
 
+                    {/* CONTAINED BUTTON */}
                     <button
                         onClick={getRandomPlaylist}
                         disabled={user.isError || status === STATUS.LOADING}
                     >
 
-                        {status === STATUS.LOADING ? 'SPINNER LOADER' : 'RANDOM TRACK'}
+                        {status === STATUS.LOADING ? (<Spinner />) : ('RANDOM TRACK')}
 
                     </button>
 
                     {
-                        status === STATUS.LOADING ? (
+                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
 
-                            //TODO: Skeleton component
-                            <span>SKELETON LOADER</span>
+                            <TrackCard {...{ handleFollow, handleLike, playlist, track }} />
 
-                        ) : (
-
-                            !track.isEmpty ? (
-
-                                <article className='trackCard'>
-
-                                    <div className='cardContainer'>
-
-                                        <div className='artwork'>
-
-                                            <img
-                                                src={track.artwork}
-                                                alt={`Album artwork for "${track.album}"`}
-                                                title={`Album artwork for "${track.album}"`}
-                                                width='100'
-                                            />
-
-                                        </div>
-
-                                        <div className='trackContainer'>
-
-                                            <div className='trackDetails'>
-
-                                                <h2 className='trackName'>{track.name}</h2>
-
-                                                <h2 className='trackArtists'>{track.artists}</h2>
-
-                                            </div>
-
-                                            {/* TODO: !DESKTOP && visible (CSS media queries) */}
-                                            <div className='nonDesktopContainer'>
-
-                                                <AudioPlayer trackPreview={track.preview_url} />
-
-                                            </div>
-
-                                            <nav className='trackNav'>
-
-                                                {/* OUTLINED BUTTON */}
-                                                <button onClick={handleFollow}>
-
-                                                    {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
-
-                                                </button>
-
-                                                {/* OUTLINED BUTTON */}
-                                                <button onClick={handleLike}>
-
-                                                    <span className="material-symbols-rounded">
-                                                        favorite
-                                                    </span>
-
-                                                </button>
-
-                                                {/* OUTLINED BUTTON STYLES */}
-                                                <Link
-                                                    to={track.track_url}
-                                                    target={DESKTOP ? '_blank' : '_self'}
-                                                >
-
-                                                    <span>PLAY ON</span>
-
-                                                    {/* IMG: SPOTIFY LOGO */}
-                                                    <span>SPOTIFY</span>
-
-                                                </Link>
-
-                                            </nav>
-
-                                        </div>
-
-                                    </div>
-
-                                    {/* TODO: DESKTOP && visible (CSS media-queries) */}
-                                    <div className='desktopContainer' style={{ display: 'none' }}>
-
-                                        <AudioPlayer trackPreview={track.preview_url} />
-
-                                    </div>
-
-                                </article>
-
-                            ) : (
-
-                                //TODO: Skeleton component
-                                <span>SKELETON LOADER</span>
-
-                            )
                         )
                     }
 
                     {
-                        //TODO: Toast component
-                        status === STATUS.FAILED && <span>ERROR TOAST</span>
+                        status === STATUS.FAILED && (
+
+                            <Toast
+                                type={'danger'}
+                                text={"Oops! We couldn't load the track. Please try again."}
+                            />
+
+                        )
                     }
 
                 </section>
