@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from '../components';
+import { Spinner } from '../components';
 import { useAuth } from '../hooks';
+import { Footer, Overlay } from '../layouts';
 import { STATUS } from '../utils';
-import { NavBar } from '../layouts';
 
 export const LoginPage = () => {
 
@@ -36,13 +36,7 @@ export const LoginPage = () => {
 
     <>
 
-      <header>
-
-        <NavBar />
-
-      </header>
-
-      <main>
+      <main className='main'>
 
         <section className='hero'>
 
@@ -54,17 +48,22 @@ export const LoginPage = () => {
 
           </div>
 
-          <Button
+          <button
+            className='login'
             onClick={requestUserAuth}
-            disabled={status === STATUS.LOADING}>
+            disabled={status === STATUS.LOADING}
+          >
             LOGIN
-          </Button>
+          </button>
 
           {
             status === STATUS.LOADING ? (
 
-              // OVERLAY
-              <span>SPINNER LOADER</span>
+              <Overlay>
+
+                <Spinner />
+
+              </Overlay>
 
             ) : (
 
@@ -78,7 +77,7 @@ export const LoginPage = () => {
 
       </main>
 
-      {/* FOOTER */}
+      <Footer />
 
     </>
 

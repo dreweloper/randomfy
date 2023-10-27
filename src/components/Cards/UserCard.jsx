@@ -1,5 +1,8 @@
+import { Image } from '../Assets';
+import { Spinner } from '../Loading';
+import { Overlay } from '../../layouts';
 //TODO: PropTypes
-export const User = ({ user }) => {
+export const UserCard = ({ user }) => {
 
 
     return (
@@ -11,8 +14,11 @@ export const User = ({ user }) => {
             {
                 user.isLoading ? (
 
-                    // OVERLAY
-                    <span>SPINNER</span>
+                    <Overlay>
+
+                        <Spinner />
+
+                    </Overlay>
 
                 ) : (
 
@@ -20,7 +26,7 @@ export const User = ({ user }) => {
 
                         //TODO: Alert. Display a notification to indicate the error and (perhaps) provide an option to reload the call or refresh the page.
                         //? Display a fake avatar (and display name?) or skeleton loader in case of an error.
-                        <span>ERROR!</span>
+                        <p>ERROR</p>
 
                     ) : (
 
@@ -28,22 +34,19 @@ export const User = ({ user }) => {
 
                             <div className='userCard'>
 
-                                <div className='avatar'>
+                                <Image
+                                    className={'avatar'}
+                                    description={"User's profile image"}
+                                    source={user.avatar}
+                                />
 
-                                    <img src={user.avatar} alt="User's profile image" title="User's profile image" />
-
-                                </div>
-
-                                <span className="displayName">{user.display_name}</span>
+                                <span className="username">{user.display_name}</span>
 
                             </div>
 
                         )
-
                     )
-
                 )
-
             }
 
         </>

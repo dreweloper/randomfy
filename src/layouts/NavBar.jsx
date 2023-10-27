@@ -1,12 +1,19 @@
-import { TextButton, User } from "../components";
+import { useState } from 'react';
+import { UserCard } from '../components';
 import { useAuth, useUserStore } from "../hooks";
 
 export const NavBar = () => {
 
+    // REACT HOOK
+    const [isOpen, setIsOpen] = useState(false);
+
     // CUSTOM HOOKS
-    const { requestUserAuth, logout } = useAuth();
+    const { logout } = useAuth();
 
     const { user } = useUserStore();
+
+    // EVENT
+    const handleToggle = () => setIsOpen(prevState => !prevState);
 
 
     return (
@@ -22,27 +29,40 @@ export const NavBar = () => {
 
             <div className="container">
 
-                <User user={user} />
+                <UserCard user={user} />
 
-                {/* INSERT MENU BUTTON */}
+                <button onClick={handleToggle}>
 
-                <ul className="menuList">
+                    <span className="material-symbols-rounded">
+                        menu
+                    </span>
 
-                    <li className="menuItem">
+                </button>
 
-                        <TextButton
-                            //TODO: user.isLogged ?
-                            onClick={user.isEmpty ? requestUserAuth : logout}
-                        >
+                {
+                    isOpen && (
 
-                            {/* user.isLogged ? LOGOUT : LOGIN */}
-                            {user.isEmpty ? 'LOGIN' : 'LOGOUT'}
+                        <ul className="menuList">
 
-                        </TextButton>
+                            <li className="menuItem">
 
-                    </li>
+                                {/* TEXT BUTTON */}
+                                <button onClick={logout}>
 
-                </ul>
+                                    <span>LOGOUT</span>
+
+                                    <span className="material-symbols-rounded">
+                                        logout
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+                        </ul>
+
+                    )
+                }
 
             </div>
 
