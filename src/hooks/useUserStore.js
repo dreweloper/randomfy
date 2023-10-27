@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
 import { setError, setUser, startLoading } from "../store/slices";
 import { SPOTIFY_API_BASE_URL } from '../utils';
@@ -6,8 +6,6 @@ import { SPOTIFY_API_BASE_URL } from '../utils';
 export const useUserStore = (token) => {
 
     // REACT-REDUX HOOKS
-    const user = useSelector(state => state.user);
-
     const dispatch = useDispatch();
 
     // FUNCTIONS
@@ -27,9 +25,6 @@ export const useUserStore = (token) => {
         const method = 'GET';
 
         try {
-
-            // Prevents the 'useEffect' in 'HomePage' from making duplicate calls.
-            if (user.isLoading) return;
 
             dispatch(startLoading());
 

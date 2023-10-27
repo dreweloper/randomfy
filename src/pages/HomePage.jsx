@@ -45,7 +45,8 @@ export const HomePage = () => {
     const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the third useEffect, restarting the process of obtaining a new random track.
 
     // REACT HOOKS
-    useEffect(() => { //* Handles cookies and sets 'user' state.
+    //* Handles cookies and sets 'user' state.
+    useEffect(() => {
 
         // Removes the cookie after the login is successful.
         if (cookies.spotify_auth_state) removeCookie(STATE_KEY);
@@ -53,19 +54,24 @@ export const HomePage = () => {
         // Removes the cookie after the login is successful.
         if (cookies.code_verifier) removeCookie(CODE_VERIFIER_KEY);
 
-        // If the token expires ('cookies.access_token'), the useEffect will be triggered again ('cookies').
         !token ? requestRefreshedAccessToken() : user.isEmpty && getUserProfile();
 
-    }, [cookies, user]);
+    }, [cookies]); // When the token ('cookies.access_token') expires, it will be triggered again.
 
-    useEffect(() => { //* Sets 'playlist' state.
+    //* Sets 'playlist' state.
+    useEffect(() => {
 
         if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
 
     }, [user, playlist]);
 
-    useEffect(() => { //* Sets 'track' state.
+    //* Sets 'track' state.
+    useEffect(() => {
 
+        /**
+         * First condition: 'getRandomPlaylist' succeeds.
+         * Second condition: prevents unnecessary re-renders when navigating with web browser arrows.
+         */
         if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
 
     }, [playlist]);
