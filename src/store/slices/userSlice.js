@@ -31,11 +31,10 @@ export const userSlice = createSlice({
             state.display_name = payload.display_name;
             state.avatar = payload.avatar;
             state.isEmpty = false;
+            state.isLoading = false;
         },
         setError: (state) => {
             state.isError = true;
-        },
-        finishLoading: (state) => {
             state.isLoading = false;
         },
         // Logout (state reset)
@@ -54,6 +53,5 @@ export const {
     startLoading,
     setUser,
     setError,
-    finishLoading,
     deleteUser
 } = userSlice.actions;

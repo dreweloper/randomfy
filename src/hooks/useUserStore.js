@@ -1,22 +1,14 @@
-import { useEffect } from "react";
-import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyData } from '../api';
-import { finishLoading, setError, setUser, startLoading } from "../store/slices";
-import { ACCESS_TOKEN_KEY, SPOTIFY_API_BASE_URL } from '../utils';
+import { setError, setUser, startLoading } from "../store/slices";
+import { SPOTIFY_API_BASE_URL } from '../utils';
 
-export const useUserStore = () => {
+export const useUserStore = (token) => {
 
     // REACT-REDUX HOOKS
     const user = useSelector(state => state.user);
 
     const dispatch = useDispatch();
-
-    // REACT-COOKIE HOOK
-    const [cookies] = useCookies([ACCESS_TOKEN_KEY]);
-
-    // VARIABLES
-    const token = cookies.access_token;
 
     // FUNCTIONS
     /**
@@ -35,6 +27,9 @@ export const useUserStore = () => {
         const method = 'GET';
 
         try {
+
+            // Prevents the 'useEffect' in 'HomePage' from making duplicate calls.
+            if (user.isLoading) return;
 
             dispatch(startLoading());
 
@@ -55,27 +50,11 @@ export const useUserStore = () => {
 
             dispatch(setError());
 
-        } finally {
-
-            dispatch(finishLoading());
-
         };
 
     }; //!FUNC-GETUSERPROFILE
 
-    useEffect(() => {
 
-        /**
-         * This 'useEffect' should be triggered only once, during the initial loading of the 'user' state.
-         * First condition: the token is valid and not expired.
-         * Second condition: the 'user' state is empty, so the function will be invoked only once.
-         * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (token && user.isEmpty) getUserProfile();
-
-    }, [cookies]); // It will trigger again if the token has expired when the component is initially mounted.
-
-
-    return { user };
+    return { getUserProfile };
 
 };

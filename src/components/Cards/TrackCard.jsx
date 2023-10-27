@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Image } from '../Assets';
 import { AudioPlayer } from '../Media';
+import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP } from '../../utils';
 
-export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
+export const TrackCard = ({ playlist, token, track }) => {
+
+    // CUSTOM HOOKS
+    const { handleFollow } = usePlaylistStore(token);
+
+    const { handleLike } = useTrackStore(token);
 
 
     return (
@@ -38,14 +44,14 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
                     <nav className='trackNav'>
 
                         {/* OUTLINED BUTTON */}
-                        <button onClick={handleFollow}>
+                        <button onClick={() => handleFollow(playlist)}>
 
                             {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
 
                         </button>
 
                         {/* OUTLINED BUTTON */}
-                        <button onClick={handleLike}>
+                        <button onClick={() => handleLike(track)}>
 
                             <span className="material-symbols-rounded">
                                 favorite

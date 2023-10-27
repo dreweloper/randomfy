@@ -1,14 +1,13 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from '../helpers';
-import { isPlaylistFollowed, setPlaylist, setPlaylistUndone, setStatus } from '../store/slices';
+import { isPlaylistFollowed, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
 
 export const usePlaylistStore = (token) => {
 
     // REACT-REDUX HOOKS
-    const { playlist, user } = useSelector(state => state);
+    const user = useSelector(state => state.user);
 
     const dispatch = useDispatch();
 
@@ -53,9 +52,9 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-FETCHUSERRANDOMPLAYLIST
 
-    const checkIsPlaylistFollowed = async (playlistId) => {
+    const checkIsPlaylistFollowed = async (playlist_id) => {
 
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/followers/contains?ids=${user.id}`;
 
         const method = 'GET';
 
@@ -78,9 +77,6 @@ export const usePlaylistStore = (token) => {
         try {
 
             dispatch(setStatus(STATUS.LOADING));
-
-            // Reset the state so that the 'getRandomTrack' useEffect triggers after the 'getRandomPlaylist' process has completed ('isDone').
-            if (playlist.isDone) dispatch(setPlaylistUndone());
 
             const total = await fetchUserTotalPlaylists();
 
@@ -109,7 +105,7 @@ export const usePlaylistStore = (token) => {
      * @async
      * @function handleFollow
      */
-    const handleFollow = async () => {
+    const handleFollow = async (playlist) => {
 
         /**
          * @type {Object}
@@ -153,23 +149,7 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-HANDLEFOLLOW
 
-    useEffect(() => {
 
-        /**
-         * This 'useEffect' should only be triggered during the initial loading of the 'playlist' state.
-         * First condition: it will trigger for the first time, i.e., when the 'initialState' has not been modified.
-         * Second condition: it allows the 'user' state to load first, preventing errors in 'checkIsPlaylistFollowed' which depends on 'user.id'.
-         * Additionally, it prevents unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
-
-    }, [user]); // It will trigger once more after the initial component mount when the user is loaded.
-
-
-    return {
-        playlist,
-        getRandomPlaylist,
-        handleFollow
-    };
+    return { getRandomPlaylist, handleFollow };
 
 };
