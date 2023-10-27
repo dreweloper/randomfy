@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { UserCard } from '../components';
-import { useAuth, useUserStore } from "../hooks";
+import { useAuth } from "../hooks";
+import { useSelector } from 'react-redux';
 
 export const NavBar = () => {
 
     // REACT HOOK
     const [isOpen, setIsOpen] = useState(false);
 
-    // CUSTOM HOOKS
-    const { logout } = useAuth();
+    // REACT-REDUX HOOK
+    const user = useSelector(state => state.user);
 
-    const { user } = useUserStore();
+    // CUSTOM HOOK
+    const { logout } = useAuth();
 
     // EVENT
     const handleToggle = () => setIsOpen(prevState => !prevState);
