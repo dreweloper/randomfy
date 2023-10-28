@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from '../components';
+import { Spinner } from '../components';
 import { useAuth } from '../hooks';
+import { Footer, Overlay } from '../layouts';
 import { STATUS } from '../utils';
-import { NavBar } from '../layouts';
 
 export const LoginPage = () => {
 
@@ -17,8 +17,10 @@ export const LoginPage = () => {
   useEffect(() => {
 
     /**
-     * Search params are not empty. It indicates that the user has clicked the login button.
-     * Once the user accepts or denied the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
+     * If search params are not empty, it indicates that the user has clicked the login button.
+     * 
+     * When the user accepts or denies the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
+     * The callback contains two query parameters: 'code' (if accepted) or 'error' (if denied) and 'state'.
      */
     if (searchParams.size > 0) handleUserAuthResponse(searchParams);
 
@@ -36,13 +38,7 @@ export const LoginPage = () => {
 
     <>
 
-      <header>
-
-        <NavBar />
-
-      </header>
-
-      <main>
+      <main className='main'>
 
         <section className='hero'>
 
@@ -54,17 +50,22 @@ export const LoginPage = () => {
 
           </div>
 
-          <Button
+          <button
+            className='login-btn'
             onClick={requestUserAuth}
-            disabled={status === STATUS.LOADING}>
+            disabled={status === STATUS.LOADING}
+          >
             LOGIN
-          </Button>
+          </button>
 
           {
             status === STATUS.LOADING ? (
 
-              // OVERLAY
-              <span>SPINNER LOADER</span>
+              <Overlay>
+
+                <Spinner />
+
+              </Overlay>
 
             ) : (
 
@@ -78,7 +79,7 @@ export const LoginPage = () => {
 
       </main>
 
-      {/* FOOTER */}
+      <Footer />
 
     </>
 

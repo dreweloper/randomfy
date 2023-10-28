@@ -1,20 +1,22 @@
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpotifyData } from '../api';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
-import { deleteUser, resetPlaylistState, resetTrackState } from '../store/slices';
-import * as Constants from "../utils";
+import { resetPlaylistState, resetTrackState, resetUserState } from '../store/slices';
+import * as c from "../utils";
 
 export const useAuth = () => {
 
   // REACT HOOKS
-  const [status, setStatus] = useState(Constants.STATUS.IDLE);
+  const [status, setStatus] = useState(c.STATUS.IDLE);
 
   // REACT-COOKIE
-  const [cookies, setCookie, removeCookie] = useCookies([Constants.ACCESS_TOKEN_KEY, Constants.REFRESH_TOKEN_KEY]);
+  const [cookies, setCookie, removeCookie] = useCookies([c.ACCESS_TOKEN_KEY, c.REFRESH_TOKEN_KEY]);
 
-  // REACT-REDUX HOOK
+  // REACT-REDUX HOOKS
+  const { playlist, track, user } = useSelector(state => state);
+
   const dispatch = useDispatch();
 
   // FUNCTIONS
@@ -24,26 +26,26 @@ export const useAuth = () => {
 
       const codeVerifier = generateRandomString(128);
 
-      setCookie(Constants.CODE_VERIFIER_KEY, codeVerifier);
+      setCookie(c.CODE_VERIFIER_KEY, codeVerifier);
 
       const state = generateRandomString(16);
 
-      setCookie(Constants.STATE_KEY, state);
+      setCookie(c.STATE_KEY, state);
 
       const codeChallenge = await generateCodeChallenge(codeVerifier);
 
       const params = new URLSearchParams({
-        response_type: Constants.RESPONSE_TYPE,
-        client_id: Constants.CLIENT_ID,
-        scope: Constants.SCOPE,
-        redirect_uri: Constants.REDIRECT_URI,
-        state: state,
-        code_challenge_method: Constants.CODE_CHALLENGE_METHOD,
+        response_type: c.RESPONSE_TYPE,
+        client_id: c.CLIENT_ID,
+        scope: c.SCOPE,
+        redirect_uri: c.REDIRECT_URI,
+        state,
+        code_challenge_method: c.CODE_CHALLENGE_METHOD,
         code_challenge: codeChallenge,
         show_dialog: true
       });
 
-      window.location.href = `${Constants.SPOTIFY_AUTH_BASE_URL}/authorize?${params}`;
+      window.location.href = `${c.SPOTIFY_AUTH_BASE_URL}/authorize?${params}`;
 
     } catch (error) {
 
@@ -59,15 +61,19 @@ export const useAuth = () => {
      * The URL used to request the access token from the Spotify API endpoint.
      * @type {String}
      */
-    const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
+    const url = `${c.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
+    /**
+     * The HTTP method.
+     * @type {String}
+     */
     const method = 'POST';
 
     const data = {
-      grant_type: Constants.GRANT_TYPE.ACCESS_TOKEN,
-      code: code,
-      redirect_uri: Constants.REDIRECT_URI,
-      client_id: Constants.CLIENT_ID,
+      grant_type: c.GRANT_TYPE.ACCESS_TOKEN,
+      code,
+      redirect_uri: c.REDIRECT_URI,
+      client_id: c.CLIENT_ID,
       code_verifier: cookies.code_verifier
     };
 
@@ -75,9 +81,9 @@ export const useAuth = () => {
 
       const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
+      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
 
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
+      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
 
@@ -93,30 +99,34 @@ export const useAuth = () => {
      * The URL used to request the refreshed access token from the Spotify API endpoint.
      * @type {String}
      */
-    const url = `${Constants.SPOTIFY_AUTH_BASE_URL}/api/token`;
+    const url = `${c.SPOTIFY_AUTH_BASE_URL}/api/token`;
 
+    /**
+     * The HTTP method.
+     * @type {String}
+     */
     const method = 'POST';
 
     const data = {
-      grant_type: Constants.GRANT_TYPE.REFRESH_TOKEN,
+      grant_type: c.GRANT_TYPE.REFRESH_TOKEN,
       refresh_token: cookies.refresh_token,
-      client_id: Constants.CLIENT_ID
+      client_id: c.CLIENT_ID
     };
 
     try {
 
       const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
 
-      setCookie(Constants.ACCESS_TOKEN_KEY, access_token, { maxAge: Constants.MAX_AGE.ACCESS_TOKEN });
+      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
 
-      setCookie(Constants.REFRESH_TOKEN_KEY, refresh_token, { maxAge: Constants.MAX_AGE.REFRESH_TOKEN });
+      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
 
     } catch (error) {
 
       console.error(`Error: ${error.message}`);
 
-      // The status will inform the user that access was denied //! Status is not working
-      logout(Constants.STATUS.FAILED);
+      // The status will inform the user that access was denied //! Status is not working (try Redux 'process' state)
+      logout(c.STATUS.FAILED);
 
     };
 
@@ -126,7 +136,7 @@ export const useAuth = () => {
 
     try {
 
-      setStatus(Constants.STATUS.LOADING);
+      setStatus(c.STATUS.LOADING);
 
       /**
        * An object that represents the serialized query string from the Spotify API response obtained after user authorization.
@@ -152,35 +162,31 @@ export const useAuth = () => {
 
       await requestAccessToken(params.code);
 
-      setStatus(Constants.STATUS.SUCCEEDED);
+      setStatus(c.STATUS.SUCCEEDED);
 
     } catch (error) {
 
       console.error(`Error: ${error.message}`);
 
-      setStatus(Constants.STATUS.FAILED);
+      setStatus(c.STATUS.FAILED);
 
     };
 
   }; //!FUNC-HANDLEUSERAUTHRESPONSE
 
-  const logout = (status = Constants.STATUS.IDLE) => {
+  const logout = (status = c.STATUS.IDLE) => {
 
-    //TODO: if 'cookie.access_token' is not undefined
-    removeCookie(Constants.ACCESS_TOKEN_KEY);
+    if (cookies.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
 
-    //TODO: if 'cookie.refresh_token' is not undefined
-    removeCookie(Constants.REFRESH_TOKEN_KEY);
+    if (cookies.refresh_token) removeCookie(c.REFRESH_TOKEN_KEY);
 
-    //TODO: if 'user' state is not empty
-    dispatch(deleteUser());
+    if (!user.isEmpty) dispatch(resetUserState());
 
-    //TODO: if 'playlist' state is not empty
-    dispatch(resetPlaylistState());
+    if (!playlist.isEmpty) dispatch(resetPlaylistState());
 
-    //TODO: if 'track' state is not empty
-    dispatch(resetTrackState());
+    if (!track.isEmpty) dispatch(resetTrackState());
 
+    //TODO: reset or set 'status' prop of 'process' Redux state instead of using useState.
     setStatus(status);
 
   }; //!FUNC-HANDLELOGOUT

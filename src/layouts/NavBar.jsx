@@ -1,12 +1,25 @@
-import { TextButton, User } from "../components";
-import { useAuth, useUserStore } from "../hooks";
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { UserCard } from '../components';
+import { useAuth } from "../hooks";
 
 export const NavBar = () => {
 
-    // CUSTOM HOOKS
-    const { requestUserAuth, logout } = useAuth();
+    // REACT HOOK
+    const [isOpen, setIsOpen] = useState(false);
 
-    const { user } = useUserStore();
+    // REACT-REDUX HOOK
+    const user = useSelector(state => state.user);
+
+    // CUSTOM HOOK
+    const { logout } = useAuth();
+
+    // EVENT
+    /**
+     * Toggles the state between open and closed.
+     * @function handleToggle
+     */
+    const handleToggle = () => setIsOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
 
 
     return (
@@ -22,27 +35,40 @@ export const NavBar = () => {
 
             <div className="container">
 
-                <User user={user} />
+                <UserCard user={user} />
 
-                {/* INSERT MENU BUTTON */}
+                <button onClick={handleToggle}>
 
-                <ul className="menuList">
+                    <span className="material-symbols-rounded">
+                        menu
+                    </span>
 
-                    <li className="menuItem">
+                </button>
 
-                        <TextButton
-                            //TODO: user.isLogged ?
-                            onClick={user.isEmpty ? requestUserAuth : logout}
-                        >
+                {
+                    isOpen && (
 
-                            {/* user.isLogged ? LOGOUT : LOGIN */}
-                            {user.isEmpty ? 'LOGIN' : 'LOGOUT'}
+                        <ul className="menuList">
 
-                        </TextButton>
+                            <li className="menuItem">
 
-                    </li>
+                                {/* TEXT BUTTON */}
+                                <button onClick={logout}>
 
-                </ul>
+                                    <span>LOGOUT</span>
+
+                                    <span className="material-symbols-rounded">
+                                        logout
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+                        </ul>
+
+                    )
+                }
 
             </div>
 

@@ -1,15 +1,12 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from "../api";
-import { generateRandomNumber } from "../helpers";
+import { generateRandomNumber, mapArtists } from "../helpers";
 import { isTrackLiked, setStatus, setTrack } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS } from "../utils";
 
 export const useTrackStore = (token) => {
 
-    // REACT-REDUX HOOKS
-    const { playlist, process: { status }, track } = useSelector(state => state);
-
+    // REACT-REDUX HOOK
     const dispatch = useDispatch();
 
     // FUNCTIONS
@@ -17,18 +14,18 @@ export const useTrackStore = (token) => {
      * Get full details of the items of a playlist owned by a Spotify user.
      * @async
      * @function fetchPlaylistItemsById
-     * @param {String} id - The Spotify ID of the playlist.
-     * @param {Number} offset - A random offset for selecting a playlist.
+     * @param {String} playlist_id - The Spotify ID of the playlist.
+     * @param {Number} randomOffset - A random offset for selecting a playlist.
      * @returns {Promise<Object>} A promise that resolves to an object containing details of the playlist items.
      * @throws {Error} Throws an error if it fails to obtain the playlist items.
      */
-    const fetchPlaylistItemsById = async (id, offset) => {
+    const fetchPlaylistItemsById = async (playlist_id, randomOffset) => {
 
         /**
          * The URL for the get playlist items Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${id}/tracks?limit=1&offset=${offset}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/tracks?limit=1&offset=${randomOffset}`;
 
         const method = 'GET';
 
@@ -49,7 +46,7 @@ export const useTrackStore = (token) => {
                             name: album
                         },
                         name,
-                        artists,
+                        artists: arrArtists,
                         external_urls: {
                             spotify: track_url
                         },
@@ -57,6 +54,12 @@ export const useTrackStore = (token) => {
                     }
                 }]
             } = await fetchSpotifyData({ url, method, token });
+
+            /**
+             * The artists names.
+             * @type {String}
+             */
+            const artists = mapArtists(arrArtists); // There can be more than one artist.
 
             return { track_id, artwork, album, name, artists, track_url, preview_url };
 
@@ -72,17 +75,17 @@ export const useTrackStore = (token) => {
      * Check if the track is already saved in the current Spotify user's 'Your Music' library.
      * @async
      * @function checkIsTrackLiked
-     * @param {String} id - The Spotify ID of the track.
+     * @param {String} track_id - The Spotify ID of the track.
      * @returns {Promise<Object>} A promise that resolves to an object representing the result of the check.
      * @throws {Error} Throws an error if it fails to check if user has already saved the track.
      */
-    const checkIsTrackLiked = async (id) => {
+    const checkIsTrackLiked = async (track_id) => {
 
         /**
          * The URL for the check user's saved tracks Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_API_BASE_URL}/v1/me/tracks/contains?ids=${id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/me/tracks/contains?ids=${track_id}`;
 
         const method = 'GET';
 
@@ -104,10 +107,10 @@ export const useTrackStore = (token) => {
      * Retrieves a random track from a random playlist.
      * @async
      * @function getRandomTrack
-     * @param {String} id - The Spotify ID of the playlist.
-     * @param {Number} total - The total number of tracks in the playlist with the provided ID.
+     * @param {String} playlist_id - The Spotify ID of the playlist.
+     * @param {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
      */
-    const getRandomTrack = async (id, total) => {
+    const getRandomTrack = async (playlist_id, total_tracks) => {
 
         try {
 
@@ -115,9 +118,9 @@ export const useTrackStore = (token) => {
              * Calculate a random offset for selecting an item (track object).
              * @type {Number}
              */
-            const randomOffset = generateRandomNumber(total);
+            const randomOffset = generateRandomNumber(total_tracks);
 
-            const items = await fetchPlaylistItemsById(id, randomOffset);
+            const items = await fetchPlaylistItemsById(playlist_id, randomOffset);
 
             /**
              * Value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
@@ -146,7 +149,7 @@ export const useTrackStore = (token) => {
      * @async
      * @function handleLike
      */
-    const handleLike = async () => {
+    const handleLike = async (track) => {
 
         /**
          * @type {Object}
@@ -192,28 +195,7 @@ export const useTrackStore = (token) => {
 
     }; //!FUNC-HANDLELIKE
 
-    // REACT HOOK
-    useEffect(() => {
 
-        /**
-         * @type {Object}
-         * @prop {String} playlist_id - The Spotify ID of the playlist.
-         * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
-         */
-        const { playlist_id, total_tracks } = playlist;
-
-        /**
-         * First condition: 'getRandomPlaylist' succeeds.
-         * Second condition: prevents unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
-
-    }, [playlist]);
-
-
-    return {
-        track,
-        handleLike
-    };
+    return { getRandomTrack, handleLike };
 
 };

@@ -1,27 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 /**
+ * Initial state for the track data.
  * @type {Object}
  * @prop {String} track_id - The Spotify ID for the track.
- * @prop {String} album_cover - The source URL of the album cover image.
+ * @prop {String} artwork - The source URL of the cover art for the album.
  * @prop {String} name - The name of the track.
- * @prop {Array} artists - The artists who performed the track.
+ * @prop {String} artists - The artists who performed the track.
  * @prop {String} album - The name of the album.
- * @prop {String} track_url - 
- * @prop {String | null} preview_url - A link to a 30 second preview (MP3 format) of the track. Can be 'null'.
- * @prop {Boolean} isLiked - Indicates whether the track is already saved in the current Spotify user's 'Your Music' library.
- * @prop {Boolean} isEmpty - Indicates whether the track is empty.
+ * @prop {String} track_url - The Spotify URL for the track.
+ * @prop {String | null} preview_url - A link to a 30 second preview (MP3 format) of the track. Can be 'null' if it is not available.
+ * @prop {Boolean} isLiked - Indicates whether the track is saved in the current Spotify user's 'Your Music' library.
+ * @prop {Boolean} isEmpty - Indicates whether the track data is empty.
  */
 const initialState = {
     track_id: '',
     artwork: '',
     name: '',
-    artists: [],
+    artists: '',
     album: '',
     track_url: '',
     preview_url: '',
     isLiked: false,
-    isEmpty: true
+    isEmpty: true,
 };
 
 export const trackSlice = createSlice({
@@ -32,13 +33,12 @@ export const trackSlice = createSlice({
             state.track_id = payload.track_id;
             state.artwork = payload.artwork;
             state.name = payload.name;
-            if (state.artists.length > 0) state.artists = []; // State reset after the first successful load.
-            payload.artists.forEach(artist => state.artists.push(artist.name)); // There can be more than one artist.
+            state.artists = payload.artists;
             state.album = payload.album;
             state.track_url = payload.track_url;
             state.preview_url = payload.preview_url;
             state.isLiked = payload.isLiked;
-            if (state.isEmpty) state.isEmpty = false; // Ensures that the track is displayed only when it is not empty.
+            if (state.isEmpty) state.isEmpty = false; // Set to 'false' only on the first successful load to conditionally render 'TrackCard' when 'track' state props are not empty.
         },
         isTrackLiked: (state, { payload }) => {
             state.isLiked = payload;
@@ -47,12 +47,12 @@ export const trackSlice = createSlice({
             state.track_id = '';
             state.artwork = '';
             state.name = '';
-            state.artist = [];
+            state.artists = '';
             state.album = '';
             state.track_url = '';
             state.preview_url = '';
-            if (state.isLiked) state.isLiked = false;
-            if (!state.isEmpty) state.isEmpty = true;
+            state.isLiked = false;
+            state.isEmpty = true;
         },
     }
 });

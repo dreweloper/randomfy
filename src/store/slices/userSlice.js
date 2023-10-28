@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 /**
+ * Initial state the user data.
  * @type {Object}
  * @prop {String} id - The Spotify user ID for the user.
- * @prop {String | null} display_name - The name displayed on the user's profile. 'null' if not available.
+ * @prop {String | null} display_name - The name displayed on the user's profile. Can be 'null' if it is not available.
  * @prop {String} avatar - The user's profile image.
  * @prop {Boolean} isLoading - Indicates whether user data is currently being loaded.
  * @prop {Boolean} isError - Indicates whether an error has occurred while loading user data.
- * @prop {Boolean} isEmpty - Indicates whether the user is not empty.
+ * @prop {Boolean} isEmpty - Indicates whether the user data is not empty.
  */
 const initialState = {
     id: '',
@@ -31,21 +32,20 @@ export const userSlice = createSlice({
             state.display_name = payload.display_name;
             state.avatar = payload.avatar;
             state.isEmpty = false;
+            state.isLoading = false;
         },
         setError: (state) => {
             state.isError = true;
-        },
-        finishLoading: (state) => {
             state.isLoading = false;
         },
-        // Logout (state reset)
-        deleteUser: (state) => {
+        // Logout
+        resetUserState: (state) => {
             state.id = '';
             state.display_name = '';
             state.avatar = '';
-            if (state.isLoading) state.isLoading = false;
-            if (state.isError) state.isError = false;
-            if (!state.isEmpty) state.isEmpty = true;
+            state.isLoading = false;
+            state.isError = false;
+            state.isEmpty = true;
         },
     }
 });
@@ -54,6 +54,5 @@ export const {
     startLoading,
     setUser,
     setError,
-    finishLoading,
-    deleteUser
+    resetUserState
 } = userSlice.actions;

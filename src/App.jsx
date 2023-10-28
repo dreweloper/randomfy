@@ -1,12 +1,8 @@
 import { AppRouter } from './routes';
 
-function App () {
+function App() {
 
-  return (
-
-      <AppRouter />
-
-  );
+  return <AppRouter />
 
 };
 
