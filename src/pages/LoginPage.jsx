@@ -17,8 +17,10 @@ export const LoginPage = () => {
   useEffect(() => {
 
     /**
-     * Search params are not empty. It indicates that the user has clicked the login button.
-     * Once the user accepts or denied the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
+     * If search params are not empty, it indicates that the user has clicked the login button.
+     * 
+     * When the user accepts or denies the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
+     * The callback contains two query parameters: 'code' (if accepted) or 'error' (if denied) and 'state'.
      */
     if (searchParams.size > 0) handleUserAuthResponse(searchParams);
 
@@ -49,7 +51,7 @@ export const LoginPage = () => {
           </div>
 
           <button
-            className='login'
+            className='login-btn'
             onClick={requestUserAuth}
             disabled={status === STATUS.LOADING}
           >

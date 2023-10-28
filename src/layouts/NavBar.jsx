@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { UserCard } from '../components';
 import { useAuth } from "../hooks";
-import { useSelector } from 'react-redux';
 
 export const NavBar = () => {
 
@@ -15,7 +15,11 @@ export const NavBar = () => {
     const { logout } = useAuth();
 
     // EVENT
-    const handleToggle = () => setIsOpen(prevState => !prevState);
+    /**
+     * Toggles the state between open and closed.
+     * @function handleToggle
+     */
+    const handleToggle = () => setIsOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
 
 
     return (

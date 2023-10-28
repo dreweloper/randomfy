@@ -10,7 +10,7 @@ import { ACCESS_TOKEN_KEY, CODE_VERIFIER_KEY, REFRESH_TOKEN_KEY, STATE_KEY, STAT
 export const HomePage = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY, CODE_VERIFIER_KEY, REFRESH_TOKEN_KEY, STATE_KEY]); // Dependencies: cookie names that the component depend on or that should trigger a re-render.
+    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the component depend on or that should trigger a re-render.
 
     // REACT-REDUX HOOKS
     const { playlist, process: { status }, track, user } = useSelector(state => state);
@@ -42,25 +42,30 @@ export const HomePage = () => {
     const { getRandomTrack } = useTrackStore(token);
 
     // EVENT
-    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the third useEffect, restarting the process of obtaining a new random track.
+    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the second useEffect, restarting the process of obtaining a new random track.
 
     // REACT HOOKS
     //* Handles cookies and sets 'user' state.
     useEffect(() => {
 
-        // Removes the cookie after the login is successful.
+        // Once the login is successful, the cookie will be removed.
         if (cookies.spotify_auth_state) removeCookie(STATE_KEY);
 
-        // Removes the cookie after the login is successful.
+        // Once the login is successful, the cookie will be removed.
         if (cookies.code_verifier) removeCookie(CODE_VERIFIER_KEY);
 
-        !token ? requestRefreshedAccessToken() : user.isEmpty && getUserProfile();
+        token ? user.isEmpty && getUserProfile() : requestRefreshedAccessToken();
 
     }, [cookies]); // When the token ('cookies.access_token') expires, it will be triggered again.
 
     //* Sets 'playlist' state.
     useEffect(() => {
 
+        /**
+         * If the token is expired during the initial page load, the user data will be empty.
+         * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
+         * From there, the useEffect will trigger every time the user clicks the 'RANDOM TRACK' button that modifies the 'isDone' prop of the 'playlist' state.
+         */
         if (!user.isEmpty && !playlist.isDone) getRandomPlaylist(user.id);
 
     }, [user, playlist]);
@@ -69,8 +74,8 @@ export const HomePage = () => {
     useEffect(() => {
 
         /**
-         * First condition: 'getRandomPlaylist' succeeds.
-         * Second condition: prevents unnecessary re-renders when navigating with web browser arrows.
+         * The conditions will both be met if 'getRandomPlaylist' succeeds.
+         * This helps prevent unnecessary re-renders when navigating with web browser arrows.
          */
         if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
 

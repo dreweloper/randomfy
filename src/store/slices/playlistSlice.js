@@ -1,16 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 /**
+ * Initial state for the playlist data.
  * @type {Object}
  * @prop {String} playlist_id - The Spotify ID of the playlist.
- * @prop {Number} total_tracks - Number of tracks in the playlist.
- * @prop {Boolean} isFollowed - Indicates whether the user follows the playlist with the provided ID.
- * @prop {Boolean} isDone - Indicates whether the process is completed.
+ * @prop {Number} total_tracks - The total number of tracks in the playlist.
+ * @prop {Boolean} isFollowed - Indicates if the user is following the playlist with the specified ID.
+ * @prop {Boolean} isEmpty - Indicates whether the playlist data is empty.
+ * @prop {Boolean} isDone - Indicates whether the process of retrieving a random playlist has been completed.
  */
 const initialState = {
     playlist_id: '',
     total_tracks: 0,
     isFollowed: false,
+    isEmpty: true,
     isDone: false
 };
 
@@ -23,6 +26,7 @@ export const playlistSlice = createSlice({
             state.playlist_id = payload.playlist_id;
             state.total_tracks = payload.total_tracks;
             state.isFollowed = payload.isFollowed;
+            if (state.isEmpty) state.isEmpty = false; // Set to 'false' only on the first successful load.
             state.isDone = true;
         },
         isPlaylistFollowed: (state, { payload }) => {
@@ -34,8 +38,9 @@ export const playlistSlice = createSlice({
         resetPlaylistState: (state) => {
             state.playlist_id = '';
             state.total_tracks = 0;
-            if (state.isFollowed) state.isFollowed = false;
-            if (state.isDone) state.isDone = false;
+            state.isFollowed = false;
+            state.isEmpty = true;
+            state.isDone = false;
         }
     }
 

@@ -36,7 +36,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:7.33.2"],\
             ["eslint-plugin-react-hooks", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:4.6.0"],\
             ["eslint-plugin-react-refresh", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:0.4.3"],\
-            ["query-string", "npm:8.1.0"],\
             ["react", "npm:18.2.0"],\
             ["react-cookie", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:6.1.1"],\
             ["react-dom", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:18.2.0"],\
@@ -1456,15 +1455,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["decode-uri-component", [\
-        ["npm:0.4.1", {\
-          "packageLocation": "./.yarn/cache/decode-uri-component-npm-0.4.1-61db093ef6-0473924860.zip/node_modules/decode-uri-component/",\
-          "packageDependencies": [\
-            ["decode-uri-component", "npm:0.4.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["deep-is", [\
         ["npm:0.1.4", {\
           "packageLocation": "./.yarn/cache/deep-is-npm-0.1.4-88938b5a67-edb65dd0d7.zip/node_modules/deep-is/",\
@@ -1998,15 +1988,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["file-entry-cache", "npm:6.0.1"],\
             ["flat-cache", "npm:3.1.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["filter-obj", [\
-        ["npm:5.1.0", {\
-          "packageLocation": "./.yarn/cache/filter-obj-npm-5.1.0-a1ae61a7db-ba7c24d9b2.zip/node_modules/filter-obj/",\
-          "packageDependencies": [\
-            ["filter-obj", "npm:5.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3459,18 +3440,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["query-string", [\
-        ["npm:8.1.0", {\
-          "packageLocation": "./.yarn/cache/query-string-npm-8.1.0-e74248e410-16fe49ab71.zip/node_modules/query-string/",\
-          "packageDependencies": [\
-            ["query-string", "npm:8.1.0"],\
-            ["decode-uri-component", "npm:0.4.1"],\
-            ["filter-obj", "npm:5.1.0"],\
-            ["split-on-first", "npm:3.0.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["queue-microtask", [\
         ["npm:1.2.3", {\
           "packageLocation": "./.yarn/cache/queue-microtask-npm-1.2.3-fcc98e4e2d-b676f8c040.zip/node_modules/queue-microtask/",\
@@ -3493,7 +3462,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-react", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:7.33.2"],\
             ["eslint-plugin-react-hooks", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:4.6.0"],\
             ["eslint-plugin-react-refresh", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:0.4.3"],\
-            ["query-string", "npm:8.1.0"],\
             ["react", "npm:18.2.0"],\
             ["react-cookie", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:6.1.1"],\
             ["react-dom", "virtual:6ad0690ae450c49fa76a94b7d331e05d4e0234c66e0b26db68bab24497754e513dbdf2326f5c3402812cced468c996cc00b235822ef4b2913a7dfc9a7294cd71#npm:18.2.0"],\
@@ -4013,15 +3981,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/source-map-js-npm-1.0.2-ee4f9f9b30-c049a7fc4d.zip/node_modules/source-map-js/",\
           "packageDependencies": [\
             ["source-map-js", "npm:1.0.2"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["split-on-first", [\
-        ["npm:3.0.0", {\
-          "packageLocation": "./.yarn/cache/split-on-first-npm-3.0.0-3b993e48ae-75dc27ecba.zip/node_modules/split-on-first/",\
-          "packageDependencies": [\
-            ["split-on-first", "npm:3.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\

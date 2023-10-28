@@ -7,8 +7,15 @@
  * @function formatTime
  * @param {Number} time - The number of seconds to format.
  * @returns {String} A string representation of the seconds in "mm:ss" format.
+ * @throws {Error} Throws an error if the provided time is not a number.
  */
 export const formatTime = (time) => {
+
+    if (isNaN(parseInt(time))) {
+
+        throw new Error('The parameter "time" must be a valid number.');
+
+    };
 
     /**
      * The integer part of the time, obtained by removing any fractional digits.

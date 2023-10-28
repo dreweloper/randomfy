@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { STATUS } from '../../utils';
 
 /**
+ * Initial state for the core app feature process status.
  * @type {Object}
  * @prop {String} status - The process status of the core app feature: generating a random track from a user's random playlist. Can be one of the following: 'idle', 'loading', 'succeed', or 'failed'.
  */
