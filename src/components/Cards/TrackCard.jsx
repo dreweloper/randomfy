@@ -65,8 +65,13 @@ export const TrackCard = ({ playlist, token, track }) => {
                             target={DESKTOP ? '_blank' : '_self'}
                         >
 
-                            {/* 'PLAY ON' span + Spotify logo image */}
-                            PLAY ON SPOTIFY
+                            <span>PLAY ON</span>
+
+                            <Image
+                                className={'spotifyLogo'}
+                                description={'Spotify Logo'}
+                                source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
+                            />
 
                         </Link>
 
