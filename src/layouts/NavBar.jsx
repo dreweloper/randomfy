@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { UserCard } from '../components';
-import { useAuth } from "../hooks";
+import { useAuth } from '../hooks';
+import styles from '../sass/layouts/_NavBar.module.scss';
 
 export const NavBar = () => {
 
@@ -24,22 +25,24 @@ export const NavBar = () => {
 
     return (
 
-        <nav>
+        <nav className={styles.nav}>
 
-            <div className="logo">
+            <div className={styles.logo}>
 
                 {/* IMG */}
-                <span>RANDOMFY LOGO</span>
+                <span>RANDOMFY</span>
 
             </div>
 
-            <div className="container">
+            <div className={styles.container}>
 
                 <UserCard user={user} />
 
-                <button onClick={handleToggle}>
+                <button
+                    className={styles.toggleBtn}
+                    onClick={handleToggle}>
 
-                    <span className="material-symbols-rounded">
+                    <span className={`${styles.menuIcon} material-symbols-rounded`}>
                         menu
                     </span>
 
@@ -48,18 +51,18 @@ export const NavBar = () => {
                 {
                     isOpen && (
 
-                        <ul className="menuList">
+                        <ul className={styles.menuList}>
 
-                            <li className="menuItem">
+                            <li className={styles.menuItem}>
 
-                                {/* TEXT BUTTON */}
+                                {/* ICON + TEXT BUTTON */}
                                 <button onClick={logout}>
 
-                                    <span>LOGOUT</span>
-
-                                    <span className="material-symbols-rounded">
+                                    <span className={`${styles.logoutIcon} material-symbols-rounded`}>
                                         logout
                                     </span>
+
+                                    <span className={styles.btnText}>LOGOUT</span>
 
                                 </button>
 
