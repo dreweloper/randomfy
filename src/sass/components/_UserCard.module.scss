@@ -1,0 +1,35 @@
+@use '../utils' as *;
+
+.card {
+    @include displayFlex(row, center, center);
+    width: fit-content;
+    padding: 8px;
+    gap: 8px;
+
+    .avatar {
+        @include displayFlex(row, center, center);
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+            object-fit: contain;
+        }
+    }
+
+    .username {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 992px) {
+
+    .card {
+
+        .username {
+            display: block;
+            font-size: var(--fs-xs);
+        }
+    }
+
+}
