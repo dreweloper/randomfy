@@ -1,72 +1,81 @@
 @use '../utils' as *;
 
-// VARIABLES
-$navbar-size: 80px;
-
 .nav {
     position: relative;
     @include displayFlex(row, center, space-between);
     width: 100%;
     max-width: 1200px;
-    height: $navbar-size;
+    height: 80px;
     padding: 8px;
-    background-color: $primary-900;
+    border-bottom: 1px solid $primary-900;
+    background-color: $primary-950;
 
     .logo {
         font-size: var(--fs-sm);
+        padding: 8px;
     }
 
     .container {
         @include displayFlex(row, center, flex-end);
-        width: 100%;
-        overflow: hidden;
-    }
+        width: fit-content;
 
-    // USER CARD
+        // USER CARD
 
-    .toggleBtn {
-        @include displayFlex(row, center, center);
-        
-        .menuIcon {
-            font-size: var(--fs-xl);
-            font-weight: 300;
-        }
-    }
-
-    .menuList {
-        position: absolute;
-        top: $navbar-size; right: 0;
-        @include displayFlex(column, center, center);
-        width: 100%;
-        min-height: 100px;
-        padding: 8px;
-        border: 1px solid $secondary-50;
-        background-color: $primary-900;
-
-        .menuItem {
+        .menuBtn {
             @include displayFlex(row, center, center);
-            width: 100%;
-            min-height: 80px;
-            background-color: $primary-900;
-
-            button {
-                @include displayFlex(row, center, center);
-                width: 100%;
-
-                > * {
-                    margin: 0 2px;
-                }
-
-                .logoutIcon {
-                    font-size: var(--fs-md);
-                    font-weight: 300;
-                    color: $secondary-300;
-                }
-
-                .btnText {
-                    font-size: var(--fs-xs);
-                }
+            
+            .menuIcon {
+                font-size: var(--fs-md);
+                font-weight: 400;
             }
         }
+
+        .list {
+            position: absolute;
+            top: 80px; // .nav height size
+            right: 0;
+            @include displayFlex(column, center, center);
+            width: 100%;
+            min-height: fit-content;
+            padding: 16px;
+            background-color: rgba(25, 20, 20, 0.8);
+    
+            .item {
+                @include displayFlex(row, center, center);
+                width: 100%;
+    
+                .logoutBtn {
+                    @include displayFlex(row, center, center);
+                    width: 100%;
+                    height: 50px;
+                    gap: 4px;
+                    border-radius: 4px;
+                    background-color: $primary-400;
+                    overflow: hidden;
+    
+                    .logoutIcon {
+                        font-size: var(--fs-md);
+                        font-weight: 300;
+                        color: $primary-700;
+                    }
+    
+                    .text {
+                        font-size: var(--fs-xs);
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        letter-spacing: 1.25px;
+                        color: $primary-950;
+                    }
+
+                    &:hover {
+                        background-color: $primary-300;
+                    }
+
+                    &:active {
+                        background-color: $primary-500;
+                    }
+                }
+            }
+        }    
     }
 }

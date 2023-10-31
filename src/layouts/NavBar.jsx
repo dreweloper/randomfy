@@ -39,11 +39,11 @@ export const NavBar = () => {
                 <UserCard user={user} />
 
                 <button
-                    className={styles.toggleBtn}
+                    className={styles.menuBtn}
                     onClick={handleToggle}>
 
                     <span className={`${styles.menuIcon} material-symbols-rounded`}>
-                        menu
+                        expand_more
                     </span>
 
                 </button>
@@ -51,18 +51,18 @@ export const NavBar = () => {
                 {
                     isOpen && (
 
-                        <ul className={styles.menuList}>
+                        <ul className={styles.list}>
 
-                            <li className={styles.menuItem}>
+                            <li className={styles.item}>
 
                                 {/* ICON + TEXT BUTTON */}
-                                <button onClick={logout}>
+                                <button className={styles.logoutBtn} onClick={logout}>
 
                                     <span className={`${styles.logoutIcon} material-symbols-rounded`}>
                                         logout
                                     </span>
 
-                                    <span className={styles.btnText}>LOGOUT</span>
+                                    <span className={styles.text}>Logout</span>
 
                                 </button>
 
