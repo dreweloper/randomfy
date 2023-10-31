@@ -1,6 +1,7 @@
 import { Image } from '../Assets';
 import { Spinner } from '../Loading';
 import { Overlay } from '../../layouts';
+import styles from '../../sass/components/_UserCard.module.scss';
 //TODO: PropTypes
 export const UserCard = ({ user }) => {
 
@@ -32,15 +33,15 @@ export const UserCard = ({ user }) => {
 
                         !user.isEmpty && (
 
-                            <div className='userCard'>
+                            <div className={styles.card}>
 
                                 <Image
-                                    className={'avatar'}
+                                    className={styles.avatar}
                                     description={"User's profile image"}
                                     source={user.avatar}
                                 />
 
-                                <span className="username">{user.display_name}</span>
+                                <span className={styles.username}>{user.display_name}</span>
 
                             </div>
 
