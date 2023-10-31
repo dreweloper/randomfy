@@ -1,7 +1,7 @@
-@use '../utils/' as *;
+@use '../utils' as *;
 
-// SASS VARIABLES
-$navbar-size: var(--space-xxl);
+// VARIABLES
+$navbar-size: 80px;
 
 .nav {
     position: relative;
@@ -9,8 +9,8 @@ $navbar-size: var(--space-xxl);
     width: 100%;
     max-width: 1200px;
     height: $navbar-size;
-    padding: var(--space-xs);
-    background-color: #2E2E2E;
+    padding: 8px;
+    background-color: $primary-900;
 
     .logo {
         background-color: blue;
@@ -28,7 +28,7 @@ $navbar-size: var(--space-xxl);
         @include displayFlex(row, center, center);
         
         .menuIcon {
-            font-size: var(--l-font-size);
+            font-size: var(--fs-xl);
             font-weight: 300;
         }
     }
@@ -38,15 +38,15 @@ $navbar-size: var(--space-xxl);
         top: $navbar-size; right: 0;
         @include displayFlex(column, center, center);
         width: 100%;
-        min-height: var(--space-xxl);
-        padding: var(--space-xs);
+        min-height: 100px;
+        padding: 8px;
         border: 1px solid $secondary-50;
-        background-color: #2E2E2E;
+        background-color: $primary-900;
 
         .menuItem {
             @include displayFlex(row, center, center);
             width: 100%;
-            min-height: var(--space-lg);
+            min-height: 80px;
             background-color: $primary-900;
 
             button {
@@ -58,13 +58,13 @@ $navbar-size: var(--space-xxl);
                 }
 
                 .logoutIcon {
-                    font-size: var(--m-font-size);
+                    font-size: var(--fs-md);
                     font-weight: 300;
                     color: $secondary-300;
                 }
 
                 .btnText {
-                    font-size: var(--xs-font-size);
+                    font-size: var(--fs-xs);
                 }
             }
         }
