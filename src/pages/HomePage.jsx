@@ -6,6 +6,7 @@ import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from '../hooks
 import { Footer, NavBar } from '../layouts';
 import { setPlaylistUndone } from '../store/slices';
 import { ACCESS_TOKEN_KEY, CODE_VERIFIER_KEY, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
+import styles from '../sass/pages/_HomePage.module.scss';
 
 export const HomePage = () => {
 
@@ -86,13 +87,9 @@ export const HomePage = () => {
 
         <>
 
-            <header>
+            <NavBar />
 
-                <NavBar />
-
-            </header>
-
-            <main className='main'>
+            <main className={styles.main}>
 
                 <section className='displayTrack'>
 

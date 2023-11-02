@@ -7,7 +7,7 @@ import styles from '../sass/layouts/_NavBar.module.scss';
 export const NavBar = () => {
 
     // REACT HOOK
-    const [isOpen, setIsOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // REACT-REDUX HOOK
     const user = useSelector(state => state.user);
@@ -20,62 +20,68 @@ export const NavBar = () => {
      * Toggles the state between open and closed.
      * @function handleToggle
      */
-    const handleToggle = () => setIsOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
+    const handleToggle = () => setIsMenuOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
 
 
     return (
 
-        <nav className={styles.nav}>
+        <>
 
-            <div className={styles.logo}>
+            <nav className={styles.nav}>
 
-                {/* IMG */}
-                <span>RANDOMFY</span>
+                {/* This wrapper is the key to enabling the slide-in and slide-out transition of the menu ('z-index'). */}
+                <div className={styles.wrapper}>
 
-            </div>
+                    <div className={styles.logo}>
 
-            <div className={styles.container}>
+                        {/* IMG */}
+                        <span>RANDOMFY</span>
 
-                <UserCard user={user} />
+                    </div>
 
-                <button
-                    className={styles.toggleBtn}
-                    onClick={handleToggle}>
+                    <div className={styles.container}>
 
-                    <span className={`${styles.menuIcon} material-symbols-rounded`}>
-                        menu
-                    </span>
+                        <UserCard user={user} />
 
-                </button>
+                        {/* NON DESKTOP MENU BUTTON */}
+                        <button
+                            className={styles.menuBtn}
+                            onClick={handleToggle}>
 
-                {
-                    isOpen && (
+                            <span className={`${styles.menuIcon} material-symbols-rounded`}>
+                                expand_more
+                            </span>
 
-                        <ul className={styles.menuList}>
+                        </button>
 
-                            <li className={styles.menuItem}>
+                        {/* DESKTOP LOGOUT BUTTON */}
+                        <button className={styles.logoutBtn} onClick={logout}>Logout</button>
 
-                                {/* ICON + TEXT BUTTON */}
-                                <button onClick={logout}>
+                    </div>
 
-                                    <span className={`${styles.logoutIcon} material-symbols-rounded`}>
-                                        logout
-                                    </span>
+                    <ul className={`${styles.menu} ${isMenuOpen && styles.menuExpanded}`}>
 
-                                    <span className={styles.btnText}>LOGOUT</span>
+                        <li className={styles.item}>
 
-                                </button>
+                            <button onClick={logout}>
 
-                            </li>
+                                <span className={`${styles.logoutIcon} material-symbols-rounded`}>
+                                    logout
+                                </span>
 
-                        </ul>
+                                <span className={styles.text}>Logout</span>
 
-                    )
-                }
+                            </button>
 
-            </div>
+                        </li>
 
-        </nav>
+                    </ul>
+
+                </div>
+
+            </nav>
+
+        </>
 
     );
 

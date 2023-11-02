@@ -1,72 +1,153 @@
 @use '../utils' as *;
 
-// VARIABLES
-$navbar-size: 80px;
+// SASS VARIABLES
+$navbar-height: 80px;
 
 .nav {
-    position: relative;
-    @include displayFlex(row, center, space-between);
+    position: fixed;
+    top: 0;
+    @include displayFlex(row, center, center);
     width: 100%;
-    max-width: 1200px;
-    height: $navbar-size;
-    padding: 8px;
-    background-color: $primary-900;
+    height: $navbar-height;
 
-    .logo {
-        font-size: var(--fs-sm);
-    }
-
-    .container {
-        @include displayFlex(row, center, flex-end);
+    .wrapper {
+        @include displayFlex(row, center, space-between);
         width: 100%;
-        overflow: hidden;
-    }
+        max-width: 1200px;
+        height: 100%;
+        background-color: $primary-950;
+        border-bottom: 1px solid $primary-900;
 
-    // USER CARD
-
-    .toggleBtn {
-        @include displayFlex(row, center, center);
-        
-        .menuIcon {
-            font-size: var(--fs-xl);
-            font-weight: 300;
+        .logo {
+            font-size: var(--fs-sm);
+            margin: 0 16px;
         }
-    }
 
-    .menuList {
-        position: absolute;
-        top: $navbar-size; right: 0;
-        @include displayFlex(column, center, center);
-        width: 100%;
-        min-height: 100px;
-        padding: 8px;
-        border: 1px solid $secondary-50;
-        background-color: $primary-900;
+        .container {
+            position: relative;
+            @include displayFlex(row, center, flex-end);
+            width: fit-content;
+            margin: 0 8px 0 16px;
+            gap: 4px;
 
-        .menuItem {
-            @include displayFlex(row, center, center);
+            .menuBtn {
+                @include displayFlex(row, center, center);
+                width: 30px;
+                height: 30px;
+
+                .menuIcon {
+                    font-size: var(--fs-md);
+                    font-weight: 400;
+                }
+            }
+
+            .logoutBtn {
+                display: none;
+            }
+        }
+
+        .menu {
+            position: absolute;
+            top: 0;
+            @include displayFlex(column, center, center);
             width: 100%;
-            min-height: 80px;
-            background-color: $primary-900;
+            min-height: fit-content;
+            padding: 16px;
+            list-style: none;
+            background-color: rgba(25, 20, 20, 0.8);
+            transition: top 0.8s ease;
+            z-index: -1;
 
-            button {
+            .item {
                 @include displayFlex(row, center, center);
                 width: 100%;
+                // max-width: 300px;
 
-                > * {
-                    margin: 0 2px;
-                }
+                button {
+                    @include displayFlex(row, center, center);
+                    flex-wrap: wrap;
+                    width: 100%;
+                    min-width: fit-content;
+                    height: 50px;
+                    padding: 0 4px;
+                    gap: 4px;
+                    border-radius: 5px;
+                    background-color: $primary-400;
+                    overflow: hidden;
 
-                .logoutIcon {
-                    font-size: var(--fs-md);
-                    font-weight: 300;
-                    color: $secondary-300;
-                }
+                    &:hover {
+                        background-color: $primary-300;
+                    }
 
-                .btnText {
-                    font-size: var(--fs-xs);
+                    &:active {
+                        background-color: $primary-500;
+                    }
+
+                    .logoutIcon {
+                        font-size: var(--fs-md);
+                        font-weight: 300;
+                        color: $primary-700;
+                    }
+
+                    .text {
+                        font-size: var(--fs-xs);
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        letter-spacing: 1.25px;
+                        color: $primary-950;
+                    }
                 }
             }
         }
+
+        .menuExpanded {
+            top: $navbar-height;
+        }
     }
 }
+
+
+/* 768px ********************/
+@media screen and (min-width: 768px) {
+
+    .nav {
+
+        .wrapper {
+
+            .container {
+                @include displayFlex(row, center, space-between);
+                min-width: 250px;
+                margin: 0 16px;
+                gap: 32px;
+
+                .menuBtn {
+                    display: none;
+                }
+
+                .logoutBtn {
+                    display: inline-block;
+                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
+                    padding: 8px 16px;
+                }
+            }
+
+            .menu {
+                display: none;
+            }
+        }
+    }
+} // 768px - END
+
+/* 992px ********************/
+@media screen and (min-width: 992px) {
+
+    .nav {
+
+        .wrapper {
+
+            .container {
+                min-width: 300px;
+            }
+        }
+    }
+} // 992px - END
