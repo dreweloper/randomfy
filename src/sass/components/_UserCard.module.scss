@@ -3,8 +3,6 @@
 .card {
     @include displayFlex(row, center, center);
     width: fit-content;
-    padding: 8px;
-    gap: 8px;
 
     .avatar {
         @include displayFlex(row, center, center);
@@ -22,9 +20,11 @@
     }
 }
 
-@media screen and (min-width: 992px) {
+/* 768 ********************/
+@media screen and (min-width: 768px) {
 
     .card {
+        gap: var(--base-size);
 
         .username {
             display: block;
@@ -32,4 +32,20 @@
         }
     }
 
-}
+} //768-END
+
+/* 992 ********************/
+@media screen and (min-width: 992px) {
+
+    .card {
+    
+        .avatar {
+            width: 50px;
+        }
+    
+        .username {
+            font-size: var(--fs-body);
+        }
+    }
+
+} //992-END

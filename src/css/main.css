@@ -128,30 +128,26 @@ input[type=submit] {
   appearance: none;
 }
 
-img {
-  width: 100%;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 400;
-}
-
 :root {
-  --base-font-size: 1rem;
-  --scale: 1.2;
-  --fs-xxs: calc(var(--fs-xs) / var(--scale));
-  --fs-xs: calc(var(--fs-body) / var(--scale));
-  --fs-body: var(--base-font-size);
-  --fs-sm: calc(var(--fs-body) * var(--scale));
-  --fs-md: calc(var(--fs-sm) * var(--scale));
-  --fs-lg: calc(var(--fs-md) * var(--scale));
-  --fs-xl: calc(var(--fs-lg) * var(--scale));
-  --fs-xxl: calc(var(--fs-xl) * var(--scale));
+  --fs-xxs: 0.694rem;
+  --fs-xs: 0.833rem;
+  --fs-body: 1rem;
+  --fs-sm: 1.2rem;
+  --fs-md: 1.44rem;
+  --fs-lg: 1.728rem;
+  --fs-xl: 2.074rem;
+  --fs-xxl: 2.488rem;
 }
 @media screen and (min-width: 992px) {
   :root {
-    --base-font-size: 1.125rem;
-    --scale: 1.250;
+    --fs-xxs: 0.64rem;
+    --fs-xs: 0.8rem;
+    --fs-body: 1.125rem;
+    --fs-sm: 1.25rem;
+    --fs-md: 1.563rem;
+    --fs-lg: 1.953rem;
+    --fs-xl: 2.441rem;
+    --fs-xxl: 3.052rem;
   }
 }
 
@@ -161,4 +157,8 @@ body {
   font-weight: 400;
   color: #ffffff;
   background-color: #191414;
+}
+
+img {
+  max-width: 100%;
 }/*# sourceMappingURL=main.css.map */

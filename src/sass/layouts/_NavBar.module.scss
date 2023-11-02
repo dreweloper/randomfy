@@ -1,28 +1,32 @@
 @use '../utils' as *;
 
+// SASS VARIABLES
+$nav-height: 80px;
+
 .nav {
     position: relative;
     @include displayFlex(row, center, space-between);
     width: 100%;
     max-width: 1200px;
-    height: 80px;
-    padding: 8px;
+    height: $nav-height;
     border-bottom: 1px solid $primary-900;
     background-color: $primary-950;
 
     .logo {
         font-size: var(--fs-sm);
-        padding: 8px;
+        margin: 0 16px;
     }
 
     .container {
         @include displayFlex(row, center, flex-end);
         width: fit-content;
-
-        // USER CARD
+        margin: 0 8px 0 16px;
+        gap: 4px;
 
         .menuBtn {
             @include displayFlex(row, center, center);
+            width: 30px;
+            height: 30px;
             
             .menuIcon {
                 font-size: var(--fs-md);
@@ -32,8 +36,7 @@
 
         .list {
             position: absolute;
-            top: 80px; // .nav height size
-            right: 0;
+            top: $nav-height; right: 0;
             @include displayFlex(column, center, center);
             width: 100%;
             min-height: fit-content;
@@ -43,10 +46,13 @@
             .item {
                 @include displayFlex(row, center, center);
                 width: 100%;
+                // max-width: 300px;
     
                 .logoutBtn {
                     @include displayFlex(row, center, center);
+                    flex-wrap: wrap;
                     width: 100%;
+                    min-width: fit-content;
                     height: 50px;
                     gap: 4px;
                     border-radius: 4px;
