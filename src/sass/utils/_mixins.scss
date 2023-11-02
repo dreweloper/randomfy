@@ -4,3 +4,21 @@
     align-items: $alignItems;
     justify-content: $justifyContent;
 }
+
+@mixin outlinedButton($width, $defaultClr, $hoverClr, $activeClr) {
+    width: $width;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.5px;
+    text-align: center;
+    border: 1px solid $defaultClr;
+    border-radius: 5px;
+    color: $defaultClr;
+
+    &:hover {
+        background-color: $hoverClr;
+    }
+
+    &:active {
+        background-color: $activeClr;
+    }
+}

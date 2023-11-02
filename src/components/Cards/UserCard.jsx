@@ -37,7 +37,7 @@ export const UserCard = ({ user }) => {
 
                                 <Image
                                     className={styles.avatar}
-                                    description={"User's profile image"}
+                                    description={`The user profile image of ${user.display_name}`}
                                     source={user.avatar}
                                 />
 

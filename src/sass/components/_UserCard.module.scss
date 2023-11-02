@@ -20,32 +20,37 @@
     }
 }
 
-/* 768 ********************/
+/* 768px ********************/
 @media screen and (min-width: 768px) {
 
     .card {
-        gap: var(--base-size);
+        gap: 8px;
 
         .username {
             display: block;
+            max-width: 200px;
             font-size: var(--fs-xs);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            white-space: nowrap; // Prevents text from wrapping to multiple lines and makes it occupy the full width of its container.
+            overflow: hidden; // Ensures that content overflowing from the container is hidden.
+            text-overflow: ellipsis; // This property adds three ellipsis points at the end of overflowing text.
         }
     }
+} //768px - END
 
-} //768-END
-
-/* 992 ********************/
+/* 992px ********************/
 @media screen and (min-width: 992px) {
 
     .card {
-    
+        gap: 16px;
+
         .avatar {
             width: 50px;
         }
-    
+
         .username {
-            font-size: var(--fs-body);
+            max-width: 400px;
         }
     }
-
-} //992-END
+} // 992px - END

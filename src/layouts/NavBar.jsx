@@ -7,7 +7,7 @@ import styles from '../sass/layouts/_NavBar.module.scss';
 export const NavBar = () => {
 
     // REACT HOOK
-    const [isOpen, setIsOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // REACT-REDUX HOOK
     const user = useSelector(state => state.user);
@@ -20,7 +20,7 @@ export const NavBar = () => {
      * Toggles the state between open and closed.
      * @function handleToggle
      */
-    const handleToggle = () => setIsOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
+    const handleToggle = () => setIsMenuOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
 
 
     return (
@@ -48,15 +48,18 @@ export const NavBar = () => {
 
                 </button>
 
+                {/* DESKTOP LOGOUT BUTTON */}
+                <button className={styles.logoutBtn} onClick={logout}>Logout</button>
+
                 {
-                    isOpen && (
+                    isMenuOpen && (
 
                         <ul className={styles.list}>
 
                             <li className={styles.item}>
 
                                 {/* ICON + TEXT BUTTON */}
-                                <button className={styles.logoutBtn} onClick={logout}>
+                                <button onClick={logout}>
 
                                     <span className={`${styles.logoutIcon} material-symbols-rounded`}>
                                         logout
