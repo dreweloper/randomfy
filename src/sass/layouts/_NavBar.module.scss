@@ -1,46 +1,54 @@
 @use '../utils' as *;
 
 // SASS VARIABLES
-$nav-height: 80px;
+$navbar-height: 80px;
 
 .nav {
-    position: relative;
-    @include displayFlex(row, center, space-between);
+    position: fixed;
+    top: 0;
+    @include displayFlex(row, center, center);
     width: 100%;
-    max-width: 1200px;
-    height: $nav-height;
-    border-bottom: 1px solid $primary-900;
-    background-color: $primary-950;
+    height: $navbar-height;
 
-    .logo {
-        font-size: var(--fs-sm);
-        margin: 0 16px;
-    }
+    .wrapper {
+        @include displayFlex(row, center, space-between);
+        width: 100%;
+        max-width: 1200px;
+        height: 100%;
+        background-color: $primary-950;
+        border-bottom: 1px solid $primary-900;
 
-    .container {
-        @include displayFlex(row, center, flex-end);
-        width: fit-content;
-        margin: 0 8px 0 16px;
-        gap: 4px;
-
-        .menuBtn {
-            @include displayFlex(row, center, center);
-            width: 30px;
-            height: 30px;
-
-            .menuIcon {
-                font-size: var(--fs-md);
-                font-weight: 400;
-            }
+        .logo {
+            font-size: var(--fs-sm);
+            margin: 0 16px;
         }
 
-        .logoutBtn {
-            display: none;
+        .container {
+            position: relative;
+            @include displayFlex(row, center, flex-end);
+            width: fit-content;
+            margin: 0 8px 0 16px;
+            gap: 4px;
+
+            .menuBtn {
+                @include displayFlex(row, center, center);
+                width: 30px;
+                height: 30px;
+
+                .menuIcon {
+                    font-size: var(--fs-md);
+                    font-weight: 400;
+                }
+            }
+
+            .logoutBtn {
+                display: none;
+            }
         }
 
         .menu {
             position: absolute;
-            top: -10%; right: 0;
+            top: 0;
             @include displayFlex(column, center, center);
             width: 100%;
             min-height: fit-content;
@@ -66,7 +74,6 @@ $nav-height: 80px;
                     border-radius: 5px;
                     background-color: $primary-400;
                     overflow: hidden;
-                    transition: top 1s;
 
                     &:hover {
                         background-color: $primary-300;
@@ -93,35 +100,35 @@ $nav-height: 80px;
             }
         }
 
-        // .menuCollapsed {
-        //     top: -10%; right: 0;
-        // }
-
         .menuExpanded {
-            top: $nav-height;
+            top: $navbar-height;
         }
     }
 }
+
 
 /* 768px ********************/
 @media screen and (min-width: 768px) {
 
     .nav {
 
-        .container {
-            @include displayFlex(row, center, space-between);
-            min-width: 250px;
-            margin: 0 16px;
-            gap: 32px;
+        .wrapper {
 
-            .menuBtn {
-                display: none;
-            }
+            .container {
+                @include displayFlex(row, center, space-between);
+                min-width: 250px;
+                margin: 0 16px;
+                gap: 32px;
 
-            .logoutBtn {
-                display: inline-block;
-                @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
-                padding: 8px 16px;
+                .menuBtn {
+                    display: none;
+                }
+
+                .logoutBtn {
+                    display: inline-block;
+                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
+                    padding: 8px 16px;
+                }
             }
 
             .menu {
@@ -136,8 +143,11 @@ $nav-height: 80px;
 
     .nav {
 
-        .container {
-            min-width: 300px;
+        .wrapper {
+
+            .container {
+                min-width: 300px;
+            }
         }
     }
 } // 992px - END

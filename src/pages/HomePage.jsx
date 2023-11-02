@@ -87,11 +87,7 @@ export const HomePage = () => {
 
         <>
 
-            <header className={styles.header}>
-
-                <NavBar />
-
-            </header>
+            <NavBar />
 
             <main className={styles.main}>
 

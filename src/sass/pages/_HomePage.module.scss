@@ -1,24 +1,13 @@
 @use '../utils/' as *;
 
 // SASS VARIABLES
-$header-height: 80px;
+$navbar-height: 80px;
 $footer-height: 60px;
-
-.header {
-    position: fixed;
-    top: 0;
-    @include displayFlex(row, center, center);
-    width: 100%;
-    height: $header-height;
-    border-bottom: 1px solid $primary-900;
-    background-color: $primary-950;
-}
 
 .main {
     @include displayFlex(column, center, center);
     width: 100%;
-    min-height: calc(100svh - ($header-height + $footer-height));
-    margin-top: $header-height;
+    min-height: calc(100svh - ($navbar-height + $footer-height));
+    margin-top: $navbar-height;
     padding: 16px;
-    z-index: -2; // To prevent hiding the navbar menu list.
 }

@@ -25,54 +25,63 @@ export const NavBar = () => {
 
     return (
 
-        <nav className={styles.nav}>
+        <>
 
-            <div className={styles.logo}>
+            <nav className={styles.nav}>
 
-                {/* IMG */}
-                <span>RANDOMFY</span>
+                {/* This wrapper is the key to enabling the slide-in and slide-out transition of the menu ('z-index'). */}
+                <div className={styles.wrapper}>
 
-            </div>
+                    <div className={styles.logo}>
 
-            <div className={styles.container}>
+                        {/* IMG */}
+                        <span>RANDOMFY</span>
 
-                <UserCard user={user} />
+                    </div>
 
-                <button
-                    className={styles.menuBtn}
-                    onClick={handleToggle}>
+                    <div className={styles.container}>
 
-                    <span className={`${styles.menuIcon} material-symbols-rounded`}>
-                        expand_more
-                    </span>
+                        <UserCard user={user} />
 
-                </button>
+                        {/* NON DESKTOP MENU BUTTON */}
+                        <button
+                            className={styles.menuBtn}
+                            onClick={handleToggle}>
 
-                <ul className={`${styles.menu} ${isMenuOpen && styles.menuExpanded}`}>
-
-                    <li className={styles.item}>
-
-                        {/* ICON + TEXT BUTTON */}
-                        <button onClick={logout}>
-
-                            <span className={`${styles.logoutIcon} material-symbols-rounded`}>
-                                logout
+                            <span className={`${styles.menuIcon} material-symbols-rounded`}>
+                                expand_more
                             </span>
-
-                            <span className={styles.text}>Logout</span>
 
                         </button>
 
-                    </li>
+                        {/* DESKTOP LOGOUT BUTTON */}
+                        <button className={styles.logoutBtn} onClick={logout}>Logout</button>
 
-                </ul>
+                    </div>
 
-                {/* DESKTOP LOGOUT BUTTON */}
-                <button className={styles.logoutBtn} onClick={logout}>Logout</button>
+                    <ul className={`${styles.menu} ${isMenuOpen && styles.menuExpanded}`}>
 
-            </div>
+                        <li className={styles.item}>
 
-        </nav>
+                            <button onClick={logout}>
+
+                                <span className={`${styles.logoutIcon} material-symbols-rounded`}>
+                                    logout
+                                </span>
+
+                                <span className={styles.text}>Logout</span>
+
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </nav>
+
+        </>
 
     );
 
