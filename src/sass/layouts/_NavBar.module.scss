@@ -38,16 +38,17 @@ $nav-height: 80px;
             display: none;
         }
 
-        .list {
+        .menu {
             position: absolute;
-            top: $nav-height;
-            right: 0;
+            top: -10%; right: 0;
             @include displayFlex(column, center, center);
             width: 100%;
             min-height: fit-content;
             padding: 16px;
             list-style: none;
             background-color: rgba(25, 20, 20, 0.8);
+            transition: top 0.8s ease;
+            z-index: -1;
 
             .item {
                 @include displayFlex(row, center, center);
@@ -65,6 +66,7 @@ $nav-height: 80px;
                     border-radius: 5px;
                     background-color: $primary-400;
                     overflow: hidden;
+                    transition: top 1s;
 
                     &:hover {
                         background-color: $primary-300;
@@ -90,6 +92,14 @@ $nav-height: 80px;
                 }
             }
         }
+
+        // .menuCollapsed {
+        //     top: -10%; right: 0;
+        // }
+
+        .menuExpanded {
+            top: $nav-height;
+        }
     }
 }
 
@@ -114,7 +124,7 @@ $nav-height: 80px;
                 padding: 8px 16px;
             }
 
-            .list {
+            .menu {
                 display: none;
             }
         }

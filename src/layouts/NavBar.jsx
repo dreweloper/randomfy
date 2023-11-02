@@ -48,33 +48,27 @@ export const NavBar = () => {
 
                 </button>
 
+                <ul className={`${styles.menu} ${isMenuOpen && styles.menuExpanded}`}>
+
+                    <li className={styles.item}>
+
+                        {/* ICON + TEXT BUTTON */}
+                        <button onClick={logout}>
+
+                            <span className={`${styles.logoutIcon} material-symbols-rounded`}>
+                                logout
+                            </span>
+
+                            <span className={styles.text}>Logout</span>
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
                 {/* DESKTOP LOGOUT BUTTON */}
                 <button className={styles.logoutBtn} onClick={logout}>Logout</button>
-
-                {
-                    isMenuOpen && (
-
-                        <ul className={styles.list}>
-
-                            <li className={styles.item}>
-
-                                {/* ICON + TEXT BUTTON */}
-                                <button onClick={logout}>
-
-                                    <span className={`${styles.logoutIcon} material-symbols-rounded`}>
-                                        logout
-                                    </span>
-
-                                    <span className={styles.text}>Logout</span>
-
-                                </button>
-
-                            </li>
-
-                        </ul>
-
-                    )
-                }
 
             </div>
 

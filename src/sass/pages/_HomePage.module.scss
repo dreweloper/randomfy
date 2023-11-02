@@ -20,5 +20,5 @@ $footer-height: 60px;
     min-height: calc(100svh - ($header-height + $footer-height));
     margin-top: $header-height;
     padding: 16px;
-    z-index: -1; // To prevent hiding the navbar menu list.
+    z-index: -2; // To prevent hiding the navbar menu list.
 }
