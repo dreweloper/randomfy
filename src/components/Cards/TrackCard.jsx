@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Image } from '../Assets';
 import { AudioPlayer } from '../Media';
@@ -7,10 +8,34 @@ import styles from '../../sass/components/_TrackCard.module.scss';
 
 export const TrackCard = ({ playlist, token, track }) => {
 
+    // REACT HOOK
+    /**
+     * A reference used to update the value of the CSS variable '--like-icon-fill' for the 'like' button.
+     * @type {React.RefObject<HTMLButtonElement>}
+     */
+    const likeButtonRef = useRef();
+
     // CUSTOM HOOKS
     const { handleFollow } = usePlaylistStore(token);
 
     const { handleLike } = useTrackStore(token);
+
+    /**
+     * Besides the first rendering, this effect will be triggered every time the user clicks on the "like" button
+     * and the track is successfully added or removed from the 'Your Music' library.
+     */
+    useEffect(() => {
+
+        /**
+         * The value to be set for the CSS variable '--like-icon-fill'.
+         * @type {Number}
+         */
+        const value = track.isLiked ? 1 : 0;
+
+        // Updates the value of the CSS variable '--like-icon-fill' to reflect if the track has been added ('true') or deleted ('false') from the user's 'Your Music' library.
+        likeButtonRef.current.style.setProperty('--like-icon-fill', value);
+
+    }, [track.isLiked]);
 
 
     return (
@@ -48,6 +73,7 @@ export const TrackCard = ({ playlist, token, track }) => {
                         <button
                             className={styles.button}
                             onClick={() => handleLike(track)}
+                            ref={likeButtonRef}
                         >
 
                             <span className={`${styles.favoriteIcon} material-symbols-rounded`}>
