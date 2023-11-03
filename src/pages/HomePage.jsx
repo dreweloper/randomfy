@@ -91,10 +91,11 @@ export const HomePage = () => {
 
             <main className={styles.main}>
 
-                <section className='displayTrack'>
+                <section className={styles.wrapper}>
 
-                    {/* CONTAINED BUTTON */}
+                    {/* SOLID BUTTON */}
                     <button
+                        className={styles.solidBtn}
                         onClick={handleAnotherShuffleTrack}
                         disabled={user.isError || status === STATUS.LOADING}
                     >
