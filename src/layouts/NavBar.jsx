@@ -55,7 +55,7 @@ export const NavBar = () => {
                         </button>
 
                         {/* DESKTOP LOGOUT BUTTON */}
-                        <button className={styles.logoutBtn} onClick={logout}>Logout</button>
+                        <button className={styles.outlinedBtn} onClick={logout}>Logout</button>
 
                     </div>
 
@@ -63,7 +63,7 @@ export const NavBar = () => {
 
                         <li className={styles.item}>
 
-                            <button onClick={logout}>
+                            <button className={styles.solidBtn} onClick={logout}>
 
                                 <span className={`${styles.logoutIcon} material-symbols-rounded`}>
                                     logout

@@ -26,6 +26,10 @@
     .card {
         gap: 8px;
 
+        .avatar {
+            width: 48px;
+        }
+
         .username {
             display: block;
             max-width: 200px;
@@ -43,11 +47,6 @@
 @media screen and (min-width: 992px) {
 
     .card {
-        gap: 16px;
-
-        .avatar {
-            width: 50px;
-        }
 
         .username {
             max-width: 400px;
