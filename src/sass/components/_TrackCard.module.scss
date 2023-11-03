@@ -1,0 +1,87 @@
+@use '../utils' as *;
+
+:root {
+    --like-icon-fill: 0;
+}
+
+.card {
+    @include displayFlex(column, center, center);
+    width: 100%;
+    max-width: 400px;
+
+    .wrapper {
+        @include displayFlex(column, center, center);
+        gap: 16px;
+
+        .artwork {
+            display: flex;
+            width: 100%;
+        }
+
+        .container {
+            @include displayFlex(column, center, center);
+            width: 100%;
+            gap: 16px;
+
+            .details {
+                @include displayFlex(column, center, center);
+                width: 100%;
+                min-height: 80px;
+                padding: 16px;
+                text-align: center;
+                border-radius: 5px;
+                background-color: $primary-900;
+                gap: 8px;
+
+                .name {
+                    font-size: var(--fs-body);
+                    font-weight: 600;
+                    line-height: 1.25;
+                }
+
+                .artists {
+                    font-size: var(--fs-xs);
+                    font-weight: 300;
+                    line-height: 1.15;
+                    letter-spacing: 0.25px;
+                    color: $secondary-200;
+                }
+            }
+
+            .nonDesktopContainer {
+                width: 100%;
+                background-color: blue;
+            }
+
+            .nav {
+                @include displayFlex(column, center, center);
+                width: 100%;
+                gap: 16px;
+                
+                .button {
+                    @include displayFlex(row, center, center);
+                    @include outlinedButton(100%, $accent-300, $accent-950, $accent-900);
+
+                    .favoriteIcon {
+                        font-size: var(--fs-lg);
+                        font-variation-settings:
+                        'FILL' var(--like-icon-fill);
+                    }
+                }
+
+                .link {
+                    gap: 8px;
+
+                    .logo {
+                        display: flex;
+                        width: 24px;
+                    }
+                }
+            }
+        }
+    }
+
+    .desktopContainer {
+        display: none;
+    }
+}

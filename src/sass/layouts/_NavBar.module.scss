@@ -41,7 +41,7 @@ $navbar-height: 80px;
                 }
             }
 
-            .logoutBtn {
+            .outlinedBtn {
                 display: none;
             }
         }
@@ -61,27 +61,12 @@ $navbar-height: 80px;
             .item {
                 @include displayFlex(row, center, center);
                 width: 100%;
-                // max-width: 300px;
+                max-width: 400px;
 
-                button {
+                .solidBtn {
                     @include displayFlex(row, center, center);
-                    flex-wrap: wrap;
-                    width: 100%;
-                    min-width: fit-content;
-                    height: 50px;
-                    padding: 0 4px;
+                    @include solidButton(unset, $primary-400, $primary-300, $primary-500, unset, unset);
                     gap: 4px;
-                    border-radius: 5px;
-                    background-color: $primary-400;
-                    overflow: hidden;
-
-                    &:hover {
-                        background-color: $primary-300;
-                    }
-
-                    &:active {
-                        background-color: $primary-500;
-                    }
 
                     .logoutIcon {
                         font-size: var(--fs-md);
@@ -116,7 +101,7 @@ $navbar-height: 80px;
 
             .container {
                 @include displayFlex(row, center, space-between);
-                min-width: 250px;
+                min-width: 300px;
                 margin: 0 16px;
                 gap: 32px;
 
@@ -124,10 +109,9 @@ $navbar-height: 80px;
                     display: none;
                 }
 
-                .logoutBtn {
+                .outlinedBtn {
                     display: inline-block;
                     @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
-                    padding: 8px 16px;
                 }
             }
 
@@ -137,17 +121,3 @@ $navbar-height: 80px;
         }
     }
 } // 768px - END
-
-/* 992px ********************/
-@media screen and (min-width: 992px) {
-
-    .nav {
-
-        .wrapper {
-
-            .container {
-                min-width: 300px;
-            }
-        }
-    }
-} // 992px - END

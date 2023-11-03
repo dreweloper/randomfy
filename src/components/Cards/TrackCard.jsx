@@ -3,6 +3,7 @@ import { Image } from '../Assets';
 import { AudioPlayer } from '../Media';
 import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP } from '../../utils';
+import styles from '../../sass/components/_TrackCard.module.scss';
 
 export const TrackCard = ({ playlist, token, track }) => {
 
@@ -14,61 +15,68 @@ export const TrackCard = ({ playlist, token, track }) => {
 
     return (
 
-        <article className='trackCard'>
+        <article className={styles.card}>
 
-            <div className='cardContainer'>
+            <div className={styles.wrapper}>
 
                 <Image
-                    className={'artwork'}
+                    className={styles.artwork}
                     description={`Album artwork for "${track.album}"`}
                     source={track.artwork}
                 />
 
-                <div className='trackContainer'>
+                <div className={styles.container}>
 
-                    <div className='trackDetails'>
+                    <div className={styles.details}>
 
-                        <h2 className='trackName'>{track.name}</h2>
+                        <h2 className={styles.name}>{track.name}</h2>
 
-                        <h2 className='trackArtists'>{track.artists}</h2>
+                        <h2 className={styles.artists}>{track.artists}</h2>
 
                     </div>
 
                     {/* TODO: !DESKTOP && visible (CSS media queries) */}
-                    <div className='nonDesktopContainer'>
+                    <div className={styles.nonDesktopContainer}>
 
                         <AudioPlayer trackPreview={track.preview_url} />
 
                     </div>
 
-                    <nav className='trackNav'>
+                    <nav className={styles.nav}>
 
                         {/* OUTLINED BUTTON */}
-                        <button onClick={() => handleFollow(playlist)}>
+                        <button
+                            className={styles.button}
+                            onClick={() => handleLike(track)}
+                        >
 
-                            {playlist.isFollowed ? 'UNFOLLOW PLAYLIST' : 'FOLLOW PLAYLIST'}
-
-                        </button>
-
-                        {/* OUTLINED BUTTON */}
-                        <button onClick={() => handleLike(track)}>
-
-                            <span className="material-symbols-rounded">
+                            <span className={`${styles.favoriteIcon} material-symbols-rounded`}>
                                 favorite
                             </span>
 
                         </button>
 
+                        {/* OUTLINED BUTTON */}
+                        <button
+                            className={styles.button}
+                            onClick={() => handleFollow(playlist)}
+                        >
+
+                            {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
+
+                        </button>
+
                         {/* OUTLINED BUTTON STYLES */}
                         <Link
+                            className={`${styles.button} ${styles.link}`}
                             to={track.track_url}
                             target={DESKTOP ? '_blank' : '_self'}
                         >
 
-                            <span>PLAY ON</span>
+                            <span>Play on</span>
 
                             <Image
-                                className={'spotifyLogo'}
+                                className={styles.logo}
                                 description={'Spotify Logo'}
                                 source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
                             />
@@ -82,7 +90,7 @@ export const TrackCard = ({ playlist, token, track }) => {
             </div>
 
             {/* TODO: DESKTOP && visible (CSS media-queries) */}
-            <div className='desktopContainer' style={{ display: 'none' }}>
+            <div className={styles.desktopContainer}>
 
                 <AudioPlayer trackPreview={track.preview_url} />
 

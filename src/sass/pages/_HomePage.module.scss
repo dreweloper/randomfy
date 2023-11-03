@@ -9,15 +9,16 @@ $footer-height: 60px;
     width: 100%;
     min-height: calc(100svh - ($navbar-height + $footer-height));
     margin-top: $navbar-height;
-    padding: 16px;
+    padding: 32px;
 
     .wrapper {
         @include displayFlex(column, center, center);
         width: 100%;
-        gap: 16px;
+        max-width: 400px;
+        gap: 24px;
 
         .solidBtn {
-            @include solidButton(400px, 10px, $accent-950, $accent-400, $accent-300, $accent-500, $accent-100, $accent-800);
+            @include solidButton($accent-950, $accent-400, $accent-300, $accent-500, $accent-100, $accent-800);
         }
 
         // TRACK CARD

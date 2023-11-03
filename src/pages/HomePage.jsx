@@ -100,7 +100,7 @@ export const HomePage = () => {
                         disabled={user.isError || status === STATUS.LOADING}
                     >
 
-                        {status === STATUS.LOADING ? (<Spinner />) : ('RANDOM TRACK')}
+                        {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
 
                     </button>
 
