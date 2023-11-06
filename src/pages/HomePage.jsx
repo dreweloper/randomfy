@@ -1,17 +1,13 @@
 import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { Skeleton, Spinner, Toast, TrackCard } from '../components';
 import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from '../hooks';
 import { Footer, NavBar } from '../layouts';
 import { setPlaylistUndone } from '../store/slices';
-import { ACCESS_TOKEN_KEY, CODE_VERIFIER_KEY, REFRESH_TOKEN_KEY, STATE_KEY, STATUS } from '../utils';
+import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
 
-export const HomePage = () => {
-
-    // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the component depend on or that should trigger a re-render.
+export const HomePage = ({ token }) => {
 
     // REACT-REDUX HOOKS
     const { playlist, process: { status }, track, user } = useSelector(state => state);
@@ -19,12 +15,6 @@ export const HomePage = () => {
     const dispatch = useDispatch();
 
     // VARIABLES
-    /**
-     * Access token for the Spotify Web API.
-     * @type {String | undefined}
-     */
-    const token = cookies.access_token;
-
     /**
      * Information about a Spotify playlist.
      * @type {Object}
@@ -46,18 +36,12 @@ export const HomePage = () => {
     const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the second useEffect, restarting the process of obtaining a new random track.
 
     // REACT HOOKS
-    //* Handles cookies and sets 'user' state.
+    //* Sets 'user' state.
     useEffect(() => {
-
-        // Once the login is successful, the cookie will be removed.
-        if (cookies.spotify_auth_state) removeCookie(STATE_KEY);
-
-        // Once the login is successful, the cookie will be removed.
-        if (cookies.code_verifier) removeCookie(CODE_VERIFIER_KEY);
 
         token ? user.isEmpty && getUserProfile() : requestRefreshedAccessToken();
 
-    }, [cookies]); // When the token ('cookies.access_token') expires, it will be triggered again.
+    }, [token]); // On init, if the token cookie is expired, it will be triggered again.
 
     //* Sets 'playlist' state.
     useEffect(() => {
