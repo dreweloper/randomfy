@@ -8,11 +8,11 @@ import * as c from "../utils";
 
 export const useAuth = () => {
 
+  // REACT-COOKIE HOOK
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   // REACT HOOKS
   const [status, setStatus] = useState(c.STATUS.IDLE);
-
-  // REACT-COOKIE
-  const [cookies, setCookie, removeCookie] = useCookies([c.ACCESS_TOKEN_KEY, c.REFRESH_TOKEN_KEY]);
 
   // REACT-REDUX HOOKS
   const { playlist, track, user } = useSelector(state => state);
