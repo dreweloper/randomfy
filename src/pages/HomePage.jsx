@@ -14,61 +14,26 @@ export const HomePage = ({ token }) => {
 
     const dispatch = useDispatch();
 
-    // VARIABLES
-    /**
-     * Information about a Spotify playlist.
-     * @type {Object}
-     * @prop {String} playlist_id - The Spotify ID of the playlist.
-     * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
-     */
-    const { playlist_id, total_tracks } = playlist;
-
     // CUSTOM HOOKS
     const { requestRefreshedAccessToken } = useAuth();
 
-    const { getUserProfile } = useUserStore(token);
+    useUserStore({ token, user });
 
-    const { getRandomPlaylist } = usePlaylistStore(token);
+    const { handleFollow } = usePlaylistStore({ playlist, token, user });
 
-    const { getRandomTrack } = useTrackStore(token);
+    const { handleLike } = useTrackStore({ playlist, status, token, track });
 
     // EVENT
-    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); //!FUNC-HANDLEANOTHERSHUFFLETRACK
+    // This action will trigger the second useEffect, restarting the process of obtaining a new random track.
+    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone());
 
     // REACT HOOKS
-    //* Handles token expiration and sets 'user' state.
     useEffect(() => {
 
-        /**
-         * On init, if the token cookie is expired, it will be triggered again to set the 'user' state.
-         * After that, every time the token expires, the useEffect will be triggered to request a refreshed access token.
-         */
-        !token ? requestRefreshedAccessToken() : user.isEmpty && getUserProfile();
+        // Every time the token expires, the useEffect will be triggered to request a refreshed access token.
+        if (!token) requestRefreshedAccessToken();
 
     }, [token]);
-
-    //* Sets 'playlist' state.
-    useEffect(() => {
-
-        /**
-         * If the token is expired during the initial page load, the user data will be empty.
-         * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
-         * From there, the useEffect will trigger every time the user clicks the 'Random track' button that modifies the 'isDone' prop of the 'playlist' state.
-         */
-        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist(user.id);
-
-    }, [user, playlist]);
-
-    //* Sets 'track' state.
-    useEffect(() => {
-
-        /**
-         * The conditions will both be met if 'getRandomPlaylist' succeeds.
-         * This helps prevent unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
-
-    }, [playlist]);
 
 
     return (
@@ -94,7 +59,7 @@ export const HomePage = ({ token }) => {
                     {
                         status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
 
-                            <TrackCard {...{ playlist, token, track }} />
+                            <TrackCard {...{ handleFollow, handleLike, playlist, track }} />
 
                         )
                     }

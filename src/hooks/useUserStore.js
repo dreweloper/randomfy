@@ -1,14 +1,15 @@
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
 import { setError, setUser, startLoading } from "../store/slices";
 import { SPOTIFY_API_BASE_URL } from '../utils';
 
-export const useUserStore = (token) => {
+export const useUserStore = ({ token, user }) => {
 
-    // REACT-REDUX HOOKS
+    // REACT-REDUX HOOK
     const dispatch = useDispatch();
 
-    // FUNCTIONS
+    // FUNCTION
     /**
      * Get detailed profile information about the current user.
      * @async
@@ -51,7 +52,12 @@ export const useUserStore = (token) => {
 
     }; //!FUNC-GETUSERPROFILE
 
+    // REACT-HOOK
+    useEffect(() => {
 
-    return { getUserProfile };
+        // Sets the 'user' state.
+        if (token && user.isEmpty) getUserProfile();
+
+    }, [token]); // On init, if the token ('cookies.access_token') is expired, it will be triggered again.
 
 };

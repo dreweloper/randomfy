@@ -2,11 +2,10 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Image } from '../Assets';
 import { AudioPlayer } from '../Media';
-import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP } from '../../utils';
 import styles from '../../sass/components/_TrackCard.module.scss';
 
-export const TrackCard = ({ playlist, token, track }) => {
+export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
 
     // REACT HOOK
     /**
@@ -15,11 +14,6 @@ export const TrackCard = ({ playlist, token, track }) => {
      */
     const likeButtonRef = useRef();
 
-    // CUSTOM HOOKS
-    const { handleFollow } = usePlaylistStore(token);
-
-    const { handleLike } = useTrackStore(token);
-
     /**
      * Besides the first rendering, this effect will be triggered every time the user clicks on the "like" button
      * and the track is successfully added or removed from the 'Your Music' library.
@@ -27,7 +21,7 @@ export const TrackCard = ({ playlist, token, track }) => {
     useEffect(() => {
 
         /**
-         * The value to be set for the CSS variable '--like-icon-fill'.
+         * The value of the CSS variable '--like-icon-fill' is set to '1' when 'track.isLiked' is true and '0' when it's false.
          * @type {Number}
          */
         const value = track.isLiked ? 1 : 0;
@@ -72,7 +66,7 @@ export const TrackCard = ({ playlist, token, track }) => {
                         {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
-                            onClick={() => handleLike(track)}
+                            onClick={handleLike}
                             ref={likeButtonRef}
                         >
 
@@ -85,7 +79,7 @@ export const TrackCard = ({ playlist, token, track }) => {
                         {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
-                            onClick={() => handleFollow(playlist)}
+                            onClick={handleFollow}
                         >
 
                             {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
