@@ -33,15 +33,19 @@ export const HomePage = ({ token }) => {
     const { getRandomTrack } = useTrackStore(token);
 
     // EVENT
-    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the second useEffect, restarting the process of obtaining a new random track.
+    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); //!FUNC-HANDLEANOTHERSHUFFLETRACK
 
     // REACT HOOKS
-    //* Sets 'user' state.
+    //* Handles token expiration and sets 'user' state.
     useEffect(() => {
 
-        token ? user.isEmpty && getUserProfile() : requestRefreshedAccessToken();
+        /**
+         * On init, if the token cookie is expired, it will be triggered again to set the 'user' state.
+         * After that, every time the token expires, the useEffect will be triggered to request a refreshed access token.
+         */
+        !token ? requestRefreshedAccessToken() : user.isEmpty && getUserProfile();
 
-    }, [token]); // On init, if the token cookie is expired, it will be triggered again.
+    }, [token]);
 
     //* Sets 'playlist' state.
     useEffect(() => {
@@ -49,7 +53,7 @@ export const HomePage = ({ token }) => {
         /**
          * If the token is expired during the initial page load, the user data will be empty.
          * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
-         * From there, the useEffect will trigger every time the user clicks the 'RANDOM TRACK' button that modifies the 'isDone' prop of the 'playlist' state.
+         * From there, the useEffect will trigger every time the user clicks the 'Random track' button that modifies the 'isDone' prop of the 'playlist' state.
          */
         if (!user.isEmpty && !playlist.isDone) getRandomPlaylist(user.id);
 
@@ -77,7 +81,6 @@ export const HomePage = ({ token }) => {
 
                 <section className={styles.wrapper}>
 
-                    {/* SOLID BUTTON */}
                     <button
                         className={styles.solidBtn}
                         onClick={handleAnotherShuffleTrack}

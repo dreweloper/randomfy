@@ -35,25 +35,9 @@ export const useTrackStore = (token) => {
              * The Spotify API response object.
              * @type {Object}
              */
-            const {
-                items: [{
-                    track: {
-                        id: track_id,
-                        album: {
-                            images: [{
-                                url: artwork
-                            }],
-                            name: album
-                        },
-                        name,
-                        artists: arrArtists,
-                        external_urls: {
-                            spotify: track_url
-                        },
-                        preview_url
-                    }
-                }]
-            } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { items: [{ track: { id: track_id, album: { images: [{ url: artwork }], name: album }, name, artists: arrArtists, external_urls: { spotify: track_url }, preview_url } }] } = response;
 
             /**
              * The artists names.
@@ -91,6 +75,7 @@ export const useTrackStore = (token) => {
 
         try {
 
+            //! PENDING REFACT
             const [response] = await fetchSpotifyData({ url, method, token });
 
             return response;
@@ -136,7 +121,7 @@ export const useTrackStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             dispatch(setStatus(STATUS.FAILED));
 
@@ -187,7 +172,7 @@ export const useTrackStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             //TODO: handle error to show an alert.
 

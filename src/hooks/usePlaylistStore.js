@@ -18,7 +18,9 @@ export const usePlaylistStore = (token) => {
 
         try {
 
-            const { total } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { total } = response;
 
             return total;
 
@@ -38,7 +40,9 @@ export const usePlaylistStore = (token) => {
 
         try {
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response;
 
             return { playlist_id, total_tracks };
 
@@ -58,6 +62,7 @@ export const usePlaylistStore = (token) => {
 
         try {
 
+            //! PENDING REFACT
             const [response] = await fetchSpotifyData({ url, method, token });
 
             return response;
@@ -80,7 +85,9 @@ export const usePlaylistStore = (token) => {
 
             const randomOffset = generateRandomNumber(total);
 
-            const { playlist_id, total_tracks } = await fetchUserRandomPlaylist(randomOffset);
+            const playlist = await fetchUserRandomPlaylist(randomOffset);
+
+            const { playlist_id, total_tracks } = playlist;
 
             const isFollowed = await checkIsPlaylistFollowed(playlist_id, userId);
 
@@ -90,7 +97,7 @@ export const usePlaylistStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             dispatch(setStatus(STATUS.FAILED));
 
@@ -139,7 +146,7 @@ export const usePlaylistStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             //TODO: handle error to show an alert.
 

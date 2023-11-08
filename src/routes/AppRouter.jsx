@@ -1,32 +1,13 @@
-import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { PrivateRoutes, PublicRoutes } from './index.js';
 import { HomePage, LoginPage } from '../pages';
-import { ACCESS_TOKEN_KEY, CODE_VERIFIER_KEY, REFRESH_TOKEN_KEY, STATE_KEY } from '../utils';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../utils';
 
 export const AppRouter = () => {
 
     // REACT-COOKIE HOOK
-    const [cookies, setCookie, removeCookie] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the components (both private and public routes) depend on or that should trigger a re-render.
-
-    // REACT-ROUTER-DOM HOOK
-    const location = useLocation();
-
-    // REACT HOOK
-    useEffect(() => {
-
-        if (!location.pathname.includes('login')) {
-
-            // Once the login is successful, the cookie will be removed.
-            cookies.spotify_auth_state && removeCookie(STATE_KEY);
-
-            // Once the login is successful, the cookie will be removed.
-            cookies.code_verifier && removeCookie(CODE_VERIFIER_KEY);
-
-        };
-
-    }, [location]);
+    const [cookies] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the components (both private and public routes) depend on or that should trigger a re-render.
 
 
     return (

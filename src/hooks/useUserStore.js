@@ -35,13 +35,15 @@ export const useUserStore = (token) => {
              * @prop {String} display_name - The name displayed on the user's profile.
              * @prop {String} avatar - The source URL of the user's profile image.
              */
-            const { id, display_name, images: [, { url: avatar }] } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { id, display_name, images: [, { url: avatar }] } = response;
 
             dispatch(setUser({ id, display_name, avatar }));
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             dispatch(setError());
 
