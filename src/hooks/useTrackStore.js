@@ -37,7 +37,15 @@ export const useTrackStore = (token) => {
              */
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { items: [{ track: { id: track_id, album: { images: [{ url: artwork }], name: album }, name, artists: arrArtists, external_urls: { spotify: track_url }, preview_url } }] } = response;
+            const { items } = response;
+
+            if (items.length === 0) {
+
+                throw new Error('Playlist items are empty');
+
+            };
+
+            const [{ track: { id: track_id, album: { images: [{ url: artwork }], name: album }, name, artists: arrArtists, external_urls: { spotify: track_url }, preview_url } }] = items;
 
             /**
              * The artists names.
