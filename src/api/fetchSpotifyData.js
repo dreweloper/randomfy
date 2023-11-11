@@ -68,18 +68,14 @@ export const fetchSpotifyData = async ({ url, method, data = {}, token = undefin
 
         if (!response.ok) {
 
-            const error  = await response.json();
-
-            throw error;
+            throw await response.json();
 
         } else {
 
             // The 'PUT' and 'DELETE' endpoints used by the app do not return JSON.
             if (method === 'GET' || method === 'POST') {
 
-                const data = await response.json();
-
-                return data;
+                return await response.json();
 
             };
 

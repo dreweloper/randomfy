@@ -15,7 +15,11 @@ export const useAuth = () => {
   const [isError, setIsError] = useState(false);
 
   // REACT-REDUX HOOKS
-  const { playlist, track, user } = useSelector(state => state);
+  const playlist = useSelector(state => state.playlist);
+
+  const track = useSelector(state => state.track);
+
+  const user = useSelector(state => state.user);
 
   const dispatch = useDispatch();
 
@@ -139,11 +143,13 @@ export const useAuth = () => {
 
       setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
 
+      return { ok: true };
+
     } catch (error) {
 
-      console.error(error);
+      if (error.error_description === 'Invalid refresh token') logout();
 
-      logout();
+      throw error;
 
     };
 
