@@ -1,113 +1,87 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Skeleton, Spinner, Toast, TrackCard } from '../components';
-import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from '../hooks';
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Spinner, Toast, TrackCard } from '../components';
+import { useAuth, usePlaylistStore, useShuffleTrack, useTrackStore, useUserStore } from '../hooks';
 import { Footer, NavBar } from '../layouts';
-import { setPlaylistUndone } from '../store/slices';
 import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
 
 export const HomePage = ({ token }) => {
 
-    // REACT-REDUX HOOKS
-    const { playlist, process: { status }, track, user } = useSelector(state => state);
-
-    const dispatch = useDispatch();
-
-    // VARIABLES
+    // REACT HOOK
     /**
-     * Information about a Spotify playlist.
-     * @type {Object}
-     * @prop {String} playlist_id - The Spotify ID of the playlist.
-     * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
+     * Used to track whether the token has been refreshed to prevent multiple calls.
+     * @type {React.MutableRefObject<Boolean>}
      */
-    const { playlist_id, total_tracks } = playlist;
+    const isRefreshed = useRef(false);
+
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+    const status = useSelector(state => state.process.status);
+    const track = useSelector(state => state.track);
+    const user = useSelector(state => state.user);
 
     // CUSTOM HOOKS
     const { requestRefreshedAccessToken } = useAuth();
 
-    const { getUserProfile } = useUserStore(token);
+    useUserStore({ token, user });
 
-    const { getRandomPlaylist } = usePlaylistStore(token);
+    const { handleFollow } = usePlaylistStore({ playlist, token, user });
 
-    const { getRandomTrack } = useTrackStore(token);
+    const { handleLike } = useTrackStore({ playlist, status, token, track });
 
-    // EVENT
-    const handleAnotherShuffleTrack = () => dispatch(setPlaylistUndone()); // This action will trigger the second useEffect, restarting the process of obtaining a new random track.
+    const { handleAnotherShuffleTrack } = useShuffleTrack(token);
 
     // REACT HOOKS
-    //* Sets 'user' state.
     useEffect(() => {
 
-        token ? user.isEmpty && getUserProfile() : requestRefreshedAccessToken();
+        // On init, if the token is expired, it will request a new access and refresh tokens.
+        if (!token && !isRefreshed.current) {
 
-    }, [token]); // On init, if the token cookie is expired, it will be triggered again.
+            isRefreshed.current = true;
 
-    //* Sets 'playlist' state.
-    useEffect(() => {
+            requestRefreshedAccessToken();
 
-        /**
-         * If the token is expired during the initial page load, the user data will be empty.
-         * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
-         * From there, the useEffect will trigger every time the user clicks the 'RANDOM TRACK' button that modifies the 'isDone' prop of the 'playlist' state.
-         */
-        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist(user.id);
+        };
 
-    }, [user, playlist]);
-
-    //* Sets 'track' state.
-    useEffect(() => {
-
-        /**
-         * The conditions will both be met if 'getRandomPlaylist' succeeds.
-         * This helps prevent unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack(playlist_id, total_tracks);
-
-    }, [playlist]);
+    }, []);
 
 
     return (
 
         <>
 
-            <NavBar />
+            <NavBar user={user} />
 
             <main className={styles.main}>
 
                 <section className={styles.wrapper}>
 
-                    {/* SOLID BUTTON */}
                     <button
                         className={styles.solidBtn}
                         onClick={handleAnotherShuffleTrack}
-                        disabled={user.isError || status === STATUS.LOADING}
+                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID. If this custom hook fails, the other functions won't be invoked.
                     >
 
                         {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
 
                     </button>
 
-                    {
-                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
-
-                            <TrackCard {...{ playlist, token, track }} />
-
-                        )
-                    }
-
-                    {
-                        status === STATUS.FAILED && (
-
-                            <Toast
-                                type={'danger'}
-                                text={"Oops! We couldn't load the track. Please try again."}
-                            />
-
-                        )
-                    }
+                    <TrackCard {...{ handleFollow, handleLike, playlist, status, track, user }} />
 
                 </section>
+
+                {
+                    // Toasts are used for handling any errors other than user-related errors.
+                    (status === STATUS.FAILED && !user.isError) && (
+
+                        <Toast
+                            type={'danger'}
+                            text={"Oops! We couldn't load the track. Please try again."}
+                        />
+
+                    )
+                }
 
             </main >
 

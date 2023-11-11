@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, Overlay } from '../layouts';
-import { STATUS } from '../utils';
 
 export const LoginPage = () => {
 
-  // REACT-ROUTER-DOM HOOK
-  const [searchParams, setSearchParams] = useSearchParams();
-
   // CUSTOM HOOK
-  const { status, handleUserAuthResponse, requestUserAuth } = useAuth();
+  const {
+    isError,
+    isLoading,
+    searchParams,
+    handleUserAuthResponse,
+    requestUserAuth
+  } = useAuth();
 
   // REACT HOOK
   useEffect(() => {
@@ -22,16 +23,9 @@ export const LoginPage = () => {
      * When the user accepts or denies the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
      * The callback contains two query parameters: 'code' (if accepted) or 'error' (if denied) and 'state'.
      */
-    if (searchParams.size > 0) handleUserAuthResponse(searchParams);
+    if (searchParams.size > 0) handleUserAuthResponse();
 
-    return () => {
-
-      // Clear the URL search params if they are not empty.
-      if (searchParams.size > 0) setSearchParams();
-
-    };
-
-  }, [searchParams]);
+  }, []);
 
 
   return (
@@ -51,15 +45,15 @@ export const LoginPage = () => {
           </div>
 
           <button
-            className='login-btn'
+            className='login'
             onClick={requestUserAuth}
-            disabled={status === STATUS.LOADING}
+            disabled={isLoading}
           >
-            LOGIN
+            Login with Spotify
           </button>
 
           {
-            status === STATUS.LOADING ? (
+            isLoading ? (
 
               <Overlay>
 
@@ -69,7 +63,7 @@ export const LoginPage = () => {
 
             ) : (
 
-              status === STATUS.FAILED && <p>Access denied. Please try again.</p>
+              isError && (<p>Access denied. Please try again.</p>)
 
             )
 

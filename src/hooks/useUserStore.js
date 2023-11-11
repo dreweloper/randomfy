@@ -1,14 +1,22 @@
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
-import { setError, setUser, startLoading } from "../store/slices";
-import { SPOTIFY_API_BASE_URL } from '../utils';
+import { setStatus, setUser, setUserError } from "../store/slices";
+import { SPOTIFY_API_BASE_URL, STATUS } from '../utils';
 
-export const useUserStore = (token) => {
+export const useUserStore = ({ token, user }) => {
 
-    // REACT-REDUX HOOKS
+    // REACT HOOK
+    /**
+     * Used to track whether the user data has been loaded to prevent multiple calls.
+     * @type {React.MutableRefObject<Boolean>}
+     */
+    const isLoaded = useRef(false);
+
+    // REACT-REDUX HOOK
     const dispatch = useDispatch();
 
-    // FUNCTIONS
+    // FUNCTION
     /**
      * Get detailed profile information about the current user.
      * @async
@@ -26,7 +34,7 @@ export const useUserStore = (token) => {
 
         try {
 
-            dispatch(startLoading());
+            dispatch(setStatus(STATUS.LOADING));
 
             /**
              * Promise that resolves with the result of parsing the response body text as JSON.
@@ -35,21 +43,40 @@ export const useUserStore = (token) => {
              * @prop {String} display_name - The name displayed on the user's profile.
              * @prop {String} avatar - The source URL of the user's profile image.
              */
-            const { id, display_name, images: [, { url: avatar }] } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { id, display_name, images: [, { url: avatar }] } = response;
 
             dispatch(setUser({ id, display_name, avatar }));
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
-            dispatch(setError());
+            dispatch(setUserError());
+
+            dispatch(setStatus(STATUS.FAILED));
 
         };
 
     }; //!FUNC-GETUSERPROFILE
 
+    // REACT-HOOK
+    useEffect(() => {
 
-    return { getUserProfile };
+        /**
+         * On init, if the token is expired, the useEffect will be triggered again.
+         * If the 'user' state remains empty, invokes the 'getUserProfile' function
+         * and updates the 'isLoaded' ref value to prevent multiple subsequent calls.
+         */
+        if (token && user.isEmpty && !isLoaded.current) {
+
+            isLoaded.current = true;
+
+            getUserProfile();
+
+        };
+
+    }, [token]);
 
 };

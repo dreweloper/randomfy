@@ -1,24 +1,21 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Image } from '../Assets';
+import { Skeleton } from '../Loading';
 import { AudioPlayer } from '../Media';
-import { usePlaylistStore, useTrackStore } from '../../hooks';
-import { DESKTOP } from '../../utils';
+import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/_TrackCard.module.scss';
 
-export const TrackCard = ({ playlist, token, track }) => {
+export const TrackCard = (props) => {
 
-    // REACT HOOK
+    const { handleFollow, handleLike, playlist, status, track, user } = props;
+
+    // REACT HOOKS
     /**
      * A reference used to update the value of the CSS variable '--like-icon-fill' for the 'like' button.
      * @type {React.RefObject<HTMLButtonElement>}
      */
     const likeButtonRef = useRef();
-
-    // CUSTOM HOOKS
-    const { handleFollow } = usePlaylistStore(token);
-
-    const { handleLike } = useTrackStore(token);
 
     /**
      * Besides the first rendering, this effect will be triggered every time the user clicks on the "like" button
@@ -27,7 +24,7 @@ export const TrackCard = ({ playlist, token, track }) => {
     useEffect(() => {
 
         /**
-         * The value to be set for the CSS variable '--like-icon-fill'.
+         * The value of the CSS variable '--like-icon-fill' is set to '1' when 'track.isLiked' is true and '0' when it's false.
          * @type {Number}
          */
         const value = track.isLiked ? 1 : 0;
@@ -44,21 +41,33 @@ export const TrackCard = ({ playlist, token, track }) => {
 
             <div className={styles.wrapper}>
 
-                <Image
-                    className={styles.artwork}
-                    description={`Album artwork for "${track.album}"`}
-                    source={track.artwork}
-                />
+                {
+                    status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
+
+                        <Image
+                            className={styles.artwork}
+                            description={`Album artwork for "${track.album}"`}
+                            source={track.artwork}
+                        />
+
+                    )
+                }
 
                 <div className={styles.container}>
 
-                    <div className={styles.details}>
+                    {
+                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
 
-                        <h2 className={styles.name}>{track.name}</h2>
+                            <div className={styles.details}>
 
-                        <h2 className={styles.artists}>{track.artists}</h2>
+                                <h2 className={styles.name}>{track.name}</h2>
 
-                    </div>
+                                <h2 className={styles.artists}>{track.artists}</h2>
+
+                            </div>
+
+                        )
+                    }
 
                     {/* TODO: !DESKTOP && visible (CSS media queries) */}
                     <div className={styles.nonDesktopContainer}>
@@ -69,10 +78,10 @@ export const TrackCard = ({ playlist, token, track }) => {
 
                     <nav className={styles.nav}>
 
-                        {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
-                            onClick={() => handleLike(track)}
+                            onClick={handleLike}
+                            disabled={user.isError || status === STATUS.LOADING}
                             ref={likeButtonRef}
                         >
 
@@ -82,32 +91,35 @@ export const TrackCard = ({ playlist, token, track }) => {
 
                         </button>
 
-                        {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
-                            onClick={() => handleFollow(playlist)}
+                            onClick={handleFollow}
+                            disabled={user.isError || status === STATUS.LOADING}
                         >
 
                             {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
 
                         </button>
 
-                        {/* OUTLINED BUTTON STYLES */}
-                        <Link
+                        <button
                             className={`${styles.button} ${styles.link}`}
-                            to={track.track_url}
-                            target={DESKTOP ? '_blank' : '_self'}
+                            disabled={user.isError || status === STATUS.LOADING}
                         >
 
-                            <span>Play on</span>
+                            {/* PENDING: implement a conditional to disable the 'to' prop if 'track_url' is empty. */}
+                            <Link to={track.track_url} target={DESKTOP ? '_blank' : '_self'}>
 
-                            <Image
-                                className={styles.logo}
-                                description={'Spotify Logo'}
-                                source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
-                            />
+                                <span>Play on</span>
 
-                        </Link>
+                                <Image
+                                    className={styles.logo}
+                                    description={'Spotify Logo'}
+                                    source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
+                                />
+
+                            </Link>
+
+                        </button>
 
                     </nav>
 

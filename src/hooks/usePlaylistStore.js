@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from '../helpers';
 import { isPlaylistFollowed, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = (token) => {
+export const usePlaylistStore = ({ playlist, token, user }) => {
 
     // REACT-REDUX HOOK
     const dispatch = useDispatch();
@@ -18,7 +19,9 @@ export const usePlaylistStore = (token) => {
 
         try {
 
-            const { total } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { total } = response;
 
             return total;
 
@@ -38,7 +41,9 @@ export const usePlaylistStore = (token) => {
 
         try {
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
+
+            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response;
 
             return { playlist_id, total_tracks };
 
@@ -50,17 +55,20 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-FETCHUSERRANDOMPLAYLIST
 
-    const checkIsPlaylistFollowed = async (playlist_id, userId) => {
+    const checkIsPlaylistFollowed = async (playlistId) => {
 
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/followers/contains?ids=${userId}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
 
         const method = 'GET';
 
         try {
 
-            const [response] = await fetchSpotifyData({ url, method, token });
+            const response = await fetchSpotifyData({ url, method, token });
 
-            return response;
+            // Array destructuring.
+            const [isFollowed] = response;
+
+            return isFollowed;
 
         } catch (error) {
 
@@ -70,19 +78,19 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-CHECKISPLAYLISTFOLLOWED
 
-    const getRandomPlaylist = async (userId) => {
+    const getRandomPlaylist = async () => {
 
         try {
-
-            dispatch(setStatus(STATUS.LOADING));
 
             const total = await fetchUserTotalPlaylists();
 
             const randomOffset = generateRandomNumber(total);
 
-            const { playlist_id, total_tracks } = await fetchUserRandomPlaylist(randomOffset);
+            const playlist = await fetchUserRandomPlaylist(randomOffset);
 
-            const isFollowed = await checkIsPlaylistFollowed(playlist_id, userId);
+            const { playlist_id, total_tracks } = playlist;
+
+            const isFollowed = await checkIsPlaylistFollowed(playlist_id);
 
             const payload = { playlist_id, total_tracks, isFollowed };
 
@@ -90,7 +98,7 @@ export const usePlaylistStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             dispatch(setStatus(STATUS.FAILED));
 
@@ -103,7 +111,7 @@ export const usePlaylistStore = (token) => {
      * @async
      * @function handleFollow
      */
-    const handleFollow = async (playlist) => {
+    const handleFollow = async () => {
 
         /**
          * @type {Object}
@@ -139,7 +147,7 @@ export const usePlaylistStore = (token) => {
 
         } catch (error) {
 
-            console.error(`Error: ${error.message}`);
+            console.error(error);
 
             //TODO: handle error to show an alert.
 
@@ -147,7 +155,18 @@ export const usePlaylistStore = (token) => {
 
     }; //!FUNC-HANDLEFOLLOW
 
+    useEffect(() => {
 
-    return { getRandomPlaylist, handleFollow };
+        /**
+         * If the token is expired during the initial page load, the user data will be empty.
+         * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
+         * From there, the useEffect will trigger every time the user clicks the 'Random track' button that modifies the 'isDone' prop of the 'playlist' state.
+         */
+        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
+
+    }, [user, playlist.isDone]);
+
+
+    return { handleFollow };
 
 };

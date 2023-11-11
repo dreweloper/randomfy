@@ -1,23 +1,40 @@
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import { fetchSpotifyData } from '../api';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
-import { resetPlaylistState, resetTrackState, resetUserState } from '../store/slices';
+import { resetPlaylistState, resetTrackState, resetUserState, setStatus } from '../store/slices';
 import * as c from "../utils";
 
 export const useAuth = () => {
 
+  // REACT HOOKS
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isError, setIsError] = useState(false);
+
+  // REACT-REDUX HOOKS
+  const playlist = useSelector(state => state.playlist);
+
+  const track = useSelector(state => state.track);
+
+  const user = useSelector(state => state.user);
+
+  const dispatch = useDispatch();
+
   // REACT-COOKIE HOOK
   const [cookies, setCookie, removeCookie] = useCookies();
 
-  // REACT HOOKS
-  const [status, setStatus] = useState(c.STATUS.IDLE);
+  // REACT-ROUTER-DOM HOOK
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // REACT-REDUX HOOKS
-  const { playlist, track, user } = useSelector(state => state);
-
-  const dispatch = useDispatch();
+  // VARIABLES
+  /**
+   * The 'state' parameter that was initially provided to Spotify.
+   * @type {String}
+   */
+  const storedState = cookies.spotify_auth_state;
 
   // FUNCTIONS
   const requestUserAuth = async () => {
@@ -79,7 +96,9 @@ export const useAuth = () => {
 
     try {
 
-      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
+      const response = await fetchSpotifyData({ url, method, data });
+
+      const { access_token, refresh_token } = response;
 
       setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
 
@@ -109,34 +128,38 @@ export const useAuth = () => {
 
     const data = {
       grant_type: c.GRANT_TYPE.REFRESH_TOKEN,
+      // refresh_token: 'AQB7tujK-nl5_urdqoDWigLAxlY1S7Nv2cOSNo_R48AViru8sCWVok3wRjoD9PX7abVOD0DRQ_IrlxQ_FCt0u8iYuFarBwM75Cc4E53TtYKUUVuesCs-jX6eLF161TsKkva',
       refresh_token: cookies.refresh_token,
       client_id: c.CLIENT_ID
     };
 
     try {
 
-      const { access_token, refresh_token } = await fetchSpotifyData({ url, method, data });
+      const response = await fetchSpotifyData({ url, method, data });
+
+      const { access_token, refresh_token } = response;
 
       setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
 
       setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
 
+      return { ok: true };
+
     } catch (error) {
 
-      console.error(`Error: ${error.message}`);
+      if (error?.error_description === 'Invalid refresh token') logout();
 
-      // The status will inform the user that access was denied //! Status is not working (try Redux 'process' state)
-      logout(c.STATUS.FAILED);
+      throw error;
 
     };
 
   }; //!FUNC-REQUESTREFRESHEDACCESSTOKEN
 
-  const handleUserAuthResponse = async (searchParams) => {
+  const handleUserAuthResponse = async () => {
 
     try {
 
-      setStatus(c.STATUS.LOADING);
+      setIsLoading(true);
 
       /**
        * An object that represents the serialized query string from the Spotify API response obtained after user authorization.
@@ -158,27 +181,36 @@ export const useAuth = () => {
        * Compares the state parameter that the app received in the redirection URI
        * with the state parameter it originally provided to Spotify in the authorization URI stored in the cookies.
        */
-      if (cookies.spotify_auth_state !== params.state) throw new Error('State mismatch');
+      if (storedState !== params.state) throw new Error('State mismatch');
 
       await requestAccessToken(params.code);
 
-      setStatus(c.STATUS.SUCCEEDED);
-
     } catch (error) {
 
-      console.error(`Error: ${error.message}`);
+      console.error(error);
 
-      setStatus(c.STATUS.FAILED);
+      setIsError(true);
+
+    } finally {
+
+      // Always clear the URL search parameters.
+      setSearchParams();
+
+      removeCookie(c.STATE_KEY);
+
+      removeCookie(c.CODE_VERIFIER_KEY);
+
+      setIsLoading(false);
 
     };
 
   }; //!FUNC-HANDLEUSERAUTHRESPONSE
 
-  const logout = (status = c.STATUS.IDLE) => {
+  const logout = () => {
 
-    if (cookies.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
+    if (cookies?.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
 
-    if (cookies.refresh_token) removeCookie(c.REFRESH_TOKEN_KEY);
+    if (cookies?.refresh_token) removeCookie(c.REFRESH_TOKEN_KEY);
 
     if (!user.isEmpty) dispatch(resetUserState());
 
@@ -186,14 +218,15 @@ export const useAuth = () => {
 
     if (!track.isEmpty) dispatch(resetTrackState());
 
-    //TODO: reset or set 'status' prop of 'process' Redux state instead of using useState.
-    setStatus(status);
+    dispatch(setStatus(c.STATUS.IDLE));
 
   }; //!FUNC-HANDLELOGOUT
 
 
   return {
-    status,
+    isError,
+    isLoading,
+    searchParams,
     handleUserAuthResponse,
     logout,
     requestUserAuth,

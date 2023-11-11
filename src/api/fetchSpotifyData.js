@@ -68,21 +68,16 @@ export const fetchSpotifyData = async ({ url, method, data = {}, token = undefin
 
         if (!response.ok) {
 
-            /**
-             * A Promise that resolves to the JSON response.
-             * @type {Promise<Response>}
-             * @prop {Object} error - An object representing an error response.
-             * @prop {Number} error.status - The HTTP status code of the error.
-             * @prop {String} error.message - A short description of the cause of the error.
-             */
-            const { error: { status, message } } = await response.json();
-
-            throw new Error(`${status} ${message}`);
+            throw await response.json();
 
         } else {
 
             // The 'PUT' and 'DELETE' endpoints used by the app do not return JSON.
-            return (method === 'PUT' || method === 'DELETE') ? response : await response.json();
+            if (method === 'GET' || method === 'POST') {
+
+                return await response.json();
+
+            };
 
         };
 

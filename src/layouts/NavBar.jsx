@@ -1,16 +1,12 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { UserCard } from '../components';
 import { useAuth } from '../hooks';
 import styles from '../sass/layouts/_NavBar.module.scss';
 
-export const NavBar = () => {
+export const NavBar = ({ user }) => {
 
     // REACT HOOK
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    // REACT-REDUX HOOK
-    const user = useSelector(state => state.user);
 
     // CUSTOM HOOK
     const { logout } = useAuth();
@@ -20,7 +16,7 @@ export const NavBar = () => {
      * Toggles the state between open and closed.
      * @function handleToggle
      */
-    const handleToggle = () => setIsMenuOpen(prevState => !prevState); //!FUNC-HANDLETOGGLE
+    const handleToggle = () => setIsMenuOpen(prevState => !prevState);
 
 
     return (
@@ -49,7 +45,7 @@ export const NavBar = () => {
                             onClick={handleToggle}>
 
                             <span className={`${styles.menuIcon} material-symbols-rounded`}>
-                                expand_more
+                                {isMenuOpen ? 'expand_less' : 'expand_more'}
                             </span>
 
                         </button>

@@ -1,52 +1,47 @@
+import { useSelector } from 'react-redux';
 import { Image } from '../Assets';
 import { Spinner } from '../Loading';
-import { Overlay } from '../../layouts';
+import { STATUS } from '../../utils';
 import styles from '../../sass/components/_UserCard.module.scss';
+import { Overlay } from '../../layouts';
 //TODO: PropTypes
 export const UserCard = ({ user }) => {
+
+    // REACT-REDUX HOOK
+    const status = useSelector(state => state.process.status);
 
 
     return (
 
-        //TODO: use the 'status' property in the 'process' Redux state to prevent loading other components in case of an error.
-
         <>
 
+            <div className={styles.card}>
+
+                <Image
+                    className={styles.avatar}
+                    description={`The user profile image of ${user.display_name}`}
+                    source={!user.isEmpty ? user.avatar : 'Fake avatar src'}
+                />
+
+                <span className={styles.username}>
+
+                    {!user.isEmpty ? user.display_name : status === STATUS.LOADING ? 'Loading…' : user.isError && 'Error'}
+                    
+                </span>
+
+            </div>
+
             {
-                user.isLoading ? (
+                user.isEmpty && (
 
                     <Overlay>
 
-                        <Spinner />
+                        {/* {user.isError && (<Alert />)} –display a notification to indicate the error and (perhaps) provide an option to reload the call or refresh the page– */}
+
+                        {status === STATUS.LOADING && (<Spinner />)}
 
                     </Overlay>
 
-                ) : (
-
-                    user.isError ? (
-
-                        //TODO: Alert. Display a notification to indicate the error and (perhaps) provide an option to reload the call or refresh the page.
-                        //? Display a fake avatar (and display name?) or skeleton loader in case of an error.
-                        <p>ERROR</p>
-
-                    ) : (
-
-                        !user.isEmpty && (
-
-                            <div className={styles.card}>
-
-                                <Image
-                                    className={styles.avatar}
-                                    description={`The user profile image of ${user.display_name}`}
-                                    source={user.avatar}
-                                />
-
-                                <span className={styles.username}>{user.display_name}</span>
-
-                            </div>
-
-                        )
-                    )
                 )
             }
 
