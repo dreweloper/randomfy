@@ -1,9 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, Overlay } from '../layouts';
 
 export const LoginPage = () => {
+
+  // REACT HOOK
+  /**
+   * Used to track whether the login callback has been handled to prevent multiple calls.
+   * @type {React.MutableRefObject<Boolean>}
+   */
+  const isHandled = useRef(false);
 
   // CUSTOM HOOK
   const {
@@ -23,7 +30,13 @@ export const LoginPage = () => {
      * When the user accepts or denies the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
      * The callback contains two query parameters: 'code' (if accepted) or 'error' (if denied) and 'state'.
      */
-    if (searchParams.size > 0) handleUserAuthResponse();
+    if (searchParams.size > 0 && !isHandled.current) {
+
+      isHandled.current = true;
+
+      handleUserAuthResponse();
+
+    };
 
   }, []);
 

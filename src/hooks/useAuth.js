@@ -128,7 +128,6 @@ export const useAuth = () => {
 
     const data = {
       grant_type: c.GRANT_TYPE.REFRESH_TOKEN,
-      // refresh_token: 'AQB7tujK-nl5_urdqoDWigLAxlY1S7Nv2cOSNo_R48AViru8sCWVok3wRjoD9PX7abVOD0DRQ_IrlxQ_FCt0u8iYuFarBwM75Cc4E53TtYKUUVuesCs-jX6eLF161TsKkva',
       refresh_token: cookies.refresh_token,
       client_id: c.CLIENT_ID
     };
