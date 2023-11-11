@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store.js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <CookiesProvider defaultSetOptions={{ sameSite: 'strict' }}>
@@ -15,5 +15,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </CookiesProvider>
       </Provider>
     </BrowserRouter>
-  // </React.StrictMode>,
+  </React.StrictMode>,
 )

@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Image } from '../Assets';
+import { Skeleton } from '../Loading';
 import { AudioPlayer } from '../Media';
-import { DESKTOP } from '../../utils';
+import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/_TrackCard.module.scss';
 
-export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
+export const TrackCard = (props) => {
 
-    // REACT HOOK
+    const { handleFollow, handleLike, playlist, status, track, user } = props;
+
+    // REACT HOOKS
     /**
      * A reference used to update the value of the CSS variable '--like-icon-fill' for the 'like' button.
      * @type {React.RefObject<HTMLButtonElement>}
@@ -38,21 +41,33 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
 
             <div className={styles.wrapper}>
 
-                <Image
-                    className={styles.artwork}
-                    description={`Album artwork for "${track.album}"`}
-                    source={track.artwork}
-                />
+                {
+                    status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
+
+                        <Image
+                            className={styles.artwork}
+                            description={`Album artwork for "${track.album}"`}
+                            source={track.artwork}
+                        />
+
+                    )
+                }
 
                 <div className={styles.container}>
 
-                    <div className={styles.details}>
+                    {
+                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
 
-                        <h2 className={styles.name}>{track.name}</h2>
+                            <div className={styles.details}>
 
-                        <h2 className={styles.artists}>{track.artists}</h2>
+                                <h2 className={styles.name}>{track.name}</h2>
 
-                    </div>
+                                <h2 className={styles.artists}>{track.artists}</h2>
+
+                            </div>
+
+                        )
+                    }
 
                     {/* TODO: !DESKTOP && visible (CSS media queries) */}
                     <div className={styles.nonDesktopContainer}>
@@ -63,10 +78,10 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
 
                     <nav className={styles.nav}>
 
-                        {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
                             onClick={handleLike}
+                            disabled={user.isError || status === STATUS.LOADING}
                             ref={likeButtonRef}
                         >
 
@@ -76,32 +91,34 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, track }) => {
 
                         </button>
 
-                        {/* OUTLINED BUTTON */}
                         <button
                             className={styles.button}
                             onClick={handleFollow}
+                            disabled={user.isError || status === STATUS.LOADING}
                         >
 
                             {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
 
                         </button>
 
-                        {/* OUTLINED BUTTON STYLES */}
-                        <Link
+                        <button
                             className={`${styles.button} ${styles.link}`}
-                            to={track.track_url}
-                            target={DESKTOP ? '_blank' : '_self'}
+                            disabled={user.isError || status === STATUS.LOADING}
                         >
 
-                            <span>Play on</span>
+                            <Link to={track.track_url} target={DESKTOP ? '_blank' : '_self'}>
 
-                            <Image
-                                className={styles.logo}
-                                description={'Spotify Logo'}
-                                source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
-                            />
+                                <span>Play on</span>
 
-                        </Link>
+                                <Image
+                                    className={styles.logo}
+                                    description={'Spotify Logo'}
+                                    source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
+                                />
+
+                            </Link>
+
+                        </button>
 
                     </nav>
 

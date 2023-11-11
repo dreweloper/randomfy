@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Skeleton, Spinner, Toast, TrackCard } from '../components';
+import { Spinner, Toast, TrackCard } from '../components';
 import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from '../hooks';
 import { Footer, NavBar } from '../layouts';
 import { setPlaylistUndone, setStatus } from '../store/slices';
@@ -44,8 +44,10 @@ export const HomePage = ({ token }) => {
                 if (response.ok) {
 
                     setTimeout(() => {
+
                         dispatch(setPlaylistUndone());
-                    }, 500);
+
+                    }, 500); // To ensure that the refreshed access token is stored in cookies before trying to generate a new random track.
 
                 };
 
@@ -57,7 +59,7 @@ export const HomePage = ({ token }) => {
 
         };
 
-    };
+    }; //!FUNC-HANDLEANOTHERSHUFFLETRACK
 
     // REACT HOOKS
     useEffect(() => {
@@ -88,26 +90,20 @@ export const HomePage = ({ token }) => {
 
                     </button>
 
-                    {
-                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
-
-                            <TrackCard {...{ handleFollow, handleLike, playlist, track }} />
-
-                        )
-                    }
-
-                    {
-                        status === STATUS.FAILED && (
-
-                            <Toast
-                                type={'danger'}
-                                text={"Oops! We couldn't load the track. Please try again."}
-                            />
-
-                        )
-                    }
+                    <TrackCard {...{ handleFollow, handleLike, playlist, status, track, user }} />
 
                 </section>
+
+                {
+                    status === STATUS.FAILED && (
+
+                        <Toast
+                            type={'danger'}
+                            text={"Oops! We couldn't load the track. Please try again."}
+                        />
+
+                    )
+                }
 
             </main >
 

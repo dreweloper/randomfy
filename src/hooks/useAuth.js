@@ -147,7 +147,7 @@ export const useAuth = () => {
 
     } catch (error) {
 
-      if (error.error_description === 'Invalid refresh token') logout();
+      if (error?.error_description === 'Invalid refresh token') logout();
 
       throw error;
 
@@ -208,9 +208,9 @@ export const useAuth = () => {
 
   const logout = () => {
 
-    if (cookies.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
+    if (cookies?.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
 
-    if (cookies.refresh_token) removeCookie(c.REFRESH_TOKEN_KEY);
+    if (cookies?.refresh_token) removeCookie(c.REFRESH_TOKEN_KEY);
 
     if (!user.isEmpty) dispatch(resetUserState());
 

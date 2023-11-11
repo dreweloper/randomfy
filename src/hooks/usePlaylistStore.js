@@ -82,7 +82,7 @@ export const usePlaylistStore = ({ playlist, status, token, user }) => {
 
         try {
 
-            // The 'status' state will be 'loading' already if the user clicks on 'Random track' button.
+            // After init, when the user clicks the 'random track' button, the 'status' state will be set to 'loading' before this function is triggered.
             if (status !== STATUS.LOADING) dispatch(setStatus(STATUS.LOADING));
 
             const total = await fetchUserTotalPlaylists();
