@@ -106,6 +106,7 @@ export const TrackCard = (props) => {
                             disabled={user.isError || status === STATUS.LOADING}
                         >
 
+                            {/* PENDING: implement a conditional to disable the 'to' prop if 'track_url' is empty. */}
                             <Link to={track.track_url} target={DESKTOP ? '_blank' : '_self'}>
 
                                 <span>Play on</span>

@@ -5,7 +5,7 @@ import { generateRandomNumber } from '../helpers';
 import { isPlaylistFollowed, setPlaylist, setStatus } from '../store/slices';
 import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
 
-export const usePlaylistStore = ({ playlist, status, token, user }) => {
+export const usePlaylistStore = ({ playlist, token, user }) => {
 
     // REACT-REDUX HOOK
     const dispatch = useDispatch();
@@ -81,9 +81,6 @@ export const usePlaylistStore = ({ playlist, status, token, user }) => {
     const getRandomPlaylist = async () => {
 
         try {
-
-            // After init, when the user clicks the 'random track' button, the 'status' state will be set to 'loading' before this function is triggered.
-            if (status !== STATUS.LOADING) dispatch(setStatus(STATUS.LOADING));
 
             const total = await fetchUserTotalPlaylists();
 
@@ -167,7 +164,7 @@ export const usePlaylistStore = ({ playlist, status, token, user }) => {
          */
         if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
 
-    }, [user, playlist]);
+    }, [user, playlist.isDone]);
 
 
     return { handleFollow };

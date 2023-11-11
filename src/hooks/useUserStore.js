@@ -1,10 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
-import { setError, setUser, startLoading } from "../store/slices";
-import { SPOTIFY_API_BASE_URL } from '../utils';
+import { setStatus, setUser, setUserError } from "../store/slices";
+import { SPOTIFY_API_BASE_URL, STATUS } from '../utils';
 
 export const useUserStore = ({ token, user }) => {
+
+    // REACT HOOK
+    /**
+     * Used to track whether the user data has been loaded to prevent multiple calls.
+     * @type {React.MutableRefObject<Boolean>}
+     */
+    const isLoaded = useRef(false);
 
     // REACT-REDUX HOOK
     const dispatch = useDispatch();
@@ -27,7 +34,7 @@ export const useUserStore = ({ token, user }) => {
 
         try {
 
-            dispatch(startLoading());
+            dispatch(setStatus(STATUS.LOADING));
 
             /**
              * Promise that resolves with the result of parsing the response body text as JSON.
@@ -46,7 +53,9 @@ export const useUserStore = ({ token, user }) => {
 
             console.error(error);
 
-            dispatch(setError());
+            dispatch(setUserError());
+
+            dispatch(setStatus(STATUS.FAILED));
 
         };
 
@@ -55,9 +64,19 @@ export const useUserStore = ({ token, user }) => {
     // REACT-HOOK
     useEffect(() => {
 
-        // Sets the 'user' state.
-        if (token && user.isEmpty) getUserProfile();
+        /**
+         * On init, if the token is expired, the useEffect will be triggered again.
+         * If the 'user' state remains empty, invokes the 'getUserProfile' function
+         * and updates the 'isLoaded' ref value to prevent multiple subsequent calls.
+         */
+        if (token && user.isEmpty && !isLoaded.current) {
 
-    }, [token]); // On init, if the token ('cookies.access_token') is expired, it will be triggered again.
+            isLoaded.current = true;
+
+            getUserProfile();
+
+        };
+
+    }, [token]);
 
 };

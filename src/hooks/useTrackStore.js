@@ -207,7 +207,7 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
          */
         if (playlist.isDone && status === STATUS.LOADING) getRandomTrack();
 
-    }, [playlist]);
+    }, [playlist.isDone]);
 
 
     return { handleLike };

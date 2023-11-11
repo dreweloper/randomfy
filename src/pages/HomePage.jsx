@@ -26,7 +26,7 @@ export const HomePage = ({ token }) => {
 
     useUserStore({ token, user });
 
-    const { handleFollow } = usePlaylistStore({ playlist, status, token, user });
+    const { handleFollow } = usePlaylistStore({ playlist, token, user });
 
     const { handleLike } = useTrackStore({ playlist, status, token, track });
 
@@ -60,7 +60,7 @@ export const HomePage = ({ token }) => {
                     <button
                         className={styles.solidBtn}
                         onClick={handleAnotherShuffleTrack}
-                        disabled={user.isError || status === STATUS.LOADING}
+                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID. If this custom hook fails, the other functions won't be invoked.
                     >
 
                         {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
@@ -72,7 +72,8 @@ export const HomePage = ({ token }) => {
                 </section>
 
                 {
-                    status === STATUS.FAILED && (
+                    // Toasts are used for handling any errors other than user-related errors.
+                    (status === STATUS.FAILED && !user.isError) && (
 
                         <Toast
                             type={'danger'}

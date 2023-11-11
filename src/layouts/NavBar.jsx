@@ -45,7 +45,7 @@ export const NavBar = ({ user }) => {
                             onClick={handleToggle}>
 
                             <span className={`${styles.menuIcon} material-symbols-rounded`}>
-                                expand_more
+                                {isMenuOpen ? 'expand_less' : 'expand_more'}
                             </span>
 
                         </button>

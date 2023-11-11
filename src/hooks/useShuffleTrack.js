@@ -42,6 +42,8 @@ export const useShuffleTrack = (token) => {
 
             console.error(error);
 
+            dispatch(setStatus(STATUS.FAILED));
+
         };
 
     }; //!FUNC-HANDLEANOTHERSHUFFLETRACK
