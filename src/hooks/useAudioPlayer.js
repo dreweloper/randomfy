@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { formatTime } from "../helpers";
+import { formatTime, updateElementStyle } from "../helpers";
 
 export const useAudioPlayer = () => {
 
@@ -120,12 +120,12 @@ export const useAudioPlayer = () => {
          */
         const width = (progressBarRef.current.value / audioRef.current.duration) * 100;
 
-        progressBarRef.current.style.setProperty('--range-progress', `${width}%`);
+        updateElementStyle(progressBarRef.current, '--range-progress', `${width}%`);
 
     }; //!FUNC-SETRANGEPROGRESSSTYLE
 
     /**
-     * Animates the current time display and progress bar while the audio track is playing.
+     * Animates the current time display and progress bar.
      * 
      * This function updates the current playback time on the progress bar element,
      * calls the 'updateTimeProgress' function to update the displayed time,
@@ -141,13 +141,13 @@ export const useAudioPlayer = () => {
         // Updates the displayed time.
         updateTimeProgress(audioRef.current.currentTime);
 
+        // Sets the width style for the progress on the range slider.
         setRangeProgressStyle();
 
         // Schedules a request for the next frame to update the time progress continuously.
         playbackAnimationRef.current = requestAnimationFrame(animateTimeProgress);
 
     }; //!FUNC-ANIMATETIMEPROGRESS
-
 
     useEffect(() => {
 
@@ -167,6 +167,7 @@ export const useAudioPlayer = () => {
 
         };
 
+        // Animates the current time display and progress bar.
         animateTimeProgress();
 
         return () => {
