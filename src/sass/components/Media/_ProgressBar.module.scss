@@ -18,8 +18,11 @@ $thumb-height: 12px;
     }
 
     input[type="range"] {
+        --range-progress: 0 // Custom property to dynamically set width within '::before' pseudo-element.
+
         -webkit-appearance: none;
         appearance: none;
+        position: relative;
         width: 120px;
         height: 4px;
         border-radius: 2px;
@@ -52,31 +55,48 @@ $thumb-height: 12px;
         &::-webkit-slider-thumb {
             -webkit-appearance: none; /* Override default look */
             appearance: none;
+            position: relative;
             margin-top: ($track-height / 2) - ($thumb-height / 2); /* Centers thumb on the track */
             width: 12px;
             height: $thumb-height;
             border: 1px solid $secondary-200;
             border-radius: 50%;
             background-color: $secondary-600;
+            z-index: 10;
         }
 
         /***** Firefox *****/
         &::-moz-range-thumb {
+            position: relative;
             width: 12px;
             height: $thumb-height;
             border: 1px solid $secondary-200;
             border-radius: 50%;
             background-color: $secondary-600;
+            z-index: 10;
         }
 
         /***** Progress Styles *****/
         // Represents the lower portion of the track (track current time).
+
+        /***** Chrome, Safari, Opera, and Edge Chromium *****/
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--range-progress);
+            height: 4px;
+            border-radius: 2px;
+            background-color: $accent-600;
+            z-index: 1;
+        }
 
         /***** Firefox *****/
         &::-moz-range-progress {
             height: 4px;
             border-radius: 2px;
             background-color: $accent-600;
+            z-index: 1;
         }
 
         &:hover {
