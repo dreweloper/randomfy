@@ -65,7 +65,7 @@ $navbar-height: 80px;
 
                 .solidBtn {
                     @include displayFlex(row, center, center);
-                    @include solidButton(unset, $primary-400, $primary-300, $primary-500, unset, unset);
+                    @include solidButton(transparent, $primary-400, $primary-300, $primary-500, transparent, transparent);
                     gap: 4px;
 
                     .logoutIcon {
@@ -111,7 +111,7 @@ $navbar-height: 80px;
 
                 .outlinedBtn {
                     display: inline-block;
-                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900, none);
+                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
                 }
             }
 
