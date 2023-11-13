@@ -30,7 +30,7 @@ export const LoginPage = () => {
      * When the user accepts or denies the requested permissions, the OAuth service redirects the user back to the URL specified in the 'redirect_uri' field ('/login').
      * The callback contains two query parameters: 'code' (if accepted) or 'error' (if denied) and 'state'.
      */
-    if (searchParams.size > 0 && !isHandled.current) {
+    if (searchParams.toString().length > 0 && !isHandled.current) {
 
       isHandled.current = true;
 
