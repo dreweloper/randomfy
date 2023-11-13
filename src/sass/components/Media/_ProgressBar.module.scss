@@ -1,16 +1,20 @@
+@use 'sass:math';
 @use '../../utils' as *;
 
 // VARIABLES
-$track-height: 4px;
-$thumb-height: 12px;
+$track-height: 8px;
+$border-radius: math.div($track-height, 2);
+$thumb-size: 16px;
 
 .progressBar {
     @include displayFlex(row, center, center);
-    margin: 0 auto;
+    flex: 1; // This will make the box occupy the remaining space.
+    width: 100%;
+    min-height: 24px;
     gap: 8px;
 
     .time {
-        width: 32px;
+        min-width: 32px; // By using only 'width', the span elements will occupy only the space required by its content.
         font-size: var(--fs-xxs);
         font-weight: 300;
         text-align: center;
@@ -23,9 +27,10 @@ $thumb-height: 12px;
         -webkit-appearance: none;
         appearance: none;
         position: relative;
-        width: 120px;
-        height: 4px;
-        border-radius: 2px;
+        width: 100%;
+        min-width: 40px;
+        height: $track-height;
+        border-radius: $border-radius;
         background: transparent;
         cursor: pointer;
 
@@ -36,7 +41,7 @@ $thumb-height: 12px;
         &::-webkit-slider-runnable-track {
             width: 100%;
             height: $track-height;
-            border-radius: 2px;
+            border-radius: $border-radius;
             background-color: $secondary-200;
         }
 
@@ -44,7 +49,7 @@ $thumb-height: 12px;
         &::-moz-range-track {
             width: 100%;
             height: $track-height;
-            border-radius: 2px;
+            border-radius: $border-radius;
             background-color: $secondary-200;
         }
 
@@ -56,24 +61,24 @@ $thumb-height: 12px;
             -webkit-appearance: none; /* Override default look */
             appearance: none;
             position: relative;
-            margin-top: ($track-height / 2) - ($thumb-height / 2); /* Centers thumb on the track */
-            width: 12px;
-            height: $thumb-height;
+            margin-top: math.div($track-height, 2) - math.div($thumb-size, 2); /* Centers thumb on the track */
+            width: $thumb-size;
+            height: $thumb-size;
             border: 1px solid $secondary-200;
             border-radius: 50%;
             background-color: $secondary-600;
-            z-index: 10;
+            z-index: 10; // Overlay the thumb on top of the track progress.
         }
 
         /***** Firefox *****/
         &::-moz-range-thumb {
             position: relative;
-            width: 12px;
-            height: $thumb-height;
+            width: $thumb-size;
+            height: $thumb-size;
             border: 1px solid $secondary-200;
             border-radius: 50%;
             background-color: $secondary-600;
-            z-index: 10;
+            z-index: 10; // Overlay the thumb on top of the track progress.
         }
 
         /***** Progress Styles *****/
@@ -85,16 +90,16 @@ $thumb-height: 12px;
             position: absolute;
             top: 0; left: 0;
             width: var(--range-progress);
-            height: 4px;
-            border-radius: 2px;
+            height: $track-height;
+            border-radius: $border-radius;
             background-color: $accent-600;
             z-index: 1;
         }
 
         /***** Firefox *****/
         &::-moz-range-progress {
-            height: 4px;
-            border-radius: 2px;
+            height: $track-height;
+            border-radius: $border-radius;
             background-color: $accent-600;
             z-index: 1;
         }

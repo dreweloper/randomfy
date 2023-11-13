@@ -11,6 +11,7 @@
 
     .wrapper {
         @include displayFlex(column, center, center);
+        width: 100%;
         gap: 16px;
 
         .artwork {
@@ -50,6 +51,8 @@
 
             .nonDesktopContainer {
                 width: 100%;
+                
+                /* AUDIO PLAYER */
             }
 
             .nav {
