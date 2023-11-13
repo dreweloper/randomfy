@@ -111,7 +111,7 @@ $navbar-height: 80px;
 
                 .outlinedBtn {
                     display: inline-block;
-                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900);
+                    @include outlinedButton(fit-content, $secondary-300, $secondary-950, $secondary-900, none);
                 }
             }
 

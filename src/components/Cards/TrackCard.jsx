@@ -102,14 +102,17 @@ export const TrackCard = (props) => {
                         </button>
 
                         <button
-                            className={`${styles.button} ${styles.link}`}
+                            className={styles.button}
                             disabled={user.isError || status === STATUS.LOADING}
                         >
 
                             {/* PENDING: implement a conditional to disable the 'to' prop if 'track_url' is empty. */}
-                            <Link to={track.track_url} target={DESKTOP ? '_blank' : '_self'}>
+                            <Link
+                                className={styles.link}
+                                to={track.track_url}
+                                target={DESKTOP ? '_blank' : '_self'}>
 
-                                <span>Play on</span>
+                                <span className={styles.linkText}>Play on</span>
 
                                 <Image
                                     className={styles.logo}

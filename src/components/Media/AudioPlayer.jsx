@@ -1,6 +1,7 @@
 import { ProgressBar, Controls } from "./index";
 import { Toast } from "../Notifications";
 import { useAudioPlayer } from "../../hooks";
+import styles from '../../sass/components/Media/_AudioPlayer.module.scss';
 //TODO: PropTypes
 export const AudioPlayer = ({ trackPreview }) => {
 
@@ -23,7 +24,7 @@ export const AudioPlayer = ({ trackPreview }) => {
 
         <>
 
-            <div className="audioPlayer">
+            <div className={styles.audioPlayer}>
 
                 <audio src={trackPreview} onEnded={onEnded} onLoadedMetadata={onLoadedMetadata} ref={audioRef}></audio>
 

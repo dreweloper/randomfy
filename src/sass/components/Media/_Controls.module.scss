@@ -1,0 +1,13 @@
+@use '../../utils' as *;
+
+.button {
+    @include displayFlex(row, center, center);
+    @include roundedButton($accent-950, $accent-400, $accent-300, $accent-500, $accent-950, $accent-800);
+
+    .icon {
+        font-size: var(--fs-lg);
+        font-weight: 400;
+        font-variation-settings:
+            'FILL' 1,
+    }
+}
