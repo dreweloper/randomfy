@@ -52,7 +52,7 @@ $navbar-height: 80px;
             @include displayFlex(column, center, center);
             width: 100%;
             min-height: fit-content;
-            padding: 16px;
+            padding: 16px 32px;
             list-style: none;
             background-color: rgba(25, 20, 20, 0.8);
             transition: top 0.8s ease;

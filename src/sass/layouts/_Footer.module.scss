@@ -1,8 +1,36 @@
 @use '../utils' as *;
 
 .footer {
-    @include displayFlex(row, center, center);
+    @include displayFlex(row, center, space-between);
+    flex-wrap: wrap;
     width: 100%;
+    max-width: 1200px;
     height: 60px;
+    padding: 16px;
+    margin: 0 auto;
+    gap: 24px;
     border-top: 1px solid $primary-900;
+
+    .nav {
+        @include displayFlex(row, center, center);
+        gap: 12px;
+
+        .link {
+            display: flex;
+            width: fit-content;
+
+            .logo {
+                font-size: var(--fs-lg);
+
+                &:hover {
+                    color: $accent-500;
+                }
+            }
+        }
+    }
+
+    .text {
+        font-size: var(--fs-xs);
+        font-weight: 300;
+    }
 }
