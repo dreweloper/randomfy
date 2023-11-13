@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { formatTime } from "../helpers";
+import { formatTime, updateElementStyle } from "../helpers";
 
 export const useAudioPlayer = () => {
 
@@ -109,7 +109,23 @@ export const useAudioPlayer = () => {
     }; //!FUNC-HANDLEPROGRESSBARCHANGE
 
     /**
-     * Animates the current time display and progress bar while the audio track is playing.
+     * Sets the width style for the progress on the range slider of the audio player based on the current audio time and duration.
+     * @function setRangeProgressStyle
+     */
+    const setRangeProgressStyle = () => {
+
+        /**
+         * Calculates the progress width for the range slider of the audio player.
+         * @type {Number}
+         */
+        const width = (progressBarRef.current.value / audioRef.current.duration) * 100;
+
+        updateElementStyle(progressBarRef.current, '--range-progress', `${width}%`);
+
+    }; //!FUNC-SETRANGEPROGRESSSTYLE
+
+    /**
+     * Animates the current time display and progress bar.
      * 
      * This function updates the current playback time on the progress bar element,
      * calls the 'updateTimeProgress' function to update the displayed time,
@@ -123,7 +139,10 @@ export const useAudioPlayer = () => {
         progressBarRef.current.value = audioRef.current.currentTime;
 
         // Updates the displayed time.
-        updateTimeProgress(progressBarRef.current.value);
+        updateTimeProgress(audioRef.current.currentTime);
+
+        // Sets the width style for the progress on the range slider.
+        setRangeProgressStyle();
 
         // Schedules a request for the next frame to update the time progress continuously.
         playbackAnimationRef.current = requestAnimationFrame(animateTimeProgress);
@@ -142,13 +161,14 @@ export const useAudioPlayer = () => {
 
             audioRef.current.play();
 
-            animateTimeProgress();
-
         } else {
 
             audioRef.current.pause();
 
         };
+
+        // Animates the current time display and progress bar.
+        animateTimeProgress();
 
         return () => {
 

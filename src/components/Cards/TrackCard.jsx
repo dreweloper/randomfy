@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Image } from '../Assets';
 import { Skeleton } from '../Loading';
 import { AudioPlayer } from '../Media';
+import { updateElementStyle } from '../../helpers';
 import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/_TrackCard.module.scss';
 
@@ -24,13 +25,13 @@ export const TrackCard = (props) => {
     useEffect(() => {
 
         /**
-         * The value of the CSS variable '--like-icon-fill' is set to '1' when 'track.isLiked' is true and '0' when it's false.
+         * The value of the CSS variable '--like-icon-fill' is set to 1 when 'track.isLiked' is 'true' and 0 when it's 'false'.
          * @type {Number}
          */
         const value = track.isLiked ? 1 : 0;
 
-        // Updates the value of the CSS variable '--like-icon-fill' to reflect if the track has been added ('true') or deleted ('false') from the user's 'Your Music' library.
-        likeButtonRef.current.style.setProperty('--like-icon-fill', value);
+        // Changes the icon fill of the like button to reflect whether the track has been added ('true') or removed ('false') from the user's 'Your Music' library.
+        updateElementStyle(likeButtonRef.current, '--like-icon-fill', value);
 
     }, [track.isLiked]);
 
@@ -102,14 +103,17 @@ export const TrackCard = (props) => {
                         </button>
 
                         <button
-                            className={`${styles.button} ${styles.link}`}
+                            className={styles.button}
                             disabled={user.isError || status === STATUS.LOADING}
                         >
 
                             {/* PENDING: implement a conditional to disable the 'to' prop if 'track_url' is empty. */}
-                            <Link to={track.track_url} target={DESKTOP ? '_blank' : '_self'}>
+                            <Link
+                                className={styles.link}
+                                to={track.track_url}
+                                target={DESKTOP ? '_blank' : '_self'}>
 
-                                <span>Play on</span>
+                                <span className={styles.linkText}>Play on</span>
 
                                 <Image
                                     className={styles.logo}

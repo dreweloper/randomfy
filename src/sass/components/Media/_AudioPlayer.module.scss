@@ -1,0 +1,12 @@
+@use '../../utils' as *;
+
+.audioPlayer {
+    @include displayFlex(row, center, space-between);
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 72px;
+    padding: 16px;
+    gap: 16px;
+    border: 1px solid $accent-300;
+    border-radius: 5px;
+}

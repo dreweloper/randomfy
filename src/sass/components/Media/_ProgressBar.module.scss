@@ -1,0 +1,120 @@
+@use 'sass:math';
+@use '../../utils' as *;
+
+// VARIABLES
+$track-height: 8px;
+$border-radius: math.div($track-height, 2);
+$thumb-size: 16px;
+
+.progressBar {
+    @include displayFlex(row, center, center);
+    flex: 1; // This will make the box occupy the remaining space.
+    width: 100%;
+    min-height: 24px;
+    gap: 8px;
+
+    .time {
+        min-width: 32px; // By using only 'width', the span elements will occupy only the space required by its content.
+        font-size: var(--fs-xxs);
+        font-weight: 300;
+        text-align: center;
+        color: $secondary-300;
+    }
+
+    input[type="range"] {
+        --range-progress: 0 // Custom property to dynamically set width within '::before' pseudo-element.
+
+        -webkit-appearance: none;
+        appearance: none;
+        position: relative;
+        width: 100%;
+        min-width: 40px;
+        height: $track-height;
+        border-radius: $border-radius;
+        background: transparent;
+        cursor: pointer;
+
+        /***** Track Styles *****/
+        // Represents the groove in which the thumb slides (track duration time).
+
+        /***** Chrome, Safari, Opera, and Edge Chromium *****/
+        &::-webkit-slider-runnable-track {
+            width: 100%;
+            height: $track-height;
+            border-radius: $border-radius;
+            background-color: $secondary-200;
+        }
+
+        /***** Firefox *****/
+        &::-moz-range-track {
+            width: 100%;
+            height: $track-height;
+            border-radius: $border-radius;
+            background-color: $secondary-200;
+        }
+
+        /***** Thumb Styles *****/
+        // Represents the indicator that slides in the groove (the slider "button").
+
+        /***** Chrome, Safari, Opera, and Edge Chromium *****/
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            position: relative;
+            margin-top: math.div($track-height, 2) - math.div($thumb-size, 2); /* Centers thumb on the track */
+            width: $thumb-size;
+            height: $thumb-size;
+            border: 1px solid $secondary-200;
+            border-radius: 50%;
+            background-color: $secondary-600;
+            z-index: 10; // Overlay the thumb on top of the track progress.
+        }
+
+        /***** Firefox *****/
+        &::-moz-range-thumb {
+            position: relative;
+            width: $thumb-size;
+            height: $thumb-size;
+            border: 1px solid $secondary-200;
+            border-radius: 50%;
+            background-color: $secondary-600;
+            z-index: 10; // Overlay the thumb on top of the track progress.
+        }
+
+        /***** Progress Styles *****/
+        // Represents the lower portion of the track (track current time).
+
+        /***** Chrome, Safari, Opera, and Edge Chromium *****/
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: var(--range-progress);
+            height: $track-height;
+            border-radius: $border-radius;
+            background-color: $accent-600;
+            z-index: 1;
+        }
+
+        /***** Firefox *****/
+        &::-moz-range-progress {
+            height: $track-height;
+            border-radius: $border-radius;
+            background-color: $accent-600;
+            z-index: 1;
+        }
+
+        &:hover {
+
+            /***** Chrome, Safari, Opera, and Edge Chromium *****/
+            &::-webkit-slider-thumb {
+                background-color: $accent-500;
+            }
+
+            /***** Firefox *****/
+            &::-moz-range-thumb {
+                background-color: $accent-500;
+            }
+        }
+    }
+}

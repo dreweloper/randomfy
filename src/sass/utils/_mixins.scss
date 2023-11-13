@@ -5,7 +5,7 @@
     justify-content: $justifyContent;
 }
 
-@mixin outlinedButton($width, $defaultClr, $hoverBgClr, $activeBgClr) {
+@mixin outlinedButton($width, $defaultClr, $hoverBgClr, $activeBgClr, $disClr) {
     width: $width;
     height: 48px;
     padding: 8px 16px;
@@ -25,6 +25,11 @@
     &:active {
         background-color: $activeBgClr;
     }
+
+    &:disabled {
+        border-color: $disClr;
+        color: $disClr;
+    }
 }
 
 @mixin solidButton($defClr, $defBgClr, $hovBgClr, $actBgClr, $disClr, $disBgClr) {
@@ -38,6 +43,27 @@
     text-align: center;
     text-transform: uppercase;
     border-radius: 5px;
+    color: $defClr;
+    background-color: $defBgClr;
+
+    &:hover {
+        background-color: $hovBgClr;
+    }
+
+    &:active {
+        background-color: $actBgClr;
+    }
+
+    &:disabled {
+        color: $disClr;
+        background-color: $disBgClr;
+    }
+}
+
+@mixin roundedButton($defClr, $defBgClr, $hovBgClr, $actBgClr, $disClr, $disBgClr) {
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
     color: $defClr;
     background-color: $defBgClr;
 
