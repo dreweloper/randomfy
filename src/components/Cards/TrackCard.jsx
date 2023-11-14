@@ -5,7 +5,7 @@ import { Skeleton } from '../Loading';
 import { AudioPlayer } from '../Media';
 import { updateElementStyle } from '../../helpers';
 import { DESKTOP, STATUS } from '../../utils';
-import styles from '../../sass/components/_TrackCard.module.scss';
+import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
 export const TrackCard = (props) => {
 

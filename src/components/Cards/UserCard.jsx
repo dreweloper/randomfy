@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 import { Image } from '../Assets';
 import { Spinner } from '../Loading';
-import { STATUS } from '../../utils';
-import styles from '../../sass/components/_UserCard.module.scss';
 import { Overlay } from '../../layouts';
+import { STATUS } from '../../utils';
+import styles from '../../sass/components/Cards/_UserCard.module.scss';
 //TODO: PropTypes
 export const UserCard = ({ user }) => {
 

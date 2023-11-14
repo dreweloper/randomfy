@@ -1,0 +1,19 @@
+@use '../../utils' as *;
+
+.spinner {
+    min-width: 32px;
+    min-height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-left-color: $secondary-50;
+    animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

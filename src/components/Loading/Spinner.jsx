@@ -1,10 +1,11 @@
+import styles from '../../sass/components/Loading/_Spinner.module.scss';
 
 export const Spinner = () => {
 
 
     return (
 
-        <div>Spinner</div>
+        <span className={styles.spinner}></span>
 
     );
 
