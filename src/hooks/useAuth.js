@@ -59,7 +59,7 @@ export const useAuth = () => {
         state,
         code_challenge_method: c.CODE_CHALLENGE_METHOD,
         code_challenge: codeChallenge,
-        show_dialog: true
+        show_dialog: false
       });
 
       window.location.href = `${c.SPOTIFY_AUTH_BASE_URL}/authorize?${params}`;

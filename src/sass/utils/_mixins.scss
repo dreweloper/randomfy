@@ -5,7 +5,7 @@
     justify-content: $justifyContent;
 }
 
-@mixin outlinedButton($width, $defaultClr, $hoverBgClr, $activeBgClr, $disClr: transparent) {
+@mixin outlinedButton($width, $defaultClr, $hoverBgClr, $activeBgClr) {
     width: $width;
     height: 48px;
     padding: 8px 16px;
@@ -24,11 +24,6 @@
 
     &:active {
         background-color: $activeBgClr;
-    }
-
-    &:disabled {
-        border-color: $disClr;
-        color: $disClr;
     }
 }
 

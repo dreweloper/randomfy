@@ -1,14 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
-import { Image } from '../Assets';
 import { AudioPlayer } from '../Media';
 import { updateElementStyle } from '../../helpers';
 import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = (props) => {
-
-    const { handleFollow, handleLike, playlist, status, track, user } = props;
+export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, user }) => {
 
     // REACT HOOKS
     /**
@@ -32,16 +29,17 @@ export const TrackCard = (props) => {
         // Changes the icon fill of the like button to reflect whether the track has been added ('true') or removed ('false') from the user's 'Your Music' library.
         updateElementStyle(likeButtonRef.current, '--like-icon-fill', value);
 
-    }, [track.isLiked, status]);
+    }, [track.isLiked]);
 
 
     return (
 
-        <article className={styles.card}>
+        <article className={`${styles.card} ${status === STATUS.LOADING && 'opacity-50'}`}>
 
             <div className={styles.wrapper}>
 
-                <div className={`${styles.artwork} ${status === STATUS.LOADING && 'opacity-50'}`}>
+                {/* ALBUM COVER */}
+                <div className={styles.artwork}>
 
                     {
                         !track.isEmpty ? (
@@ -63,7 +61,8 @@ export const TrackCard = (props) => {
 
                 <div className={styles.container}>
 
-                    <div className={`${styles.details} ${status === STATUS.LOADING && 'opacity-50'}`}>
+                    {/* TRACK NAME AND ARTISTS */}
+                    <div className={styles.details}>
 
                         <h2 className={`${styles.name} ${track.isEmpty && 'skeleton-text'}`}>
                             {track.name}
@@ -81,7 +80,7 @@ export const TrackCard = (props) => {
                         {
                             track.preview_url !== null ? (
 
-                                <AudioPlayer trackPreview={track.preview_url} isLoading={status === STATUS.LOADING} />
+                                <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
 
                             ) : (
 
@@ -130,18 +129,18 @@ export const TrackCard = (props) => {
                             disabled={user.isError || status === STATUS.LOADING}
                         >
 
-                            {/* PENDING: implement a conditional to disable the 'to' prop if 'track_url' is empty. */}
                             <Link
-                                className={styles.link}
+                                className={`${styles.link} ${status === STATUS.LOADING && 'pointer-events'}`}
                                 to={track.track_url}
                                 target={DESKTOP ? '_blank' : '_self'}>
 
                                 <span className={styles.linkText}>Play on</span>
 
-                                <Image
+                                <img
                                     className={styles.logo}
-                                    description={'Spotify Logo'}
-                                    source={'/assets/spotify/icons/Spotify_Icon_RGB_Green.png'}
+                                    src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
+                                    alt='Spotify Logo'
+                                    title='Spotify Logo'
                                 />
 
                             </Link>
@@ -157,12 +156,29 @@ export const TrackCard = (props) => {
             {/* DESKTOP AUDIO PLAYER CONTAINER */}
             <div className={styles.desktopContainer}>
 
-                {/* <AudioPlayer trackPreview={track.preview_url} /> */}
+                {
+                    track.preview_url !== null ? (
+
+                        <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+
+                    ) : (
+
+                        <div className={styles.warningContainer}>
+
+                            <span className={`${styles.warningIcon} material-symbols-rounded`}>
+                                warning
+                            </span>
+
+                            <p className={styles.warningText}>Track preview is not available.</p>
+
+                        </div>
+
+                    )
+                }
 
             </div>
 
         </article>
-
 
     );
 

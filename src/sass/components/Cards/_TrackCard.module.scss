@@ -88,7 +88,7 @@
                         font-weight: 300;
                         text-align: center;
                         letter-spacing: 0.2px;
-                        // color: $warning-300;
+                        color: $warning-300;    
                     }
                 }
             }
@@ -100,7 +100,7 @@
 
                 .button {
                     @include displayFlex(row, center, center);
-                    @include outlinedButton(100%, $accent-300, $accent-950, $accent-900, $accent-700);
+                    @include outlinedButton(100%, $accent-300, $accent-950, $accent-900);
 
                     .favoriteIcon {
                         font-size: var(--fs-lg);
