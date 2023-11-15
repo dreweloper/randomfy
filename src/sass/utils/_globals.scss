@@ -1,0 +1,40 @@
+@use './colors' as *;
+@use './fonts' as *;
+@use './mixins' as *;
+
+// TYPE SELECTORS
+body {
+    font-family: $primary-font;
+    font-size: var(--fs-body);
+    font-weight: 400;
+    color: $secondary-50;
+    background-color: $primary-950;
+}
+
+img {
+    width: 100%;
+}
+
+// CLASS SELECTORS
+.skeleton {
+    opacity: 0.8;
+    animation: skeleton .7s linear infinite alternate;
+}
+
+.skeletonText {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    opacity: 0.8;
+    animation: skeleton .7s linear infinite alternate;
+}
+
+// KEYFRAMES
+@keyframes skeleton {
+    0% {
+        background-color: $secondary-400;
+    }
+    100% {
+        background-color: $secondary-100;
+    }
+}

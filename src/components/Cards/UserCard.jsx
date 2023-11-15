@@ -1,14 +1,6 @@
-import { useSelector } from 'react-redux';
-import { Image } from '../Assets';
-import { Spinner } from '../Loading';
-import { Overlay } from '../../layouts';
-import { STATUS } from '../../utils';
 import styles from '../../sass/components/Cards/_UserCard.module.scss';
 //TODO: PropTypes
 export const UserCard = ({ user }) => {
-
-    // REACT-REDUX HOOK
-    const status = useSelector(state => state.process.status);
 
 
     return (
@@ -17,33 +9,25 @@ export const UserCard = ({ user }) => {
 
             <div className={styles.card}>
 
-                <Image
-                    className={styles.avatar}
-                    description={`The user profile image of ${user.display_name}`}
-                    source={!user.isEmpty ? user.avatar : 'Fake avatar src'}
-                />
+                <div className={`${styles.avatar} ${user.isEmpty && 'skeleton'}`}>
 
-                <span className={styles.username}>
+                    {
+                        !user.isEmpty && (
+                            <img
+                                src={user.avatar}
+                                alt={`The user profile image of ${user.display_name}`}
+                                title={`The user profile image of ${user.display_name}`}
+                            />
+                        )
+                    }
 
-                    {!user.isEmpty ? user.display_name : status === STATUS.LOADING ? 'Loading…' : user.isError && 'Error'}
-                    
+                </div>
+
+                <span className={`${styles.username} ${user.isEmpty && 'skeletonText'}`}>
+                    {user.display_name}
                 </span>
 
             </div>
-
-            {
-                user.isEmpty && (
-
-                    <Overlay>
-
-                        {/* {user.isError && (<Alert />)} –display a notification to indicate the error and (perhaps) provide an option to reload the call or refresh the page– */}
-
-                        {status === STATUS.LOADING && (<Spinner />)}
-
-                    </Overlay>
-
-                )
-            }
 
         </>
 

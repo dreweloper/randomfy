@@ -1,14 +1,2 @@
 @use './base';
-@use './utils/' as *;
-
-body {
-    font-family: $primary-font;
-    font-size: var(--fs-body);
-    font-weight: 400;
-    color: $secondary-50;
-    background-color: $primary-950;
-}
-
-img {
-    width: 100%;
-}
+@use './utils';
