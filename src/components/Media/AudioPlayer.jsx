@@ -1,5 +1,4 @@
 import { ProgressBar, Controls } from "./index";
-import { Toast } from "../Notifications";
 import { useAudioPlayer } from "../../hooks";
 import styles from '../../sass/components/Media/_AudioPlayer.module.scss';
 //TODO: PropTypes
@@ -33,17 +32,6 @@ export const AudioPlayer = ({ trackPreview }) => {
                 <ProgressBar {...{ currentTime, duration, handleProgressBarChange, progressBarRef }} />
 
             </div>
-
-            {
-                !trackPreview && (
-
-                    <Toast
-                        type={'warning'}
-                        text={'Track preview is not available.'}
-                    />
-
-                )
-            }
 
         </>
 

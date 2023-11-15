@@ -151,6 +151,8 @@ export const useAudioPlayer = () => {
 
     useEffect(() => {
 
+        console.log('ENTRO')
+
         if (isPlaying) {
 
             /**

@@ -56,10 +56,41 @@
                 }
             }
 
+            /*** AUDIO PLAYER CONTAINER ***/
             .nonDesktopContainer {
+                @include displayFlex(row, center, center);
                 width: 100%;
+                min-height: 82px;
 
-                /* AUDIO PLAYER */
+                .warningContainer {
+                    @include displayFlex(row, center, center);
+                    width: 100%;
+                    min-height: 82px;
+                    padding: 16px;
+                    gap: 8px;
+                    border: 1px solid $warning-600;
+                    border-radius: 5px;
+                    background-color: $warning-950;
+
+                    .warningIcon {
+                        font-size: var(--fs-md);
+                        font-weight: 300;
+                        color: $warning-400;
+                        font-variation-settings:
+                            'FILL' 1,
+                            'wght' 300,
+                            'GRAD' 200,
+                            'opsz' 24
+                    }
+
+                    .warningText {
+                        font-size: var(--fs-xs);
+                        font-weight: 300;
+                        text-align: center;
+                        letter-spacing: 0.2px;
+                        // color: $warning-300;
+                    }
+                }
             }
 
             .nav {

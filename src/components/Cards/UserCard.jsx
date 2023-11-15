@@ -23,7 +23,7 @@ export const UserCard = ({ user }) => {
 
                 </div>
 
-                <span className={`${styles.username} ${user.isEmpty && 'skeletonText'}`}>
+                <span className={`${styles.username} ${user.isEmpty && 'skeleton-text'}`}>
                     {user.display_name}
                 </span>
 

@@ -16,11 +16,11 @@ img {
 }
 
 // CLASS SELECTORS
-.opacity {
+.opacity-50 {
     opacity: 0.5;
 }
 
-.skeletonText {
+.skeleton-text {
     width: 80%;
     height: 10px;
     border-radius: 5px;
@@ -29,6 +29,10 @@ img {
     &:last-child {
         width: 50%;
     }
+}
+
+.pointer-events {
+    pointer-events: none; // Disable mouse events
 }
 
 // KEYFRAMES
