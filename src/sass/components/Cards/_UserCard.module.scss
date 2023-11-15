@@ -16,6 +16,10 @@
         }
     }
 
+    .skeleton {
+        @include animationSkeleton();
+    }
+
     .username {
         display: none;
     }

@@ -9,6 +9,7 @@ $navbar-height: 80px;
     @include displayFlex(row, center, center);
     width: 100%;
     height: $navbar-height;
+    z-index: 1;
 
     .wrapper {
         @include displayFlex(row, center, space-between);

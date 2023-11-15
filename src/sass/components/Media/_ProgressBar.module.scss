@@ -93,7 +93,7 @@ $thumb-size: 16px;
             height: $track-height;
             border-radius: $border-radius;
             background-color: $accent-600;
-            z-index: 1;
+            z-index: 5;
         }
 
         /***** Firefox *****/
@@ -101,7 +101,7 @@ $thumb-size: 16px;
             height: $track-height;
             border-radius: $border-radius;
             background-color: $accent-600;
-            z-index: 1;
+            z-index: 5;
         }
 
         &:hover {

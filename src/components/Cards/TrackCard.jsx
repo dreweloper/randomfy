@@ -33,7 +33,7 @@ export const TrackCard = (props) => {
         // Changes the icon fill of the like button to reflect whether the track has been added ('true') or removed ('false') from the user's 'Your Music' library.
         updateElementStyle(likeButtonRef.current, '--like-icon-fill', value);
 
-    }, [track.isLiked]);
+    }, [track.isLiked, status]);
 
 
     return (
@@ -42,33 +42,39 @@ export const TrackCard = (props) => {
 
             <div className={styles.wrapper}>
 
-                {
-                    status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
-
-                        <Image
-                            className={styles.artwork}
-                            description={`Album artwork for "${track.album}"`}
-                            source={track.artwork}
-                        />
-
-                    )
-                }
-
-                <div className={styles.container}>
+                <div className={`${styles.artwork} ${status === STATUS.LOADING && 'opacity'}`}>
 
                     {
-                        status === STATUS.LOADING || track.isEmpty ? (<Skeleton />) : (
+                        !track.isEmpty ? (
 
-                            <div className={styles.details}>
+                            <img
+                                src={track.artwork}
+                                alt={`Album artwork for "${track.album}"`}
+                                title={`Album artwork for "${track.album}"`}
+                            />
 
-                                <h2 className={styles.name}>{track.name}</h2>
+                        ) : (
 
-                                <h2 className={styles.artists}>{track.artists}</h2>
-
-                            </div>
+                            <span className={styles.skeleton}></span>
 
                         )
                     }
+
+                </div>
+
+                <div className={styles.container}>
+
+                    <div className={`${styles.details} ${status === STATUS.LOADING && 'opacity'}`}>
+
+                        <h2 className={`${styles.name} ${track.isEmpty && 'skeletonText'}`}>
+                            {track.name}
+                        </h2>
+
+                        <h2 className={`${styles.artists} ${track.isEmpty && 'skeletonText'}`}>
+                            {track.artists}
+                        </h2>
+
+                    </div>
 
                     {/* TODO: !DESKTOP && visible (CSS media queries) */}
                     <div className={styles.nonDesktopContainer}>

@@ -19,6 +19,13 @@
             width: 100%;
         }
 
+        .skeleton {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; // Set padding-bottom to 100% to make height proportional to the width of the parent container ('.wrapper').
+            @include animationSkeleton();
+        }
+
         .container {
             @include displayFlex(column, center, center);
             width: 100%;
@@ -51,7 +58,7 @@
 
             .nonDesktopContainer {
                 width: 100%;
-                
+
                 /* AUDIO PLAYER */
             }
 
@@ -73,7 +80,7 @@
                     .link {
                         @include displayFlex(row, center, center);
                         gap: 8px;
-    
+
                         .logo {
                             display: flex;
                             width: 24px;

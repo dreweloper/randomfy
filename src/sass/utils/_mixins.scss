@@ -79,3 +79,8 @@
         background-color: $disBgClr;
     }
 }
+
+@mixin animationSkeleton{
+    opacity: 0.7;
+    animation: skeleton 1s linear infinite alternate;
+}

@@ -16,25 +16,28 @@ img {
 }
 
 // CLASS SELECTORS
-.skeleton {
-    opacity: 0.8;
-    animation: skeleton .7s linear infinite alternate;
+.opacity {
+    opacity: 0.5;
 }
 
 .skeletonText {
-    width: 100%;
+    width: 80%;
     height: 10px;
     border-radius: 5px;
-    opacity: 0.8;
-    animation: skeleton .7s linear infinite alternate;
+    @include animationSkeleton();
+
+    &:last-child {
+        width: 50%;
+    }
 }
 
 // KEYFRAMES
 @keyframes skeleton {
     0% {
-        background-color: $secondary-400;
+        background-color: $secondary-500;
     }
+
     100% {
-        background-color: $secondary-100;
+        background-color: $secondary-300;
     }
 }

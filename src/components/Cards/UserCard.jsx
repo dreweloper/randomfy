@@ -9,7 +9,7 @@ export const UserCard = ({ user }) => {
 
             <div className={styles.card}>
 
-                <div className={`${styles.avatar} ${user.isEmpty && 'skeleton'}`}>
+                <div className={`${styles.avatar} ${user.isEmpty && styles.skeleton}`}>
 
                     {
                         !user.isEmpty && (
