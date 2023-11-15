@@ -1,10 +1,6 @@
-import { useSelector } from 'react-redux';
-import { STATUS } from '../../utils';
 import styles from '../../sass/components/Media/_Controls.module.scss';
 //TODO: PropTypes
-export const Controls = ({ handlePlayback, hasEnded, isPlaying, trackPreview }) => {
-
-    const status = useSelector(state => state.process.status);
+export const Controls = ({ handlePlayback, hasEnded, isLoading, isPlaying, trackPreview }) => {
 
 
     return (
@@ -13,7 +9,7 @@ export const Controls = ({ handlePlayback, hasEnded, isPlaying, trackPreview }) 
         <button
             className={styles.button}
             onClick={handlePlayback}
-            disabled={!trackPreview || status === STATUS.LOADING}
+            disabled={!trackPreview || isLoading}
         >
 
             {

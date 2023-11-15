@@ -2,7 +2,7 @@ import { ProgressBar, Controls } from "./index";
 import { useAudioPlayer } from "../../hooks";
 import styles from '../../sass/components/Media/_AudioPlayer.module.scss';
 //TODO: PropTypes
-export const AudioPlayer = ({ trackPreview }) => {
+export const AudioPlayer = ({ isLoading, trackPreview }) => {
 
     // CUSTOM HOOK
     const {
@@ -16,7 +16,7 @@ export const AudioPlayer = ({ trackPreview }) => {
         onEnded,
         onLoadedMetadata,
         handleProgressBarChange
-    } = useAudioPlayer();
+    } = useAudioPlayer(isLoading);
 
 
     return (
@@ -27,7 +27,7 @@ export const AudioPlayer = ({ trackPreview }) => {
 
                 <audio src={trackPreview} onEnded={onEnded} onLoadedMetadata={onLoadedMetadata} ref={audioRef}></audio>
 
-                <Controls {...{ handlePlayback, hasEnded, isPlaying, trackPreview }} />
+                <Controls {...{ handlePlayback, hasEnded, isLoading, isPlaying, trackPreview }} />
 
                 <ProgressBar {...{ currentTime, duration, handleProgressBarChange, progressBarRef }} />
 

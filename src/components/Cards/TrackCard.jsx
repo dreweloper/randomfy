@@ -81,7 +81,7 @@ export const TrackCard = (props) => {
                         {
                             track.preview_url !== null ? (
 
-                                <AudioPlayer trackPreview={track.preview_url} />
+                                <AudioPlayer trackPreview={track.preview_url} isLoading={status === STATUS.LOADING} />
 
                             ) : (
 
@@ -157,7 +157,7 @@ export const TrackCard = (props) => {
             {/* DESKTOP AUDIO PLAYER CONTAINER */}
             <div className={styles.desktopContainer}>
 
-                <AudioPlayer trackPreview={track.preview_url} />
+                {/* <AudioPlayer trackPreview={track.preview_url} /> */}
 
             </div>
 
