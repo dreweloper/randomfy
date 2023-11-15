@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { formatTime, updateElementStyle } from "../helpers";
 
-export const useAudioPlayer = () => {
+export const useAudioPlayer = (isLoading) => {
 
     // REACT HOOKS
     const [isPlaying, setIsPlaying] = useState(false);
@@ -47,7 +47,6 @@ export const useAudioPlayer = () => {
 
         setHasEnded(true);
 
-        // Resets playback to the beginning. //! It is not working after the first trigger.
         audioRef.current.currentTime = 0;
 
     }; //!FUNC-ONENDED
@@ -151,17 +150,23 @@ export const useAudioPlayer = () => {
 
     useEffect(() => {
 
-        console.log('ENTRO')
-
         if (isPlaying) {
 
-            /**
-             * Reset the track's state to its initial value if it has ended and the user plays the track again.
-             * This ensures that icons are displayed correctly in the component.
-             */
-            if (hasEnded) setHasEnded(false);
+            // Condition for when the user clicks the 'random track' button while the track preview is playing.
+            if (isLoading) {
 
-            audioRef.current.play();
+                audioRef.current.pause();
+
+                setIsPlaying(false);
+
+            } else {
+
+                // Reset the track's state to its initial value if it has ended and the user plays the track again.
+                if (hasEnded) setHasEnded(false);
+
+                audioRef.current.play();
+
+            };
 
         } else {
 
@@ -179,7 +184,7 @@ export const useAudioPlayer = () => {
 
         };
 
-    }, [isPlaying]);
+    }, [isPlaying, isLoading]);
 
 
     return {
