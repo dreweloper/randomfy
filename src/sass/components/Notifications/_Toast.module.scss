@@ -1,0 +1,32 @@
+@use '../../utils' as *;
+
+.container {
+    position: fixed;
+    bottom: 68px; // Footer height + 8px
+    @include displayFlex(row, center, flex-start);
+    max-width: 432px;
+    width: calc(100% - 32px); // 32px = HomePage padding (32 x 2 would be both sides –left and rigth– and same width of TrackCard)
+    min-height: 42px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: $primary-950;
+    background-color: $secondary-50;
+    opacity: 0.95;
+    animation: fade-in 0.3s linear;
+
+    .text {
+        font-size: var(--fs-xs);
+        font-weight: 300;
+        letter-spacing: 0.20px;
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import styles from '../../sass/components/Notifications/_Toast.module.scss';
 //TODO: PropTypes
 export const Toast = ({ text }) => {
 
@@ -26,7 +27,7 @@ export const Toast = ({ text }) => {
 
                 setIsOpen(false);
 
-            }, 6000);
+            }, 4000);
 
         };
 
@@ -43,9 +44,9 @@ export const Toast = ({ text }) => {
             {
                 isOpen && (
 
-                    <article className="toast">
+                    <article className={styles.container}>
 
-                        <p>{text}</p>
+                        <p className={styles.text}>{text}</p>
 
                     </article>
 
