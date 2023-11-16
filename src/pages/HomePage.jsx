@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Spinner, Toast, TrackCard } from '../components';
+import { Spinner, TrackCard } from '../components';
 import { useAuth, usePlaylistStore, useShuffleTrack, useTrackStore, useUserStore } from '../hooks';
 import { Footer, NavBar } from '../layouts';
 import { STATUS } from '../utils';
@@ -71,17 +71,7 @@ export const HomePage = ({ token }) => {
 
                 </section>
 
-                {
-                    // Toasts are used for handling any errors other than user-related errors.
-                    (status === STATUS.FAILED && !user.isError) && (
-
-                        <Toast
-                            type={'danger'}
-                            text={"Oops! We couldn't load the track. Please try again."}
-                        />
-
-                    )
-                }
+                {/* "Oops! We couldn't load the track. Please try again." */}
 
             </main >
 

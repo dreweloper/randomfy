@@ -1,14 +1,58 @@
+import { useEffect, useRef, useState } from "react";
+//TODO: PropTypes
+export const Toast = ({ text }) => {
 
-export const Toast = ({ text, type }) => {
+    // REACT HOOKS
+    const [isOpen, setIsOpen] = useState(false);
+
+    /**
+     * Reference to the timer used for auto-closing the toast.
+     * @type {React.MutableRefObject<null|Number>}
+     */
+    const toastRef = useRef(null);
+
+    useEffect(() => {
+
+        if (text) {
+
+            // If the user clicks the 'like' or 'follow' button again while the current timer is still running, the state 'isOpen' is already true.
+            if (!isOpen) setIsOpen(true);
+
+            // Clears the existing timer if the user clicks the 'like' or 'follow' button again while the current timer is still running.
+            if (toastRef.current) clearTimeout(toastRef.current);
+
+            // Sets a new timer.
+            toastRef.current = setTimeout(() => {
+
+                setIsOpen(false);
+
+            }, 6000);
+
+        };
+
+        // Clean up the timer on unmount.
+        return () => toastRef.current && clearTimeout(toastRef.current);
+
+    }, [text]);
 
 
     return (
 
-        <div className='toast'>
+        <>
 
-            <p className={type}>{text}</p>
+            {
+                isOpen && (
 
-        </div>
+                    <article className="toast">
+
+                        <p>{text}</p>
+
+                    </article>
+
+                )
+            }
+
+        </>
 
     );
 

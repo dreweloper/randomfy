@@ -145,6 +145,11 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             dispatch(isPlaylistFollowed(payload));
 
+            return {
+                ok: true,
+                text: !isFollowed ? 'Added to Your Library' : 'Removed from Your Library' // After the dispatch, the 'isFollowed' prop in the state switches to its opposite value. Consequently, the text reflects the opposite of the current state of the 'isFollowed' prop.
+            };
+
         } catch (error) {
 
             console.error(error);
