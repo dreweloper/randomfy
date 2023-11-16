@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from "react-router-dom";
 import { AudioPlayer } from '../Media';
+import { Toast } from '../Notifications';
 import { updateElementStyle } from '../../helpers';
 import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
@@ -8,11 +9,34 @@ import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, user }) => {
 
     // REACT HOOKS
+    const [toastText, setToastText] = useState('');
+
     /**
      * A reference used to update the value of the CSS variable '--like-icon-fill' for the 'like' button.
      * @type {React.RefObject<HTMLButtonElement>}
      */
     const likeButtonRef = useRef();
+
+    // EVENT
+    const handleClick = async ({ target }) => {
+
+        let response;
+
+        if (target.id === 'like') {
+
+            response = await handleLike();
+
+            if (response.ok) setToastText(response.text);
+
+        } else {
+
+            response = await handleFollow();
+
+            if (response.ok) setToastText(response.text);
+
+        };
+
+    }; //!FUNC-HANDLECLICK
 
     /**
      * Besides the first rendering, this effect will be triggered every time the user clicks on the "like" button
@@ -34,151 +58,159 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
 
     return (
 
-        <article className={`${styles.card} ${status === STATUS.LOADING && 'opacity-50'}`}>
+        <>
 
-            <div className={styles.wrapper}>
+            <article className={`${styles.card} ${status === STATUS.LOADING && 'opacity-50'}`}>
 
-                {/* ALBUM COVER */}
-                <div className={styles.artwork}>
+                <div className={styles.wrapper}>
 
-                    {
-                        !track.isEmpty ? (
-
-                            <img
-                                src={track.artwork}
-                                alt={`Album artwork for "${track.album}"`}
-                                title={`Album artwork for "${track.album}"`}
-                            />
-
-                        ) : (
-
-                            <span className={styles.skeleton}></span>
-
-                        )
-                    }
-
-                </div>
-
-                <div className={styles.container}>
-
-                    {/* TRACK NAME AND ARTISTS */}
-                    <div className={styles.details}>
-
-                        <h2 className={`${styles.name} ${track.isEmpty && 'skeleton-text'}`}>
-                            {track.name}
-                        </h2>
-
-                        <h2 className={`${styles.artists} ${track.isEmpty && 'skeleton-text'}`}>
-                            {track.artists}
-                        </h2>
-
-                    </div>
-
-                    {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
-                    <div className={`${styles.nonDesktopContainer} ${status === STATUS.LOADING && 'pointer-events'}`}>
+                    {/* ALBUM COVER */}
+                    <div className={styles.artwork}>
 
                         {
-                            track.preview_url !== null ? (
+                            !track.isEmpty ? (
 
-                                <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+                                <img
+                                    src={track.artwork}
+                                    alt={`Album artwork for "${track.album}"`}
+                                    title={`Album artwork for "${track.album}"`}
+                                />
 
                             ) : (
 
-                                <div className={styles.warningContainer}>
-
-                                    <span className={`${styles.warningIcon} material-symbols-rounded`}>
-                                        warning
-                                    </span>
-
-                                    <p className={styles.warningText}>Track preview is not available.</p>
-
-                                </div>
+                                <span className={styles.skeleton}></span>
 
                             )
                         }
 
                     </div>
 
-                    <nav className={styles.nav}>
+                    <div className={styles.container}>
 
-                        <button
-                            className={styles.button}
-                            onClick={handleLike}
-                            disabled={user.isError || status === STATUS.LOADING}
-                            ref={likeButtonRef}
-                        >
+                        {/* TRACK NAME AND ARTISTS */}
+                        <div className={styles.details}>
 
-                            <span className={`${styles.favoriteIcon} material-symbols-rounded`}>
-                                favorite
-                            </span>
+                            <h2 className={`${styles.name} ${track.isEmpty && 'skeleton-text'}`}>
+                                {track.name}
+                            </h2>
 
-                        </button>
-
-                        <button
-                            className={styles.button}
-                            onClick={handleFollow}
-                            disabled={user.isError || status === STATUS.LOADING}
-                        >
-
-                            {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
-
-                        </button>
-
-                        <button
-                            className={styles.button}
-                            disabled={user.isError || status === STATUS.LOADING}
-                        >
-
-                            <Link
-                                className={`${styles.link} ${status === STATUS.LOADING && 'pointer-events'}`}
-                                to={track.track_url}
-                                target={DESKTOP ? '_blank' : '_self'}>
-
-                                <span className={styles.linkText}>Play on</span>
-
-                                <img
-                                    className={styles.logo}
-                                    src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
-                                    alt='Spotify Logo'
-                                    title='Spotify Logo'
-                                />
-
-                            </Link>
-
-                        </button>
-
-                    </nav>
-
-                </div>
-
-            </div>
-
-            {/* DESKTOP AUDIO PLAYER CONTAINER */}
-            <div className={styles.desktopContainer}>
-
-                {
-                    track.preview_url !== null ? (
-
-                        <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
-
-                    ) : (
-
-                        <div className={styles.warningContainer}>
-
-                            <span className={`${styles.warningIcon} material-symbols-rounded`}>
-                                warning
-                            </span>
-
-                            <p className={styles.warningText}>Track preview is not available.</p>
+                            <h2 className={`${styles.artists} ${track.isEmpty && 'skeleton-text'}`}>
+                                {track.artists}
+                            </h2>
 
                         </div>
 
-                    )
-                }
+                        {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
+                        <div className={`${styles.nonDesktopContainer} ${status === STATUS.LOADING && 'pointer-events'}`}>
 
-            </div>
+                            {
+                                track.preview_url !== null ? (
 
-        </article>
+                                    <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+
+                                ) : (
+
+                                    <div className={styles.warningContainer}>
+
+                                        <span className={`${styles.warningIcon} material-symbols-rounded`}>
+                                            warning
+                                        </span>
+
+                                        <p className={styles.warningText}>Track preview is not available.</p>
+
+                                    </div>
+
+                                )
+                            }
+
+                        </div>
+
+                        <nav className={styles.nav}>
+
+                            <button
+                                id='like'
+                                className={styles.button}
+                                onClick={handleClick}
+                                disabled={user.isError || status === STATUS.LOADING}
+                                ref={likeButtonRef}
+                            >
+
+                                <span className={`${styles.favoriteIcon} material-symbols-rounded`}>
+                                    favorite
+                                </span>
+
+                            </button>
+
+                            <button
+                                id='follow'
+                                className={styles.button}
+                                onClick={handleClick}
+                                disabled={user.isError || status === STATUS.LOADING}
+                            >
+
+                                {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
+
+                            </button>
+
+                            <button
+                                className={styles.button}
+                                disabled={user.isError || status === STATUS.LOADING}
+                            >
+
+                                <Link
+                                    className={`${styles.link} ${status === STATUS.LOADING && 'pointer-events'}`}
+                                    to={track.track_url}
+                                    target={DESKTOP ? '_blank' : '_self'}>
+
+                                    <span className={styles.linkText}>Play on</span>
+
+                                    <img
+                                        className={styles.logo}
+                                        src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
+                                        alt='Spotify Logo'
+                                        title='Spotify Logo'
+                                    />
+
+                                </Link>
+
+                            </button>
+
+                        </nav>
+
+                    </div>
+
+                </div>
+
+                {/* DESKTOP AUDIO PLAYER CONTAINER */}
+                <div className={styles.desktopContainer}>
+
+                    {
+                        track.preview_url !== null ? (
+
+                            <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+
+                        ) : (
+
+                            <div className={styles.warningContainer}>
+
+                                <span className={`${styles.warningIcon} material-symbols-rounded`}>
+                                    warning
+                                </span>
+
+                                <p className={styles.warningText}>Track preview is not available.</p>
+
+                            </div>
+
+                        )
+                    }
+
+                </div>
+
+            </article>
+
+            <Toast text={toastText} />
+
+        </>
 
     );
 

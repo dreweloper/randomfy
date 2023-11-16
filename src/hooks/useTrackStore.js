@@ -189,6 +189,11 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
 
             dispatch(isTrackLiked(payload));
 
+            return {
+                ok: true,
+                text: !isLiked ? 'Added to Liked Songs.' : 'Removed from Liked Songs.' // After the dispatch, the 'isLiked' prop in the state switches to its opposite value. Consequently, the text reflects the opposite of the current state of the 'isLiked' prop.
+            }
+
         } catch (error) {
 
             console.error(error);
