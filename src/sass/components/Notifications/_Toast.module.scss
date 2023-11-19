@@ -13,6 +13,7 @@
     background-color: $secondary-50;
     opacity: 0.95;
     animation: fade-in 0.3s linear;
+    z-index: 20; // Positioned above the progress bar thumb
 
     .text {
         font-size: var(--fs-xs);
