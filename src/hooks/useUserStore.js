@@ -45,9 +45,13 @@ export const useUserStore = ({ token, user }) => {
              */
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { id, display_name, images: [, { url: avatar }] } = response;
+            if (response?.ok) {
 
-            dispatch(setUser({ id, display_name, avatar }));
+                const { id, display_name, images: [, { url: avatar }] } = response.data;
+
+                dispatch(setUser({ id, display_name, avatar }));
+
+            };
 
         } catch (error) {
 

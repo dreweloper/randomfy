@@ -98,11 +98,15 @@ export const useAuth = () => {
 
       const response = await fetchSpotifyData({ url, method, data });
 
-      const { access_token, refresh_token } = response;
+      if (response?.ok) {
 
-      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+        const { access_token, refresh_token } = response.data;
 
-      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+        setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+
+        setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+
+      };
 
     } catch (error) {
 
@@ -128,6 +132,7 @@ export const useAuth = () => {
 
     const data = {
       grant_type: c.GRANT_TYPE.REFRESH_TOKEN,
+      // refresh_token: import.meta.env.VITE_WRONG_REFRESH_TOKEN,
       refresh_token: cookies.refresh_token,
       client_id: c.CLIENT_ID
     };
@@ -136,17 +141,27 @@ export const useAuth = () => {
 
       const response = await fetchSpotifyData({ url, method, data });
 
-      const { access_token, refresh_token } = response;
+      if (response?.ok) {
 
-      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+        const { access_token, refresh_token } = response.data;
 
-      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+        setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
 
-      return { ok: true };
+        setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+
+        return { ok: true };
+
+      };
 
     } catch (error) {
 
-      if (error?.error_description === 'Invalid refresh token') logout();
+      console.error(error);
+
+      if(error.message.includes('Refresh token revoked') || error.message.includes('Invalid refresh token')) {
+
+        logout();
+
+      };
 
       throw error;
 
@@ -186,7 +201,7 @@ export const useAuth = () => {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(error.message);
 
       setIsError(true);
 

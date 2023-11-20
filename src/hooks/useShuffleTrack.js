@@ -26,7 +26,7 @@ export const useShuffleTrack = (token) => {
 
                 const response = await requestRefreshedAccessToken();
 
-                if (response.ok) {
+                if (response?.ok) {
 
                     setTimeout(() => {
 
@@ -39,8 +39,6 @@ export const useShuffleTrack = (token) => {
             };
 
         } catch (error) {
-
-            console.error(error);
 
             dispatch(setStatus(STATUS.FAILED));
 

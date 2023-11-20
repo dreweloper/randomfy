@@ -68,14 +68,24 @@ export const fetchSpotifyData = async ({ url, method, data = {}, token = undefin
 
         if (!response.ok) {
 
-            throw await response.json();
+            const json = await response.json();
+
+            throw {
+                status: response.status,
+                message: method === 'POST' ? json.error_description : json.error.message // The API error response can be of two types: Authentication Error Object (access and refresh token requests) or Regular Error Object (https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes).
+            };
 
         } else {
 
             // The 'PUT' and 'DELETE' endpoints used by the app do not return JSON.
             if (method === 'GET' || method === 'POST') {
 
-                return await response.json();
+                const json = await response.json();
+
+                return {
+                    ok: true,
+                    data: json
+                };
 
             };
 

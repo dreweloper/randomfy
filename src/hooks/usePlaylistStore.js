@@ -21,9 +21,13 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { total } = response;
+            if (response?.ok) {
 
-            return total;
+                const { total } = response.data;
+
+                return total;
+
+            };
 
         } catch (error) {
 
@@ -43,9 +47,13 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response;
+            if (response?.ok) {
 
-            return { playlist_id, total_tracks };
+                const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response.data;
+
+                return { playlist_id, total_tracks };
+
+            };
 
         } catch (error) {
 
@@ -65,10 +73,14 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            // Array destructuring.
-            const [isFollowed] = response;
+            if (response?.ok) {
 
-            return isFollowed;
+                // Array destructuring.
+                const [isFollowed] = response.data;
+
+                return isFollowed;
+
+            };
 
         } catch (error) {
 

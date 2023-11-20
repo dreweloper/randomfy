@@ -46,23 +46,27 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
              */
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { items } = response;
+            if (response?.ok) {
 
-            if (items.length === 0) {
+                const { items } = response.data;
 
-                throw new Error('Playlist items are empty');
+                if (items.length === 0) {
+
+                    throw new Error('Playlist items are empty');
+
+                };
+
+                const [{ track: { id: track_id, album: { images: [{ url: artwork }], name: album }, name, artists: arrArtists, external_urls: { spotify: track_url }, preview_url } }] = items;
+
+                /**
+                 * The artists names.
+                 * @type {String}
+                 */
+                const artists = mapArtists(arrArtists); // There can be more than one artist.
+
+                return { track_id, artwork, album, name, artists, track_url, preview_url };
 
             };
-
-            const [{ track: { id: track_id, album: { images: [{ url: artwork }], name: album }, name, artists: arrArtists, external_urls: { spotify: track_url }, preview_url } }] = items;
-
-            /**
-             * The artists names.
-             * @type {String}
-             */
-            const artists = mapArtists(arrArtists); // There can be more than one artist.
-
-            return { track_id, artwork, album, name, artists, track_url, preview_url };
 
         } catch (error) {
 
@@ -94,10 +98,14 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            // Array destructuring.
-            const [isLiked] = response;
+            if (response?.ok) {
 
-            return isLiked;
+                // Array destructuring.
+                const [isLiked] = response.data;
+
+                return isLiked;
+
+            };
 
         } catch (error) {
 
