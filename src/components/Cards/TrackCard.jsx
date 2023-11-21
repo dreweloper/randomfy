@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { AudioPlayer } from '../Media';
 import { Toast } from '../Notifications';
 import { updateElementStyle } from '../../helpers';
+import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP, STATUS } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, user }) => {
+export const TrackCard = ({ playlist, status, token, track, user }) => {
 
     // REACT HOOKS
     const [toastText, setToastText] = useState('');
@@ -17,22 +18,29 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
      */
     const likeButtonRef = useRef();
 
+    // CUSTOM HOOKS
+    const { handleFollow } = usePlaylistStore();
+
+    const { handleLike } = useTrackStore();
+
     // EVENT
     const handleClick = async ({ target }) => {
 
-        let response;
+        try {
+            
+            const response = (target.id === 'like') ? await handleLike(token) : await handleFollow(token);
 
-        if (target.id === 'like') {
+            if (response?.ok) {
 
-            response = await handleLike();
+                setToastText(response.text);
 
-            if (response.ok) setToastText(response.text);
+            };
 
-        } else {
+        } catch (error) {
+            
+            console.error(error);
 
-            response = await handleFollow();
-
-            if (response.ok) setToastText(response.text);
+            //TODO: handle error alert.
 
         };
 
@@ -50,7 +58,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
          */
         const value = track.isLiked ? 1 : 0;
 
-        // Changes the icon fill of the like button to reflect whether the track has been added ('true') or removed ('false') from the user's 'Your Music' library.
+        // Changes the icon fill of the like button to reflect whether the track has been added (true) or removed (false) from the user's 'Your Music' library.
         updateElementStyle(likeButtonRef.current, '--like-icon-fill', value);
 
     }, [track.isLiked]);

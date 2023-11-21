@@ -102,9 +102,11 @@ export const useAuth = () => {
 
         const { access_token, refresh_token } = response.data;
 
-        setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
-
-        setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+        return {
+          ok: true,
+          access_token,
+          refresh_token
+        };
 
       };
 
@@ -145,23 +147,23 @@ export const useAuth = () => {
 
         const { access_token, refresh_token } = response.data;
 
-        setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
-
-        setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
-
-        return { ok: true };
+        return {
+          ok: true,
+          access_token,
+          refresh_token
+        };
 
       };
 
     } catch (error) {
 
-      console.error(error);
+      // console.error(error);
 
-      if(error.message.includes('Refresh token revoked') || error.message.includes('Invalid refresh token')) {
+      // if(error.message.includes('Refresh token revoked') || error.message.includes('Invalid refresh token')) {
 
-        logout();
+      //   logout();
 
-      };
+      // };
 
       throw error;
 
@@ -197,11 +199,27 @@ export const useAuth = () => {
        */
       if (storedState !== params.state) throw new Error('State mismatch');
 
-      await requestAccessToken(params.code);
+      const response = await requestAccessToken(params.code);
+
+      if (response?.ok) {
+
+        setCookie(
+          c.ACCESS_TOKEN_KEY,
+          response.access_token,
+          { maxAge: c.MAX_AGE.ACCESS_TOKEN }
+        );
+
+        setCookie(
+          c.REFRESH_TOKEN_KEY,
+          response.refresh_token,
+          { maxAge: c.MAX_AGE.REFRESH_TOKEN }
+        );
+
+      };
 
     } catch (error) {
 
-      console.error(error.message);
+      console.error(error);
 
       setIsError(true);
 

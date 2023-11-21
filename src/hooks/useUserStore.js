@@ -1,17 +1,9 @@
-import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
-import { setStatus, setUser, setUserError } from "../store/slices";
-import { SPOTIFY_API_BASE_URL, STATUS } from '../utils';
+import { setUser, setUserError } from "../store/slices";
+import { SPOTIFY_API_BASE_URL } from '../utils';
 
-export const useUserStore = ({ token, user }) => {
-
-    // REACT HOOK
-    /**
-     * Used to track whether the user data has been loaded to prevent multiple calls.
-     * @type {React.MutableRefObject<Boolean>}
-     */
-    const isLoaded = useRef(false);
+export const useUserStore = () => {
 
     // REACT-REDUX HOOK
     const dispatch = useDispatch();
@@ -22,7 +14,7 @@ export const useUserStore = ({ token, user }) => {
      * @async
      * @function getUserProfile
      */
-    const getUserProfile = async () => {
+    const getUserProfile = async (token) => {
 
         /**
          * The URL for the get current user's profile Spotify API endpoint.
@@ -33,8 +25,6 @@ export const useUserStore = ({ token, user }) => {
         const method = 'GET';
 
         try {
-
-            dispatch(setStatus(STATUS.LOADING));
 
             /**
              * Promise that resolves with the result of parsing the response body text as JSON.
@@ -51,36 +41,24 @@ export const useUserStore = ({ token, user }) => {
 
                 dispatch(setUser({ id, display_name, avatar }));
 
+                return {
+                    ok: true,
+                    userId: id
+                };
+
             };
 
         } catch (error) {
 
-            console.error(error);
-
             dispatch(setUserError());
 
-            dispatch(setStatus(STATUS.FAILED));
+            throw error;
 
         };
 
     }; //!FUNC-GETUSERPROFILE
 
-    // REACT-HOOK
-    useEffect(() => {
 
-        /**
-         * On init, if the token is expired, the useEffect will be triggered again.
-         * If the 'user' state remains empty, invokes the 'getUserProfile' function
-         * and updates the 'isLoaded' ref value to prevent multiple subsequent calls.
-         */
-        if (token && user.isEmpty && !isLoaded.current) {
-
-            isLoaded.current = true;
-
-            getUserProfile();
-
-        };
-
-    }, [token]);
+    return { getUserProfile };
 
 };

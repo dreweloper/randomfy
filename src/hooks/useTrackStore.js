@@ -1,23 +1,15 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyData } from "../api";
 import { generateRandomNumber, mapArtists } from "../helpers";
-import { isTrackLiked, setStatus, setTrack } from '../store/slices';
-import { SPOTIFY_API_BASE_URL, STATUS } from "../utils";
+import { isTrackLiked, setTrack } from '../store/slices';
+import { SPOTIFY_API_BASE_URL } from "../utils";
 
-export const useTrackStore = ({ playlist, status, token, track }) => {
+export const useTrackStore = () => {
 
-    // REACT-REDUX HOOK
+    // REACT-REDUX HOOKS
+    const track = useSelector(state => state.track);
+
     const dispatch = useDispatch();
-
-    // VARIABLES
-    /**
-     * Information about a Spotify playlist.
-     * @type {Object}
-     * @prop {String} playlist_id - The Spotify ID of the playlist.
-     * @prop {Number} total_tracks - The total number of tracks in the playlist with the provided ID.
-     */
-    const { playlist_id, total_tracks } = playlist;
 
     // FUNCTIONS
     /**
@@ -28,13 +20,13 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
      * @returns {Promise<Object>} A promise that resolves to an object containing details of the playlist items.
      * @throws {Error} Throws an error if it fails to obtain the playlist items.
      */
-    const fetchPlaylistItemsById = async (randomOffset) => {
+    const fetchPlaylistItemsById = async (token, playlistId, randomOffset) => {
 
         /**
          * The URL for the get playlist items Spotify API endpoint.
          * @type {String}
          */
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlist_id}/tracks?limit=1&offset=${randomOffset}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/tracks?limit=1&offset=${randomOffset}`;
 
         const method = 'GET';
 
@@ -64,7 +56,18 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
                  */
                 const artists = mapArtists(arrArtists); // There can be more than one artist.
 
-                return { track_id, artwork, album, name, artists, track_url, preview_url };
+                return {
+                    ok: true,
+                    items: {
+                        track_id,
+                        artwork,
+                        album,
+                        name,
+                        artists,
+                        track_url,
+                        preview_url
+                    }
+                };
 
             };
 
@@ -84,7 +87,7 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
      * @returns {Promise<Object>} A promise that resolves to an object representing the result of the check.
      * @throws {Error} Throws an error if it fails to check if user has already saved the track.
      */
-    const checkIsTrackLiked = async (trackId) => {
+    const checkIsTrackLiked = async (token, trackId) => {
 
         /**
          * The URL for the check user's saved tracks Spotify API endpoint.
@@ -103,7 +106,10 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
                 // Array destructuring.
                 const [isLiked] = response.data;
 
-                return isLiked;
+                return {
+                    ok: true,
+                    isLiked
+                };
 
             };
 
@@ -121,7 +127,9 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
      * @async
      * @function getRandomTrack
      */
-    const getRandomTrack = async () => {
+    const getRandomTrack = async (token, playlistId, totalTracks) => {
+
+        let response;
 
         try {
 
@@ -129,27 +137,36 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
              * Calculate a random offset for selecting an item (track object).
              * @type {Number}
              */
-            const randomOffset = generateRandomNumber(total_tracks);
+            const randomOffset = generateRandomNumber(totalTracks);
 
-            const items = await fetchPlaylistItemsById(randomOffset);
+            response = await fetchPlaylistItemsById(token, playlistId, randomOffset);
 
-            /**
-             * Value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
-             * @type {Boolean}
-             */
-            const isLiked = await checkIsTrackLiked(items.track_id);
+            if (response?.ok) {
 
-            const payload = { ...items, isLiked };
+                const { items } = response; // The 'fetchPlaylistItemsById' response.
 
-            dispatch(setTrack(payload));
+                response = await checkIsTrackLiked(token, items.track_id);
 
-            dispatch(setStatus(STATUS.SUCCEEDED));
+                if (response?.ok) {
+
+                    /**
+                     * Value indicating whether the track has already been added ('true') or not ('false') to the user's 'Your Music' library.
+                     * @type {Boolean}
+                     */
+                    const { isLiked } = response; // The 'checkIsTrackLiked' response.
+
+                    const payload = { ...items, isLiked };
+
+                    dispatch(setTrack(payload));
+
+                    return { ok: true };
+
+                };
+            };
 
         } catch (error) {
 
-            console.error(error);
-
-            dispatch(setStatus(STATUS.FAILED));
+            throw error;
 
         };
 
@@ -161,7 +178,7 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
      * @async
      * @function handleLike
      */
-    const handleLike = async () => {
+    const handleLike = async (token) => {
 
         /**
          * @type {Object}
@@ -197,32 +214,26 @@ export const useTrackStore = ({ playlist, status, token, track }) => {
 
             dispatch(isTrackLiked(payload));
 
+            /**
+             * After the dispatch, the 'isLiked' prop in the state switches to its opposite value.
+             * Consequently, the text reflects the opposite of the current state of the 'isLiked' prop.
+             */
+            const text = !isLiked ? 'Track added to Liked Songs.' : 'Track removed from Liked Songs.';
+
             return {
                 ok: true,
-                text: !isLiked ? 'Added to Liked Songs.' : 'Removed from Liked Songs.' // After the dispatch, the 'isLiked' prop in the state switches to its opposite value. Consequently, the text reflects the opposite of the current state of the 'isLiked' prop.
+                text
             }
 
         } catch (error) {
 
-            console.error(error);
-
-            //TODO: handle error to show an alert.
+            throw error;
 
         };
 
     }; //!FUNC-HANDLELIKE
 
-    useEffect(() => {
 
-        /**
-         * The conditions will both be met if 'getRandomPlaylist' succeeds.
-         * This helps prevent unnecessary re-renders when navigating with web browser arrows.
-         */
-        if (playlist.isDone && status === STATUS.LOADING) getRandomTrack();
-
-    }, [playlist.isDone]);
-
-
-    return { handleLike };
+    return { getRandomTrack, handleLike };
 
 };
