@@ -58,15 +58,7 @@ export const useTrackStore = () => {
 
                 return {
                     ok: true,
-                    items: {
-                        track_id,
-                        artwork,
-                        album,
-                        name,
-                        artists,
-                        track_url,
-                        preview_url
-                    }
+                    items: { track_id, artwork, album, name, artists, track_url, preview_url }
                 };
 
             };
@@ -106,10 +98,7 @@ export const useTrackStore = () => {
                 // Array destructuring.
                 const [isLiked] = response.data;
 
-                return {
-                    ok: true,
-                    isLiked
-                };
+                return { ok: true, isLiked };
 
             };
 

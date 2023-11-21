@@ -29,7 +29,7 @@ export const HomePage = () => {
     const [cookies, setCookie] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]);
 
     // CUSTOM HOOKS
-    const { requestRefreshedAccessToken } = useAuth();
+    const { logout, requestRefreshedAccessToken } = useAuth();
 
     const { getUserProfile } = useUserStore();
 
@@ -38,19 +38,36 @@ export const HomePage = () => {
     const { getRandomTrack } = useTrackStore();
 
     // FUNCTIONS
-    // if the token is expired, it will request a new access and refresh tokens.
+    /**
+     * Checks the validity of the Spotify API access token.
+     * 
+     * @async
+     * @function checkTokenValidity
+     * @returns {Object} An object with a boolean property 'ok' indicating the success status and the Spotify API access token.
+     * @throws {Error}
+     */
     const checkTokenValidity = async () => {
 
-        let response;
+        /**
+         * If the access token is valid, it returns 'cookies.access_token';
+         * otherwise, if the token has expired, it returns 'response.access_token' (a refreshed access token).
+         * This approach ensures that the time taken to set tokens in cookies won't affect subsequent fetch calls.
+         * 
+         * The Spotify API's access token.
+         * @type {String}
+         */
+        let token = cookies?.access_token;
 
         try {
 
             // Access token is expired.
             if (!cookies?.access_token) {
 
-                response = await requestRefreshedAccessToken();
+                const response = await requestRefreshedAccessToken();
 
                 if (response?.ok) {
+
+                    token = response.access_token;
 
                     setCookie(ACCESS_TOKEN_KEY, response.access_token, { maxAge: MAX_AGE.ACCESS_TOKEN });
 
@@ -60,16 +77,7 @@ export const HomePage = () => {
 
             };
 
-            /**
-             * If the token was refreshed, it will return 'response.access_token';
-             * otherwise, if the token has not expired, it will return 'cookies.access_token'.
-             */
-            const token = response?.access_token || cookies.access_token;
-
-            return {
-                ok: true,
-                token
-            };
+            return { ok: true, token };
 
         } catch (error) {
 
@@ -79,75 +87,46 @@ export const HomePage = () => {
 
     }; //!FUNC-CHECKTOKENVALIDITY
 
-    const onInit = async () => {
+    const shuffleTrack = async () => {
 
-        let response, token;
+        /**
+         * On the initial load, 'user.id' is an empty string due to 'user.isEmpty'.
+         * Subsequently, 'getUserProfile' sets the new 'user.id'.
+         * After the first load is completed, '!user.isEmpty' ensures 'user.id' is already set.
+         * 
+         * The Spotify user ID for the user.
+         * @type {String}
+         */
+        let userId = user.id;
 
         try {
 
             dispatch(setStatus(STATUS.LOADING));
 
-            response = await checkTokenValidity();
+            let response = await checkTokenValidity();
 
             if (response?.ok) {
 
-                token = response.token; // The 'checkTokenValidity' response.
+                const token = response.token; // The 'checkTokenValidity' response.
 
-                response = await getUserProfile(token);
+                // This will only be triggered during the initial load.
+                if (user.isEmpty) {
 
-                if (response?.ok) {
-
-                    const { userId } = response; // The 'getUserProfile' response.
-
-                    response = await getRandomPlaylist(token, userId);
+                    response = await getUserProfile(token);
 
                     if (response?.ok) {
 
-                        const { playlistId, totalTracks } = response; // The 'getRandomPlaylist' response;
+                        userId = response.id; // The 'getUserProfile' response.
 
-                        response = await getRandomTrack(token, playlistId, totalTracks);
-
-                        if (response?.ok) {
-
-                            dispatch(setStatus(STATUS.SUCCEEDED));
-
-                        };
                     };
+
                 };
-            };
 
-        } catch (error) {
-
-            console.error(error);
-
-            dispatch(setStatus(STATUS.FAILED));
-
-            //TODO: status >= 400 ... status >= 500... set Redux status failed and message to render.
-
-        };
-
-    }; //!FUNC-ONINIT
-
-    // EVENT
-    const handleShuffle = async () => {
-
-        let response, token;
-
-        try {
-
-            dispatch(setStatus(STATUS.LOADING));
-
-            response = await checkTokenValidity();
-
-            if (response?.ok) {
-
-                token = response.token; // The 'checkTokenValidity' response.
-
-                response = await getRandomPlaylist(token, user.id); // The 'id' property from the 'user' Redux state.
+                response = await getRandomPlaylist(token, userId);
 
                 if (response?.ok) {
 
-                    const { playlistId, totalTracks } = response;
+                    const { playlistId, totalTracks } = response; // The 'getRandomPlaylist' response;
 
                     response = await getRandomTrack(token, playlistId, totalTracks);
 
@@ -163,14 +142,19 @@ export const HomePage = () => {
 
             console.error(error);
 
+            if (error.message === 'Refresh token revoked' || error.message === 'Invalid refresh token') {
+
+                logout();
+
+            };
+
             dispatch(setStatus(STATUS.FAILED));
 
             //TODO: status >= 400 ... status >= 500... set Redux status failed and message to render.
 
         };
 
-    }; //!FUNC-HANDLESHUFFLE
-
+    }; //!FUNC-ONINIT
 
     useEffect(() => {
 
@@ -179,7 +163,7 @@ export const HomePage = () => {
             // Update the ref to indicate that the first load is completed and prevent multiple calls.
             isFirstLoadRef.current = false;
 
-            onInit();
+            shuffleTrack();
 
         };
 
@@ -198,7 +182,7 @@ export const HomePage = () => {
 
                     <button
                         className={styles.solidBtn}
-                        onClick={handleShuffle}
+                        onClick={shuffleTrack}
                         disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID. If this custom hook fails, the other functions won't be invoked.
                     >
 

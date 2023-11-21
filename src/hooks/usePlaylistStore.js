@@ -26,10 +26,7 @@ export const usePlaylistStore = () => {
 
                 const { total } = response.data;
 
-                return {
-                    ok: true,
-                    total
-                };
+                return { ok: true, total };
 
             };
 
@@ -55,11 +52,7 @@ export const usePlaylistStore = () => {
 
                 const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response.data;
 
-                return {
-                    ok: true,
-                    playlist_id,
-                    total_tracks
-                };
+                return { ok: true, playlist_id, total_tracks };
 
             };
 
@@ -86,10 +79,7 @@ export const usePlaylistStore = () => {
                 // Array destructuring.
                 const [isFollowed] = response.data;
 
-                return {
-                    ok: true,
-                    isFollowed
-                };
+                return { ok: true, isFollowed };
 
             };
 

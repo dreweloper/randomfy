@@ -102,11 +102,7 @@ export const useAuth = () => {
 
         const { access_token, refresh_token } = response.data;
 
-        return {
-          ok: true,
-          access_token,
-          refresh_token
-        };
+        return { ok: true, access_token, refresh_token };
 
       };
 
@@ -147,23 +143,11 @@ export const useAuth = () => {
 
         const { access_token, refresh_token } = response.data;
 
-        return {
-          ok: true,
-          access_token,
-          refresh_token
-        };
+        return { ok: true, access_token, refresh_token };
 
       };
 
     } catch (error) {
-
-      // console.error(error);
-
-      // if(error.message.includes('Refresh token revoked') || error.message.includes('Invalid refresh token')) {
-
-      //   logout();
-
-      // };
 
       throw error;
 

@@ -41,10 +41,7 @@ export const useUserStore = () => {
 
                 dispatch(setUser({ id, display_name, avatar }));
 
-                return {
-                    ok: true,
-                    userId: id
-                };
+                return { ok: true, id };
 
             };
 
