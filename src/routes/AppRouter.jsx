@@ -17,16 +17,16 @@ export const AppRouter = () => {
             <Routes>
 
                 {/* PRIVATE ROUTES */}
-                <Route element={<PrivateRoutes access_token={cookies.access_token} refresh_token={cookies.refresh_token} />}>
+                <Route element={<PrivateRoutes access_token={cookies?.access_token} refresh_token={cookies?.refresh_token} />}>
 
-                    <Route path="/" element={<HomePage token={cookies.access_token} />} />
+                    <Route path="/" element={<HomePage token={cookies?.access_token} />} />
 
                     <Route path="/*" element={<Navigate to="/" />} />
 
                 </Route>
 
                 {/* PUBLIC ROUTES */}
-                <Route element={<PublicRoutes access_token={cookies.access_token} refresh_token={cookies.refresh_token} />}>
+                <Route element={<PublicRoutes access_token={cookies?.access_token} refresh_token={cookies?.refresh_token} />}>
 
                     <Route path="login" element={<LoginPage />} />
 

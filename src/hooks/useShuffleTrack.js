@@ -1,54 +1,99 @@
-import { useDispatch } from "react-redux";
-import { useAuth } from "./index";
-import { setPlaylistUndone, setStatus } from "../store/slices";
+import { useDispatch, useSelector } from "react-redux";
+import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from "./index";
+import { setStatus } from "../store/slices";
 import { STATUS } from "../utils";
 
-export const useShuffleTrack = (token) => {
-    
-    // REACT-REDUX HOOK
+export const useShuffleTrack = () => {
+
+    // REACT-REDUX HOOKS
+    const user = useSelector(state => state.user);
+
     const dispatch = useDispatch();
 
     // CUSTOM HOOKS
-    const { requestRefreshedAccessToken } = useAuth();
+    const { checkTokenValidity, logout } = useAuth();
 
+    const { getUserProfile } = useUserStore();
 
-    const handleAnotherShuffleTrack = async () => {
+    const { getRandomPlaylist } = usePlaylistStore();
+
+    const { getRandomTrack } = useTrackStore();
+
+    // FUNCTIONS
+    /**
+     * @async
+     * @function shuffleTrack
+     */
+    const shuffleTrack = async () => {
+
+        /**
+         * On the initial load, 'user.id' is an empty string due to 'user.isEmpty'.
+         * Subsequently, 'getUserProfile' sets the new 'user.id'.
+         * After the first load is completed, '!user.isEmpty' ensures 'user.id' is already set.
+         * 
+         * The Spotify user ID for the user.
+         * @type {String}
+         */
+        let userId = user.id;
 
         try {
 
             dispatch(setStatus(STATUS.LOADING));
 
-            if (token) {
+            let response = await checkTokenValidity();
 
-                dispatch(setPlaylistUndone());
+            if (response?.ok) {
 
-            } else {
+                const token = response.token; // The 'checkTokenValidity' response.
 
-                const response = await requestRefreshedAccessToken();
+                // This will only be triggered during the initial load.
+                if (user.isEmpty) {
 
-                if (response.ok) {
+                    response = await getUserProfile(token);
 
-                    setTimeout(() => {
+                    if (response?.ok) {
 
-                        dispatch(setPlaylistUndone());
+                        userId = response.id; // The 'getUserProfile' response.
 
-                    }, 500); // To ensure that the refreshed access token is stored in cookies before trying to generate a new random track.
+                    };
 
                 };
 
+                response = await getRandomPlaylist(token, userId);
+
+                if (response?.ok) {
+
+                    const { playlistId, totalTracks } = response; // The 'getRandomPlaylist' response;
+
+                    response = await getRandomTrack(token, playlistId, totalTracks);
+
+                    if (response?.ok) {
+
+                        dispatch(setStatus(STATUS.SUCCEEDED));
+
+                    };
+                };
             };
 
         } catch (error) {
 
             console.error(error);
 
+            if (error.message === 'Refresh token revoked' || error.message === 'Invalid refresh token') {
+
+                logout();
+
+            };
+
             dispatch(setStatus(STATUS.FAILED));
+
+            //TODO: status >= 400 ... status >= 500... set Redux status failed and message to render.
 
         };
 
-    }; //!FUNC-HANDLEANOTHERSHUFFLETRACK
+    }; //!FUNC-SHUFFLETRACK
 
 
-    return { handleAnotherShuffleTrack };
+    return { shuffleTrack };
 
 };

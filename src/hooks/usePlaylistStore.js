@@ -1,17 +1,18 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchSpotifyData } from "../api";
 import { generateRandomNumber } from '../helpers';
-import { isPlaylistFollowed, setPlaylist, setStatus } from '../store/slices';
-import { SPOTIFY_API_BASE_URL, STATUS, USER_ID } from "../utils";
+import { isPlaylistFollowed, setPlaylist } from '../store/slices';
+import { SPOTIFY_API_BASE_URL, USER_ID } from "../utils";
 
-export const usePlaylistStore = ({ playlist, token, user }) => {
+export const usePlaylistStore = () => {
 
-    // REACT-REDUX HOOK
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+
     const dispatch = useDispatch();
 
     // FUNCTIONS
-    const fetchUserTotalPlaylists = async () => {
+    const fetchUserTotalPlaylists = async (token) => {
 
         const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists`;
 
@@ -21,9 +22,13 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { total } = response;
+            if (response?.ok) {
 
-            return total;
+                const { total } = response.data;
+
+                return { ok: true, total };
+
+            };
 
         } catch (error) {
 
@@ -33,7 +38,7 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
     }; //!FUNC-FETCHUSERTOTALPLAYLISTS
 
-    const fetchUserRandomPlaylist = async (randomOffset) => {
+    const fetchUserRandomPlaylist = async (token, randomOffset) => {
 
         const url = `${SPOTIFY_API_BASE_URL}/v1/users/${USER_ID}/playlists?limit=1&offset=${randomOffset}`;
 
@@ -43,9 +48,13 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response;
+            if (response?.ok) {
 
-            return { playlist_id, total_tracks };
+                const { items: [{ id: playlist_id, tracks: { total: total_tracks } }] } = response.data;
+
+                return { ok: true, playlist_id, total_tracks };
+
+            };
 
         } catch (error) {
 
@@ -55,9 +64,9 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
     }; //!FUNC-FETCHUSERRANDOMPLAYLIST
 
-    const checkIsPlaylistFollowed = async (playlistId) => {
+    const checkIsPlaylistFollowed = async (token, playlistId, userId) => {
 
-        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${user.id}`;
+        const url = `${SPOTIFY_API_BASE_URL}/v1/playlists/${playlistId}/followers/contains?ids=${userId}`;
 
         const method = 'GET';
 
@@ -65,10 +74,14 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             const response = await fetchSpotifyData({ url, method, token });
 
-            // Array destructuring.
-            const [isFollowed] = response;
+            if (response?.ok) {
 
-            return isFollowed;
+                // Array destructuring.
+                const [isFollowed] = response.data;
+
+                return { ok: true, isFollowed };
+
+            };
 
         } catch (error) {
 
@@ -78,29 +91,47 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
     }; //!FUNC-CHECKISPLAYLISTFOLLOWED
 
-    const getRandomPlaylist = async () => {
+    const getRandomPlaylist = async (token, userId) => {
+
+        let response;
 
         try {
 
-            const total = await fetchUserTotalPlaylists();
+            response = await fetchUserTotalPlaylists(token);
 
-            const randomOffset = generateRandomNumber(total);
+            if (response?.ok) {
 
-            const playlist = await fetchUserRandomPlaylist(randomOffset);
+                const randomOffset = generateRandomNumber(response.total);
 
-            const { playlist_id, total_tracks } = playlist;
+                response = await fetchUserRandomPlaylist(token, randomOffset);
 
-            const isFollowed = await checkIsPlaylistFollowed(playlist_id);
+                if (response?.ok) {
 
-            const payload = { playlist_id, total_tracks, isFollowed };
+                    const { playlist_id, total_tracks } = response;
 
-            dispatch(setPlaylist(payload));
+                    response = await checkIsPlaylistFollowed(token, playlist_id, userId);
+
+                    if (response?.ok) {
+
+                        const { isFollowed } = response;
+
+                        const payload = { playlist_id, total_tracks, isFollowed };
+
+                        dispatch(setPlaylist(payload));
+
+                        return {
+                            ok: true,
+                            playlistId: playlist_id,
+                            totalTracks: total_tracks
+                        };
+
+                    };
+                };
+            };
 
         } catch (error) {
 
-            console.error(error);
-
-            dispatch(setStatus(STATUS.FAILED));
+            throw error;
 
         };
 
@@ -111,7 +142,7 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
      * @async
      * @function handleFollow
      */
-    const handleFollow = async () => {
+    const handleFollow = async (token) => {
 
         /**
          * @type {Object}
@@ -145,33 +176,26 @@ export const usePlaylistStore = ({ playlist, token, user }) => {
 
             dispatch(isPlaylistFollowed(payload));
 
+            /**
+             * After the dispatch, the 'isFollowed' prop in the state switches to its opposite value.
+             * Consequently, the text reflects the opposite of the current state of the 'isFollowed' prop.
+             */
+            const text = !isFollowed ? 'Playlist added to Your Library.' : 'Playlist removed from Your Library.';
+
             return {
                 ok: true,
-                text: !isFollowed ? 'Added to Your Library.' : 'Removed from Your Library.' // After the dispatch, the 'isFollowed' prop in the state switches to its opposite value. Consequently, the text reflects the opposite of the current state of the 'isFollowed' prop.
+                text
             };
 
         } catch (error) {
 
-            console.error(error);
-
-            //TODO: handle error to show an alert.
+            throw error;
 
         };
 
     }; //!FUNC-HANDLEFOLLOW
 
-    useEffect(() => {
 
-        /**
-         * If the token is expired during the initial page load, the user data will be empty.
-         * Once the token is refreshed, the user profile will be set, and this useEffect will be triggered again due to the 'user' dependency.
-         * From there, the useEffect will trigger every time the user clicks the 'Random track' button that modifies the 'isDone' prop of the 'playlist' state.
-         */
-        if (!user.isEmpty && !playlist.isDone) getRandomPlaylist();
-
-    }, [user, playlist.isDone]);
-
-
-    return { handleFollow };
+    return { getRandomPlaylist, handleFollow };
 
 };

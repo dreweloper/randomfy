@@ -34,7 +34,7 @@ export const useAuth = () => {
    * The 'state' parameter that was initially provided to Spotify.
    * @type {String}
    */
-  const storedState = cookies.spotify_auth_state;
+  const storedState = cookies?.spotify_auth_state;
 
   // FUNCTIONS
   const requestUserAuth = async () => {
@@ -98,11 +98,13 @@ export const useAuth = () => {
 
       const response = await fetchSpotifyData({ url, method, data });
 
-      const { access_token, refresh_token } = response;
+      if (response?.ok) {
 
-      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+        const { access_token, refresh_token } = response.data;
 
-      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+        return { ok: true, access_token, refresh_token };
+
+      };
 
     } catch (error) {
 
@@ -128,6 +130,7 @@ export const useAuth = () => {
 
     const data = {
       grant_type: c.GRANT_TYPE.REFRESH_TOKEN,
+      // refresh_token: import.meta.env.VITE_WRONG_REFRESH_TOKEN,
       refresh_token: cookies.refresh_token,
       client_id: c.CLIENT_ID
     };
@@ -136,17 +139,15 @@ export const useAuth = () => {
 
       const response = await fetchSpotifyData({ url, method, data });
 
-      const { access_token, refresh_token } = response;
+      if (response?.ok) {
 
-      setCookie(c.ACCESS_TOKEN_KEY, access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+        const { access_token, refresh_token } = response.data;
 
-      setCookie(c.REFRESH_TOKEN_KEY, refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+        return { ok: true, access_token, refresh_token };
 
-      return { ok: true };
+      };
 
     } catch (error) {
-
-      if (error?.error_description === 'Invalid refresh token') logout();
 
       throw error;
 
@@ -182,7 +183,23 @@ export const useAuth = () => {
        */
       if (storedState !== params.state) throw new Error('State mismatch');
 
-      await requestAccessToken(params.code);
+      const response = await requestAccessToken(params.code);
+
+      if (response?.ok) {
+
+        setCookie(
+          c.ACCESS_TOKEN_KEY,
+          response.access_token,
+          { maxAge: c.MAX_AGE.ACCESS_TOKEN }
+        );
+
+        setCookie(
+          c.REFRESH_TOKEN_KEY,
+          response.refresh_token,
+          { maxAge: c.MAX_AGE.REFRESH_TOKEN }
+        );
+
+      };
 
     } catch (error) {
 
@@ -205,6 +222,55 @@ export const useAuth = () => {
 
   }; //!FUNC-HANDLEUSERAUTHRESPONSE
 
+  /**
+   * Checks the validity of the Spotify API access token.
+   * 
+   * @async
+   * @function checkTokenValidity
+   * @returns {Object} An object with a boolean property 'ok' indicating the success status and the Spotify API access token.
+   * @throws {Error}
+   */
+  const checkTokenValidity = async () => {
+
+    /**
+     * If the access token is valid, it returns 'cookies.access_token';
+     * otherwise, if the token has expired, it returns 'response.access_token' (a refreshed access token).
+     * This approach ensures that the time taken to set tokens in cookies won't affect subsequent fetch calls.
+     * 
+     * The Spotify API's access token.
+     * @type {String}
+     */
+    let token = cookies?.access_token;
+
+    try {
+
+      // Access token is expired.
+      if (!cookies?.access_token) {
+
+        const response = await requestRefreshedAccessToken();
+
+        if (response?.ok) {
+
+          token = response.access_token;
+
+          setCookie(c.ACCESS_TOKEN_KEY, response.access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+
+          setCookie(c.REFRESH_TOKEN_KEY, response.refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+
+        };
+
+      };
+
+      return { ok: true, token };
+
+    } catch (error) {
+
+      throw error;
+
+    };
+
+  }; //!FUNC-CHECKTOKENVALIDITY
+
   const logout = () => {
 
     if (cookies?.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
@@ -226,6 +292,7 @@ export const useAuth = () => {
     isError,
     isLoading,
     searchParams,
+    checkTokenValidity,
     handleUserAuthResponse,
     logout,
     requestUserAuth,

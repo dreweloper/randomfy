@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Spinner, TrackCard } from '../components';
-import { useAuth, usePlaylistStore, useShuffleTrack, useTrackStore, useUserStore } from '../hooks';
+import { useShuffleTrack } from '../hooks';
 import { Footer, NavBar } from '../layouts';
 import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
@@ -10,37 +10,27 @@ export const HomePage = ({ token }) => {
 
     // REACT HOOK
     /**
-     * Used to track whether the token has been refreshed to prevent multiple calls.
+     * Ref to track whether the initial page load is pending (true) or not (false) to prevent multiple calls.
      * @type {React.MutableRefObject<Boolean>}
      */
-    const isRefreshed = useRef(false);
+    const isFirstLoadRef = useRef(true);
 
     // REACT-REDUX HOOKS
-    const playlist = useSelector(state => state.playlist);
     const status = useSelector(state => state.process.status);
-    const track = useSelector(state => state.track);
+
     const user = useSelector(state => state.user);
 
-    // CUSTOM HOOKS
-    const { requestRefreshedAccessToken } = useAuth();
+    // CUSTOM HOOK
+    const { shuffleTrack } = useShuffleTrack();
 
-    useUserStore({ token, user });
-
-    const { handleFollow } = usePlaylistStore({ playlist, token, user });
-
-    const { handleLike } = useTrackStore({ playlist, status, token, track });
-
-    const { handleAnotherShuffleTrack } = useShuffleTrack(token);
-
-    // REACT HOOKS
     useEffect(() => {
 
-        // On init, if the token is expired, it will request a new access and refresh tokens.
-        if (!token && !isRefreshed.current) {
+        if (isFirstLoadRef.current) {
 
-            isRefreshed.current = true;
+            // Update the ref to indicate that the first load is completed and prevent multiple calls.
+            isFirstLoadRef.current = false;
 
-            requestRefreshedAccessToken();
+            shuffleTrack();
 
         };
 
@@ -59,15 +49,15 @@ export const HomePage = ({ token }) => {
 
                     <button
                         className={styles.solidBtn}
-                        onClick={handleAnotherShuffleTrack}
-                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID. If this custom hook fails, the other functions won't be invoked.
+                        onClick={shuffleTrack}
+                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID.
                     >
 
                         {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
 
                     </button>
 
-                    <TrackCard {...{ handleFollow, handleLike, playlist, status, track, user }} />
+                    <TrackCard isLoading={status === STATUS.LOADING} token={token} user={user} />
 
                 </section>
 

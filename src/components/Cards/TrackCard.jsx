@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { AudioPlayer } from '../Media';
 import { Toast } from '../Notifications';
 import { updateElementStyle } from '../../helpers';
-import { DESKTOP, STATUS } from '../../utils';
+import { usePlaylistStore, useTrackStore } from '../../hooks';
+import { DESKTOP } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, user }) => {
+export const TrackCard = ({ isLoading, token, user }) => {
 
     // REACT HOOKS
     const [toastText, setToastText] = useState('');
@@ -17,22 +19,34 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
      */
     const likeButtonRef = useRef();
 
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+
+    const track = useSelector(state => state.track);
+
+    // CUSTOM HOOKS
+    const { handleFollow } = usePlaylistStore();
+
+    const { handleLike } = useTrackStore();
+
     // EVENT
     const handleClick = async ({ target }) => {
 
-        let response;
+        try {
+            
+            const response = (target.id === 'like') ? await handleLike(token) : await handleFollow(token);
 
-        if (target.id === 'like') {
+            if (response?.ok) {
 
-            response = await handleLike();
+                setToastText(response.text);
 
-            if (response.ok) setToastText(response.text);
+            };
 
-        } else {
+        } catch (error) {
+            
+            console.error(error);
 
-            response = await handleFollow();
-
-            if (response.ok) setToastText(response.text);
+            //TODO: handle error alert.
 
         };
 
@@ -50,7 +64,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
          */
         const value = track.isLiked ? 1 : 0;
 
-        // Changes the icon fill of the like button to reflect whether the track has been added ('true') or removed ('false') from the user's 'Your Music' library.
+        // Changes the icon fill of the like button to reflect whether the track has been added (true) or removed (false) from the user's 'Your Music' library.
         updateElementStyle(likeButtonRef.current, '--like-icon-fill', value);
 
     }, [track.isLiked]);
@@ -60,7 +74,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
 
         <>
 
-            <article className={`${styles.card} ${status === STATUS.LOADING && 'opacity-50'}`}>
+            <article className={`${styles.card} ${isLoading && 'opacity-50'}`}>
 
                 <div className={styles.wrapper}>
 
@@ -101,12 +115,12 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
                         </div>
 
                         {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
-                        <div className={`${styles.nonDesktopContainer} ${status === STATUS.LOADING && 'pointer-events'}`}>
+                        <div className={`${styles.nonDesktopContainer} ${isLoading && 'pointer-events'}`}>
 
                             {
                                 track.preview_url !== null ? (
 
-                                    <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+                                    <AudioPlayer isLoading={isLoading} trackPreview={track.preview_url} />
 
                                 ) : (
 
@@ -131,7 +145,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
                                 id='like'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                                 ref={likeButtonRef}
                             >
 
@@ -145,7 +159,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
                                 id='follow'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                             >
 
                                 {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
@@ -154,11 +168,11 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
 
                             <button
                                 className={styles.button}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                             >
 
                                 <Link
-                                    className={`${styles.link} ${status === STATUS.LOADING && 'pointer-events'}`}
+                                    className={`${styles.link} ${isLoading && 'pointer-events'}`}
                                     to={track.track_url}
                                     target={DESKTOP ? '_blank' : '_self'}>
 
@@ -187,7 +201,7 @@ export const TrackCard = ({ handleFollow, handleLike, playlist, status, track, u
                     {
                         track.preview_url !== null ? (
 
-                            <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+                            <AudioPlayer isLoading={isLoading} trackPreview={track.preview_url} />
 
                         ) : (
 
