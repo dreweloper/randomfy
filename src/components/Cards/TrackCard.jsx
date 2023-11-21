@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 import { AudioPlayer } from '../Media';
 import { Toast } from '../Notifications';
 import { updateElementStyle } from '../../helpers';
 import { usePlaylistStore, useTrackStore } from '../../hooks';
-import { DESKTOP, STATUS } from '../../utils';
+import { DESKTOP } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = ({ playlist, status, token, track, user }) => {
+export const TrackCard = ({ isLoading, token, user }) => {
 
     // REACT HOOKS
     const [toastText, setToastText] = useState('');
@@ -17,6 +18,11 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
      * @type {React.RefObject<HTMLButtonElement>}
      */
     const likeButtonRef = useRef();
+
+    // REACT-REDUX HOOKS
+    const playlist = useSelector(state => state.playlist);
+
+    const track = useSelector(state => state.track);
 
     // CUSTOM HOOKS
     const { handleFollow } = usePlaylistStore();
@@ -68,7 +74,7 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
 
         <>
 
-            <article className={`${styles.card} ${status === STATUS.LOADING && 'opacity-50'}`}>
+            <article className={`${styles.card} ${isLoading && 'opacity-50'}`}>
 
                 <div className={styles.wrapper}>
 
@@ -109,12 +115,12 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
                         </div>
 
                         {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
-                        <div className={`${styles.nonDesktopContainer} ${status === STATUS.LOADING && 'pointer-events'}`}>
+                        <div className={`${styles.nonDesktopContainer} ${isLoading && 'pointer-events'}`}>
 
                             {
                                 track.preview_url !== null ? (
 
-                                    <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+                                    <AudioPlayer isLoading={isLoading} trackPreview={track.preview_url} />
 
                                 ) : (
 
@@ -139,7 +145,7 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
                                 id='like'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                                 ref={likeButtonRef}
                             >
 
@@ -153,7 +159,7 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
                                 id='follow'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                             >
 
                                 {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
@@ -162,11 +168,11 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
 
                             <button
                                 className={styles.button}
-                                disabled={user.isError || status === STATUS.LOADING}
+                                disabled={user.isError || isLoading}
                             >
 
                                 <Link
-                                    className={`${styles.link} ${status === STATUS.LOADING && 'pointer-events'}`}
+                                    className={`${styles.link} ${isLoading && 'pointer-events'}`}
                                     to={track.track_url}
                                     target={DESKTOP ? '_blank' : '_self'}>
 
@@ -195,7 +201,7 @@ export const TrackCard = ({ playlist, status, token, track, user }) => {
                     {
                         track.preview_url !== null ? (
 
-                            <AudioPlayer isLoading={status === STATUS.LOADING} trackPreview={track.preview_url} />
+                            <AudioPlayer isLoading={isLoading} trackPreview={track.preview_url} />
 
                         ) : (
 

@@ -34,7 +34,7 @@ export const useAuth = () => {
    * The 'state' parameter that was initially provided to Spotify.
    * @type {String}
    */
-  const storedState = cookies.spotify_auth_state;
+  const storedState = cookies?.spotify_auth_state;
 
   // FUNCTIONS
   const requestUserAuth = async () => {
@@ -222,6 +222,55 @@ export const useAuth = () => {
 
   }; //!FUNC-HANDLEUSERAUTHRESPONSE
 
+  /**
+   * Checks the validity of the Spotify API access token.
+   * 
+   * @async
+   * @function checkTokenValidity
+   * @returns {Object} An object with a boolean property 'ok' indicating the success status and the Spotify API access token.
+   * @throws {Error}
+   */
+  const checkTokenValidity = async () => {
+
+    /**
+     * If the access token is valid, it returns 'cookies.access_token';
+     * otherwise, if the token has expired, it returns 'response.access_token' (a refreshed access token).
+     * This approach ensures that the time taken to set tokens in cookies won't affect subsequent fetch calls.
+     * 
+     * The Spotify API's access token.
+     * @type {String}
+     */
+    let token = cookies?.access_token;
+
+    try {
+
+      // Access token is expired.
+      if (!cookies?.access_token) {
+
+        const response = await requestRefreshedAccessToken();
+
+        if (response?.ok) {
+
+          token = response.access_token;
+
+          setCookie(c.ACCESS_TOKEN_KEY, response.access_token, { maxAge: c.MAX_AGE.ACCESS_TOKEN });
+
+          setCookie(c.REFRESH_TOKEN_KEY, response.refresh_token, { maxAge: c.MAX_AGE.REFRESH_TOKEN });
+
+        };
+
+      };
+
+      return { ok: true, token };
+
+    } catch (error) {
+
+      throw error;
+
+    };
+
+  }; //!FUNC-CHECKTOKENVALIDITY
+
   const logout = () => {
 
     if (cookies?.access_token) removeCookie(c.ACCESS_TOKEN_KEY);
@@ -243,6 +292,7 @@ export const useAuth = () => {
     isError,
     isLoading,
     searchParams,
+    checkTokenValidity,
     handleUserAuthResponse,
     logout,
     requestUserAuth,

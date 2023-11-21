@@ -9,11 +9,6 @@ export const AppRouter = () => {
     // REACT-COOKIE HOOK
     const [cookies] = useCookies([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]); // Dependencies: cookie names that the components (both private and public routes) depend on or that should trigger a re-render.
 
-    // VARIABLES
-    const access_token = cookies?.access_token;
-
-    const refresh_token = cookies?.refresh_token;
-
 
     return (
 
@@ -22,16 +17,16 @@ export const AppRouter = () => {
             <Routes>
 
                 {/* PRIVATE ROUTES */}
-                <Route element={<PrivateRoutes {...{ access_token, refresh_token }} />}>
+                <Route element={<PrivateRoutes access_token={cookies?.access_token} refresh_token={cookies?.refresh_token} />}>
 
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<HomePage token={cookies?.access_token} />} />
 
                     <Route path="/*" element={<Navigate to="/" />} />
 
                 </Route>
 
                 {/* PUBLIC ROUTES */}
-                <Route element={<PublicRoutes {...{ access_token, refresh_token }} />}>
+                <Route element={<PublicRoutes access_token={cookies?.access_token} refresh_token={cookies?.refresh_token} />}>
 
                     <Route path="login" element={<LoginPage />} />
 
