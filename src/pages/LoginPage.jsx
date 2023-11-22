@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, NavBar, Overlay } from '../layouts';
+import styles from '../sass/pages/_LoginPage.module.scss';
 
 export const LoginPage = () => {
 
@@ -47,20 +48,20 @@ export const LoginPage = () => {
 
       <NavBar />
 
-      <main className='main'>
+      <main className={styles.main}>
 
-        <section className='hero'>
+        <section className={styles.hero}>
 
-          <div className='container'>
+          <article className={styles.container}>
 
-            <h1 className='title'>Randomfy: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta, quia!</h1>
+            <h1 className={styles.title}>Find your next <span>favorite</span> song</h1>
 
-            <p className='description'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus labore ratione quae soluta quidem corrupti similique eaque facere magni voluptates.</p>
+            <p className={styles.description}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus labore ratione quae soluta quidem corrupti similique eaque facere magni voluptates.</p>
 
-          </div>
+          </article>
 
           <button
-            className='login'
+            className={styles.loginBtn}
             onClick={requestUserAuth}
             disabled={isLoading}
           >
@@ -78,7 +79,7 @@ export const LoginPage = () => {
 
             ) : (
 
-              isError && (<p>Access denied. Please try again.</p>)
+              isError && (<p className={styles.error}>Access denied. Please try again.</p>)
 
             )
 

@@ -13,7 +13,7 @@ export const NavBar = () => {
     const user = useSelector(state => state.user);
 
     // CUSTOM HOOK
-    const { logout } = useAuth();
+    const { requestUserAuth, logout } = useAuth();
 
     // EVENT
     /**
@@ -65,13 +65,18 @@ export const NavBar = () => {
 
                         <li className={styles.item}>
 
-                            <button className={styles.solidBtn} onClick={logout}>
+                            <button
+                                className={styles.solidBtn}
+                                onClick={user.isLogged ? logout : requestUserAuth}
+                            >
 
                                 <span className={`${styles.logoutIcon} material-symbols-rounded`}>
-                                    logout
+                                    {user.isLogged ? 'logout' : 'login'}
                                 </span>
 
-                                <span className={styles.text}>Logout</span>
+                                <span className={styles.text}>
+                                    {user.isLogged ? 'Logout' : 'Login'}
+                                </span>
 
                             </button>
 
