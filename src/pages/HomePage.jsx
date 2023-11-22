@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Spinner, TrackCard } from '../components';
 import { useShuffleTrack } from '../hooks';
 import { Footer, NavBar } from '../layouts';
 import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
+import { isUserLogged } from '../store/slices';
 
 export const HomePage = ({ token }) => {
 
@@ -20,6 +21,8 @@ export const HomePage = ({ token }) => {
 
     const user = useSelector(state => state.user);
 
+    const dispatch = useDispatch();
+
     // CUSTOM HOOK
     const { shuffleTrack } = useShuffleTrack();
 
@@ -29,6 +32,9 @@ export const HomePage = ({ token }) => {
 
             // Update the ref to indicate that the first load is completed and prevent multiple calls.
             isFirstLoadRef.current = false;
+
+            // State flag for rendering user information in the NavBar when logged in.
+            dispatch(isUserLogged(true));
 
             shuffleTrack();
 
@@ -41,7 +47,7 @@ export const HomePage = ({ token }) => {
 
         <>
 
-            <NavBar user={user} />
+            <NavBar />
 
             <main className={styles.main}>
 
