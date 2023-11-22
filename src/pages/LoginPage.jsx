@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Spinner } from '../components';
 import { useAuth } from '../hooks';
-import { Footer, Overlay } from '../layouts';
+import { Footer, NavBar, Overlay } from '../layouts';
 
 export const LoginPage = () => {
 
@@ -44,6 +44,8 @@ export const LoginPage = () => {
   return (
 
     <>
+
+      <NavBar />
 
       <main className='main'>
 

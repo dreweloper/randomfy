@@ -1,12 +1,16 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { UserCard } from '../components';
 import { useAuth } from '../hooks';
 import styles from '../sass/layouts/_NavBar.module.scss';
 
-export const NavBar = ({ user }) => {
+export const NavBar = () => {
 
     // REACT HOOK
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // REACT-REDUX HOOK
+    const user = useSelector(state => state.user);
 
     // CUSTOM HOOK
     const { logout } = useAuth();
@@ -37,7 +41,9 @@ export const NavBar = ({ user }) => {
 
                     <div className={styles.container}>
 
-                        <UserCard user={user} />
+                        {
+                            user.isLogged && <UserCard user={user} />
+                        }
 
                         {/* NON DESKTOP MENU BUTTON */}
                         <button
