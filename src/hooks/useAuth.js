@@ -216,7 +216,11 @@ export const useAuth = () => {
 
       removeCookie(c.CODE_VERIFIER_KEY);
 
-      setIsLoading(false);
+      setTimeout(() => {
+
+        setIsLoading(false);
+
+      }, 1500);
 
     };
 

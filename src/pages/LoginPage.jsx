@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, NavBar, Overlay } from '../layouts';
+import { STATUS } from '../utils';
 import styles from '../sass/pages/_LoginPage.module.scss';
 
 export const LoginPage = () => {
@@ -12,6 +14,9 @@ export const LoginPage = () => {
    * @type {React.MutableRefObject<Boolean>}
    */
   const isHandled = useRef(false);
+
+  // REACT-REDUX HOOK
+  const status = useSelector(state => state.process.status);
 
   // CUSTOM HOOK
   const {
@@ -73,13 +78,17 @@ export const LoginPage = () => {
 
               <Overlay>
 
-                <Spinner />
+                <Spinner size={'48px'} color={'#1db954'} /> {/* Accent color */}
 
               </Overlay>
 
             ) : (
 
-              isError && (<p className={styles.error}>Access denied. Please try again.</p>)
+              (isError || status === STATUS.FAILED) && (
+
+                <p className={styles.error}>Access denied. Please try again.</p>
+                
+              )
 
             )
 

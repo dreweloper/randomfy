@@ -1,11 +1,16 @@
 @use '../../utils' as *;
 
+:root {
+    --spinner-size: 32px;
+    --border-left-clr: $secondary-50;
+}
+
 .spinner {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: var(--spinner-size);
+    min-height: var(--spinner-size);
     border: 3px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    border-left-color: $secondary-50;
+    border-left-color: var(--border-left-clr);
     animation: spinner 1s linear infinite;
 }
 
@@ -13,6 +18,7 @@
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }

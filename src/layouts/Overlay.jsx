@@ -4,7 +4,7 @@ export const Overlay = ({ children }) => {
 
     return (
 
-        <div className="overlay">
+        <div className='overlay'>
 
             {children}
 

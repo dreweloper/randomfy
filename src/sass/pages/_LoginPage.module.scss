@@ -51,6 +51,8 @@ $footer-height: 60px;
             @include displayFlex(row, center, center);
             @include solidButton($accent-950, $accent-400, $accent-300, $accent-500, $accent-100, $accent-800);
             max-width: 200px;
+            letter-spacing: 0.5px;
+            word-spacing: 1px;
         }
 
         .error {
