@@ -6,7 +6,12 @@ export const ProgressBar = ({ currentTime, duration, handleProgressBarChange, pr
 
         <div className={styles.progressBar}>
 
-            <span className={styles.time}>{currentTime}</span>
+            <time
+                className={styles.time}
+                dateTime='mm:ss'
+            >
+                {currentTime}
+            </time>
 
             <input
                 type='range'
@@ -15,7 +20,12 @@ export const ProgressBar = ({ currentTime, duration, handleProgressBarChange, pr
                 ref={progressBarRef}
             />
 
-            <span className={styles.time}>{duration}</span>
+            <time
+                className={styles.time}
+                dateTime='mm:ss'
+            >
+                {duration}
+            </time>
 
         </div>
 

@@ -7,7 +7,7 @@ export const UserCard = ({ user }) => {
 
         <>
 
-            <div className={styles.card}>
+            <article className={styles.card}>
 
                 <div className={`${styles.avatar} ${user.isEmpty && styles.skeleton}`}>
 
@@ -27,7 +27,7 @@ export const UserCard = ({ user }) => {
                     {user.display_name}
                 </span>
 
-            </div>
+            </article>
 
         </>
 

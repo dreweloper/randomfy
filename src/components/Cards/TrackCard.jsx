@@ -102,7 +102,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
                     <div className={styles.container}>
 
                         {/* TRACK NAME AND ARTISTS */}
-                        <div className={styles.details}>
+                        <article className={styles.details}>
 
                             <h2 className={`${styles.name} ${track.isEmpty && 'skeleton-text'}`}>
                                 {track.name}
@@ -112,7 +112,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
                                 {track.artists}
                             </h2>
 
-                        </div>
+                        </article>
 
                         {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
                         <div className={`${styles.nonDesktopContainer} ${isLoading && 'pointer-events'}`}>
@@ -124,7 +124,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                                 ) : (
 
-                                    <div className={styles.warningContainer}>
+                                    <article className={styles.warningContainer}>
 
                                         <span className={`${styles.warningIcon} material-symbols-rounded`}>
                                             warning
@@ -132,7 +132,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                                         <p className={styles.warningText}>Track preview is not available.</p>
 
-                                    </div>
+                                    </article>
 
                                 )
                             }
@@ -205,7 +205,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                         ) : (
 
-                            <div className={styles.warningContainer}>
+                            <article className={styles.warningContainer}>
 
                                 <span className={`${styles.warningIcon} material-symbols-rounded`}>
                                     warning
@@ -213,7 +213,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                                 <p className={styles.warningText}>Track preview is not available.</p>
 
-                            </div>
+                            </article>
 
                         )
                     }

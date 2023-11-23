@@ -39,7 +39,7 @@ export const NavBar = () => {
 
                     </div>
 
-                    <div className={styles.container}>
+                    <section className={styles.container}>
 
                         {
                             user.isLogged && <UserCard user={user} />
@@ -57,9 +57,14 @@ export const NavBar = () => {
                         </button>
 
                         {/* DESKTOP LOGOUT BUTTON */}
-                        <button className={styles.outlinedBtn} onClick={logout}>Logout</button>
+                        <button
+                            className={styles.outlinedBtn}
+                            onClick={user.isLogged ? logout : requestUserAuth}
+                        >
+                            {user.isLogged ? 'Logout' : 'Login'}
+                        </button>
 
-                    </div>
+                    </section>
 
                     <ul className={`${styles.menu} ${isMenuOpen && styles.menuExpanded}`}>
 

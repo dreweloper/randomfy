@@ -54,7 +54,7 @@ export const LoginPage = () => {
 
           <article className={styles.container}>
 
-            <h1 className={styles.title}>Find your next <span>favorite</span> song</h1>
+            <h1 className={styles.title}>Find your next <span className={styles.favorite}>favorite</span> song</h1>
 
             <p className={styles.description}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus labore ratione quae soluta quidem corrupti similique eaque facere magni voluptates.</p>
 
