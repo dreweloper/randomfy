@@ -19,7 +19,7 @@ export const LoginPage = () => {
   const status = useSelector(state => state.process.status);
 
   // CUSTOM HOOK
-  const { isLoading, searchParams, handleUserAuthResponse, requestUserAuth } = useAuth();
+  const { searchParams, handleUserAuthResponse, requestUserAuth } = useAuth();
 
   // REACT HOOK
   useEffect(() => {
@@ -62,7 +62,7 @@ export const LoginPage = () => {
           <button
             className={styles.loginBtn}
             onClick={requestUserAuth}
-            disabled={isLoading}
+            disabled={status === STATUS.LOADING}
           >
             Login with Spotify
           </button>
@@ -70,7 +70,7 @@ export const LoginPage = () => {
         </section>
 
         {
-          isLoading ? (
+          status === STATUS.LOADING ? (
 
             <Overlay>
 

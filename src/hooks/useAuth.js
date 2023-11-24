@@ -1,16 +1,12 @@
-import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { fetchSpotifyData } from '../api';
-import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
+import { generateCodeChallenge, generateRandomString, serializeData, setErrorMessage } from "../helpers";
 import { resetPlaylistState, resetStatus, resetTrackState, resetUserState, setStatus } from '../store/slices';
 import * as c from "../utils";
 
 export const useAuth = () => {
-
-  // REACT HOOKS
-  const [isLoading, setIsLoading] = useState(false);
 
   // REACT-REDUX HOOKS
   const playlist = useSelector(state => state.playlist);
@@ -157,7 +153,7 @@ export const useAuth = () => {
 
     try {
 
-      setIsLoading(true);
+      dispatch(setStatus({ status: c.STATUS.LOADING }));
 
       /**
        * An object that represents the serialized query string from the Spotify API response obtained after user authorization.
@@ -174,7 +170,10 @@ export const useAuth = () => {
        */
       if (params.error) {
 
-        throw new Error('Access denied');
+        throw {
+          status: 401,
+          message: 'Access denied'
+        };
 
       };
 
@@ -185,7 +184,10 @@ export const useAuth = () => {
        */
       if (storedState !== params.state) {
 
-        throw new Error('State mismatch');
+        throw {
+          status: 400,
+          message: 'State mismatch'
+        };
 
       };
 
@@ -211,11 +213,16 @@ export const useAuth = () => {
 
       console.error(error);
 
-      dispatch(setStatus({
-        status: c.STATUS.FAILED, // The 'status' property within the Redux 'process' state.
-        code: error.status || null, // HTTP response status code.
-        message: !error.status ? 'Access denied. Please try again.' : null
-      }));
+      const message = setErrorMessage(error.status);
+
+      setTimeout(() => {
+
+        dispatch(setStatus({
+          status: c.STATUS.FAILED, // The 'status' property within the Redux 'process' state.
+          message
+        }));
+
+      }, 1000);
 
     } finally {
 
@@ -225,12 +232,6 @@ export const useAuth = () => {
       removeCookie(c.STATE_KEY);
 
       removeCookie(c.CODE_VERIFIER_KEY);
-
-      setTimeout(() => {
-
-        setIsLoading(false);
-
-      }, 1500);
 
     };
 
@@ -303,7 +304,6 @@ export const useAuth = () => {
 
 
   return {
-    isLoading,
     searchParams,
     checkTokenValidity,
     handleUserAuthResponse,

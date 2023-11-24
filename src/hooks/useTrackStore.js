@@ -44,7 +44,10 @@ export const useTrackStore = () => {
 
                 if (items.length === 0) {
 
-                    throw new Error('Playlist items are empty');
+                    throw {
+                        status: 404,
+                        message: 'Playlist items are empty'
+                    };
 
                 };
 
