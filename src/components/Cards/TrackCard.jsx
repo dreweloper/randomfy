@@ -8,7 +8,7 @@ import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = ({ isLoading, token, user }) => {
+export const TrackCard = ({ isLoading, token }) => {
 
     // REACT HOOKS
     const [toastText, setToastText] = useState('');
@@ -20,7 +20,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
     const likeButtonRef = useRef();
 
     // REACT-REDUX HOOKS
-    const playlist = useSelector(state => state.playlist);
+    const playlist = useSelector(state => state);
 
     const track = useSelector(state => state.track);
 
@@ -145,7 +145,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
                                 id='like'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || isLoading}
+                                disabled={track.isEmpty || isLoading}
                                 ref={likeButtonRef}
                             >
 
@@ -159,7 +159,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
                                 id='follow'
                                 className={styles.button}
                                 onClick={handleClick}
-                                disabled={user.isError || isLoading}
+                                disabled={track.isEmpty || isLoading}
                             >
 
                                 {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
@@ -168,7 +168,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                             <button
                                 className={styles.button}
-                                disabled={user.isError || isLoading}
+                                disabled={track.isEmpty || isLoading}
                             >
 
                                 <Link

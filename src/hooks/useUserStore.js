@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { fetchSpotifyData } from '../api';
-import { setUser, setUserError } from "../store/slices";
+import { setUser } from "../store/slices";
 import { SPOTIFY_API_BASE_URL } from '../utils';
 
 export const useUserStore = () => {
@@ -46,8 +46,6 @@ export const useUserStore = () => {
             };
 
         } catch (error) {
-
-            dispatch(setUserError());
 
             throw error;
 

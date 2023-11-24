@@ -19,8 +19,6 @@ export const HomePage = ({ token }) => {
     // REACT-REDUX HOOKS
     const status = useSelector(state => state.process.status);
 
-    const user = useSelector(state => state.user);
-
     const dispatch = useDispatch();
 
     // CUSTOM HOOK
@@ -56,14 +54,14 @@ export const HomePage = ({ token }) => {
                     <button
                         className={styles.solidBtn}
                         onClick={shuffleTrack}
-                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID.
+                        disabled={status === STATUS.LOADING}
                     >
 
                         {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
 
                     </button>
 
-                    <TrackCard isLoading={status === STATUS.LOADING} token={token} user={user} />
+                    <TrackCard isLoading={status === STATUS.LOADING} token={token} />
 
                 </section>
 
