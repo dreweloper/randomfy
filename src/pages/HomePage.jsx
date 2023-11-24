@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner, TrackCard } from '../components';
+import { Alert, Spinner, TrackCard } from '../components';
 import { useShuffleTrack } from '../hooks';
 import { Footer, NavBar } from '../layouts';
+import { isUserLogged } from '../store/slices';
 import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
-import { isUserLogged } from '../store/slices';
 
 export const HomePage = ({ token }) => {
 
@@ -64,6 +64,10 @@ export const HomePage = ({ token }) => {
                     <TrackCard isLoading={status === STATUS.LOADING} token={token} />
 
                 </section>
+
+                {
+                    status === STATUS.FAILED && (<Alert />)
+                }
 
                 {/* "Oops! We couldn't load the track. Please try again." */}
 
