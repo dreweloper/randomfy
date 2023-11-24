@@ -1,0 +1,46 @@
+@use '../../utils' as *;
+
+.alert {
+    position: relative;
+    @include displayFlex(row, center, center);
+    width: 90%;
+    padding: 16px;
+    border-radius: 5px;
+    border: 1px solid $danger-600;
+    background-color: $danger-950;
+
+    .container {
+        @include displayFlex(row, center, flex-start);
+        width: 100%;
+        min-height: 80px;
+        gap: 12px;
+
+        .errorIcon {
+            font-size: var(--fs-md);
+            font-weight: 400;
+            color: $danger-400;
+            font-variation-settings:
+                'FILL' 1,
+                'GRAD' 200
+        }
+
+        .text {
+            font-weight: 300;
+            letter-spacing: 0.25px;
+            line-height: 1.2;
+        }
+    }
+
+    .button {
+        position: absolute;
+        top: 0; right: 0;
+        display: flex;
+        padding: 4px;
+
+        .closeIcon {
+            font-size: var(--fs-sm);
+            font-weight: 300;
+            color: $danger-600;
+        }
+    }
+}

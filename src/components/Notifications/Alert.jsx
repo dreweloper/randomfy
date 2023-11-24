@@ -38,18 +38,26 @@ export const Alert = () => {
 
                         <article className={styles.alert}>
 
+                            <section className={styles.container}>
+
+                                <span className={`${styles.errorIcon} material-symbols-rounded`}>
+                                    error
+                                </span>
+
+                                <p className={styles.text}>{message}</p>
+
+                            </section>
+
                             <button
                                 className={styles.button}
                                 onClick={() => setIsAlertOpen(false)}
                             >
 
-                                <span className={`${styles.icon} material-symbols-rounded`}>
+                                <span className={`${styles.closeIcon} material-symbols-rounded`}>
                                     close
                                 </span>
 
                             </button>
-
-                            <p className={styles.text}>{message}</p>
 
                         </article>
 
