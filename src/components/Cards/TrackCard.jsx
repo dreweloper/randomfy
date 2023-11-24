@@ -20,7 +20,7 @@ export const TrackCard = ({ isLoading, token }) => {
     const likeButtonRef = useRef();
 
     // REACT-REDUX HOOKS
-    const playlist = useSelector(state => state);
+    const playlist = useSelector(state => state.playlist);
 
     const track = useSelector(state => state.track);
 
@@ -33,7 +33,7 @@ export const TrackCard = ({ isLoading, token }) => {
     const handleClick = async ({ target }) => {
 
         try {
-            
+
             const response = (target.id === 'like') ? await handleLike(token) : await handleFollow(token);
 
             if (response?.ok) {
@@ -43,7 +43,7 @@ export const TrackCard = ({ isLoading, token }) => {
             };
 
         } catch (error) {
-            
+
             console.error(error);
 
             //TODO: handle error alert.
@@ -115,7 +115,7 @@ export const TrackCard = ({ isLoading, token }) => {
                         </article>
 
                         {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
-                        <div className={`${styles.nonDesktopContainer} ${isLoading && 'pointer-events'}`}>
+                        <div className={`${styles.nonDesktopContainer} ${(track.isEmpty || isLoading) && 'pointer-events'}`}>
 
                             {
                                 track.preview_url !== null ? (
@@ -143,7 +143,7 @@ export const TrackCard = ({ isLoading, token }) => {
 
                             <button
                                 id='like'
-                                className={styles.button}
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
                                 onClick={handleClick}
                                 disabled={track.isEmpty || isLoading}
                                 ref={likeButtonRef}
@@ -157,7 +157,7 @@ export const TrackCard = ({ isLoading, token }) => {
 
                             <button
                                 id='follow'
-                                className={styles.button}
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
                                 onClick={handleClick}
                                 disabled={track.isEmpty || isLoading}
                             >
@@ -166,28 +166,21 @@ export const TrackCard = ({ isLoading, token }) => {
 
                             </button>
 
-                            <button
-                                className={styles.button}
-                                disabled={track.isEmpty || isLoading}
-                            >
+                            <Link
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
+                                to={track.track_url}
+                                target={DESKTOP ? '_blank' : '_self'}>
 
-                                <Link
-                                    className={`${styles.link} ${isLoading && 'pointer-events'}`}
-                                    to={track.track_url}
-                                    target={DESKTOP ? '_blank' : '_self'}>
+                                <span className={styles.linkText}>Play on</span>
 
-                                    <span className={styles.linkText}>Play on</span>
+                                <img
+                                    className={styles.logo}
+                                    src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
+                                    alt='Spotify Logo'
+                                    title='Spotify Logo'
+                                />
 
-                                    <img
-                                        className={styles.logo}
-                                        src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
-                                        alt='Spotify Logo'
-                                        title='Spotify Logo'
-                                    />
-
-                                </Link>
-
-                            </button>
+                            </Link>
 
                         </nav>
 
