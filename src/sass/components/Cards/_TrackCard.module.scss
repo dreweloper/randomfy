@@ -101,6 +101,7 @@
                 .button {
                     @include displayFlex(row, center, center);
                     @include outlinedButton(100%, $accent-300, $accent-950, $accent-900);
+                    gap: 8px;
 
                     .favoriteIcon {
                         font-size: var(--fs-lg);
@@ -108,14 +109,8 @@
                             'FILL' var(--like-icon-fill);
                     }
 
-                    .link {
-                        @include displayFlex(row, center, center);
-                        gap: 8px;
-
-                        .logo {
-                            display: flex;
-                            width: 24px;
-                        }
+                    .logo {
+                        width: 24px;
                     }
                 }
             }

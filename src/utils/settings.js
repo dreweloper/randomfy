@@ -19,8 +19,14 @@ export const SPOTIFY_AUTH_BASE_URL = 'https://accounts.spotify.com';
 export const SPOTIFY_API_BASE_URL = 'https://api.spotify.com';
 export const USER_ID = 'spotify';
 
-// STATUS STATE
+// PROCESS STATE
 export const STATUS = { IDLE: 'idle', LOADING: 'loading', SUCCEEDED: 'succeeded', FAILED: 'failed' };
+export const MESSAGE = {
+    BAD_REQUEST: "Oops! We couldn't process your request. Please try again.",
+    UNAUTHORIZED: 'Access denied. Please try again.',
+    NOT_FOUND: "Oops! We couldn't load the track. Please try again.",
+    SERVER_ERROR: 'The Spotify server is experiencing difficulties. Please try again later.'
+};
 
 // WINDOW SIZES
 export const DESKTOP = window.innerWidth >= 992;

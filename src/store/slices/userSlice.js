@@ -8,15 +8,13 @@ import { createSlice } from '@reduxjs/toolkit';
  * @prop {String} avatar - The user's profile image.
  * @prop {Boolean} isLogged - Indicates whether the user is logged in.
  * @prop {Boolean} isEmpty - Indicates whether the user data is not empty.
- * @prop {Boolean} isError - Indicates whether an error has occurred while loading user data.
  */
 const initialState = {
     id: '',
     display_name: '',
     avatar: '',
     isLogged: false,
-    isEmpty: true,
-    isError: false
+    isEmpty: true
 };
 
 export const userSlice = createSlice({
@@ -33,9 +31,6 @@ export const userSlice = createSlice({
             state.avatar = payload.avatar;
             state.isEmpty = false;
         },
-        setUserError: (state) => {
-            state.isError = true;
-        },
         // Logout.
         resetUserState: (state) => {
             state.id = '';
@@ -51,6 +46,5 @@ export const userSlice = createSlice({
 export const {
     isUserLogged,
     setUser,
-    setUserError,
     resetUserState
 } = userSlice.actions;

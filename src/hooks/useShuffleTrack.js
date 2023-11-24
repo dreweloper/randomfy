@@ -1,11 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth, usePlaylistStore, useTrackStore, useUserStore } from "./index";
+import { setErrorMessage } from "../helpers";
 import { setStatus } from "../store/slices";
 import { STATUS } from "../utils";
 
 export const useShuffleTrack = () => {
 
     // REACT-REDUX HOOKS
+    const status = useSelector(state => state.process.status);
+
     const user = useSelector(state => state.user);
 
     const dispatch = useDispatch();
@@ -38,7 +41,12 @@ export const useShuffleTrack = () => {
 
         try {
 
-            dispatch(setStatus(STATUS.LOADING));
+            // After a successful user login, the status is already set to 'loading'.
+            if (status !== STATUS.LOADING) {
+
+                dispatch(setStatus({ status: STATUS.LOADING }));
+
+            };
 
             let response = await checkTokenValidity();
 
@@ -69,7 +77,7 @@ export const useShuffleTrack = () => {
 
                     if (response?.ok) {
 
-                        dispatch(setStatus(STATUS.SUCCEEDED));
+                        dispatch(setStatus({ status: STATUS.SUCCEEDED }));
 
                     };
                 };
@@ -81,13 +89,19 @@ export const useShuffleTrack = () => {
 
             if (error.message === 'Refresh token revoked' || error.message === 'Invalid refresh token') {
 
+                // Unauthorized.
+                error.status = 401;
+
                 logout();
 
             };
 
-            dispatch(setStatus(STATUS.FAILED));
+            const message = setErrorMessage(error.status);
 
-            //TODO: status >= 400 ... status >= 500... set Redux status failed and message to render.
+            dispatch(setStatus({
+                status: STATUS.FAILED,
+                message
+            }));
 
         };
 

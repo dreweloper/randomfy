@@ -8,7 +8,7 @@ import { usePlaylistStore, useTrackStore } from '../../hooks';
 import { DESKTOP } from '../../utils';
 import styles from '../../sass/components/Cards/_TrackCard.module.scss';
 
-export const TrackCard = ({ isLoading, token, user }) => {
+export const TrackCard = ({ isLoading, token }) => {
 
     // REACT HOOKS
     const [toastText, setToastText] = useState('');
@@ -33,7 +33,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
     const handleClick = async ({ target }) => {
 
         try {
-            
+
             const response = (target.id === 'like') ? await handleLike(token) : await handleFollow(token);
 
             if (response?.ok) {
@@ -43,7 +43,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
             };
 
         } catch (error) {
-            
+
             console.error(error);
 
             //TODO: handle error alert.
@@ -115,7 +115,7 @@ export const TrackCard = ({ isLoading, token, user }) => {
                         </article>
 
                         {/* NON DESKTOP AUDIO PLAYER CONTAINER */}
-                        <div className={`${styles.nonDesktopContainer} ${isLoading && 'pointer-events'}`}>
+                        <div className={`${styles.nonDesktopContainer} ${(track.isEmpty || isLoading) && 'pointer-events'}`}>
 
                             {
                                 track.preview_url !== null ? (
@@ -143,9 +143,9 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                             <button
                                 id='like'
-                                className={styles.button}
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
                                 onClick={handleClick}
-                                disabled={user.isError || isLoading}
+                                disabled={track.isEmpty || isLoading}
                                 ref={likeButtonRef}
                             >
 
@@ -157,37 +157,30 @@ export const TrackCard = ({ isLoading, token, user }) => {
 
                             <button
                                 id='follow'
-                                className={styles.button}
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
                                 onClick={handleClick}
-                                disabled={user.isError || isLoading}
+                                disabled={track.isEmpty || isLoading}
                             >
 
                                 {playlist.isFollowed ? 'Unfollow playlist' : 'Follow playlist'}
 
                             </button>
 
-                            <button
-                                className={styles.button}
-                                disabled={user.isError || isLoading}
-                            >
+                            <Link
+                                className={`${styles.button} ${(track.isEmpty || isLoading) && 'pointer-events'}`}
+                                to={track.track_url}
+                                target={DESKTOP ? '_blank' : '_self'}>
 
-                                <Link
-                                    className={`${styles.link} ${isLoading && 'pointer-events'}`}
-                                    to={track.track_url}
-                                    target={DESKTOP ? '_blank' : '_self'}>
+                                <span className={styles.linkText}>Play on</span>
 
-                                    <span className={styles.linkText}>Play on</span>
+                                <img
+                                    className={styles.logo}
+                                    src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
+                                    alt='Spotify Logo'
+                                    title='Spotify Logo'
+                                />
 
-                                    <img
-                                        className={styles.logo}
-                                        src='/assets/spotify/icons/Spotify_Icon_RGB_Green.png'
-                                        alt='Spotify Logo'
-                                        title='Spotify Logo'
-                                    />
-
-                                </Link>
-
-                            </button>
+                            </Link>
 
                         </nav>
 

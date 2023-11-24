@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Spinner, TrackCard } from '../components';
+import { Alert, Spinner, TrackCard } from '../components';
 import { useShuffleTrack } from '../hooks';
 import { Footer, NavBar } from '../layouts';
+import { isUserLogged } from '../store/slices';
 import { STATUS } from '../utils';
 import styles from '../sass/pages/_HomePage.module.scss';
-import { isUserLogged } from '../store/slices';
 
 export const HomePage = ({ token }) => {
 
@@ -18,8 +18,6 @@ export const HomePage = ({ token }) => {
 
     // REACT-REDUX HOOKS
     const status = useSelector(state => state.process.status);
-
-    const user = useSelector(state => state.user);
 
     const dispatch = useDispatch();
 
@@ -56,16 +54,20 @@ export const HomePage = ({ token }) => {
                     <button
                         className={styles.solidBtn}
                         onClick={shuffleTrack}
-                        disabled={user.isError || status === STATUS.LOADING} // The 'user.isError' conditional is utilized because the custom hook 'usePlaylistStore' relies on the user ID.
+                        disabled={status === STATUS.LOADING}
                     >
 
                         {status === STATUS.LOADING ? (<Spinner />) : ('Random track')}
 
                     </button>
 
-                    <TrackCard isLoading={status === STATUS.LOADING} token={token} user={user} />
+                    <TrackCard isLoading={status === STATUS.LOADING} token={token} />
 
                 </section>
+
+                {
+                    status === STATUS.FAILED && (<Alert />)
+                }
 
                 {/* "Oops! We couldn't load the track. Please try again." */}
 

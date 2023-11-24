@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { Spinner } from '../components';
+import { useSelector } from 'react-redux';
+import { Alert, Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, NavBar, Overlay } from '../layouts';
+import { STATUS } from '../utils';
 import styles from '../sass/pages/_LoginPage.module.scss';
 
 export const LoginPage = () => {
@@ -13,14 +15,11 @@ export const LoginPage = () => {
    */
   const isHandled = useRef(false);
 
+  // REACT-REDUX HOOK
+  const status = useSelector(state => state.process.status);
+
   // CUSTOM HOOK
-  const {
-    isError,
-    isLoading,
-    searchParams,
-    handleUserAuthResponse,
-    requestUserAuth
-  } = useAuth();
+  const { searchParams, handleUserAuthResponse, requestUserAuth } = useAuth();
 
   // REACT HOOK
   useEffect(() => {
@@ -63,29 +62,28 @@ export const LoginPage = () => {
           <button
             className={styles.loginBtn}
             onClick={requestUserAuth}
-            disabled={isLoading}
+            disabled={status === STATUS.LOADING}
           >
             Login with Spotify
           </button>
 
-          {
-            isLoading ? (
-
-              <Overlay>
-
-                <Spinner />
-
-              </Overlay>
-
-            ) : (
-
-              isError && (<p className={styles.error}>Access denied. Please try again.</p>)
-
-            )
-
-          }
-
         </section>
+
+        {
+          status === STATUS.LOADING ? (
+
+            <Overlay>
+
+              <Spinner size={'48px'} color={'#1db954'} /> {/* Accent color */}
+
+            </Overlay>
+
+          ) : (
+
+            status === STATUS.FAILED && (<Alert />)
+
+          )
+        }
 
       </main>
 
