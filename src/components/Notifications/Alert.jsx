@@ -1,23 +1,30 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Overlay } from '../../layouts';
+import { STATUS } from '../../utils';
 import styles from '../../sass/components/Notifications/_Alert.module.scss';
 
-export const Alert = ({ text }) => {
+export const Alert = () => {
 
-    // REACT HOOKS
+    // REACT HOOK
     const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+    // REACT-REDUX HOOK
+    const { status, message } = useSelector(state => state.process);
 
     useEffect(() => {
 
-        setIsAlertOpen(true);
+        if (status === STATUS.FAILED) setIsAlertOpen(true);
 
         return () => {
 
             if (isAlertOpen) setIsAlertOpen(false);
 
+            //? Reset process state…
+
         };
 
-    }, [text]);
+    }, [status]);
 
 
     return (
@@ -31,7 +38,10 @@ export const Alert = ({ text }) => {
 
                         <article className={styles.alert}>
 
-                            <button className={styles.button} onClick={() => setIsAlertOpen(false)}>
+                            <button
+                                className={styles.button}
+                                onClick={() => setIsAlertOpen(false)}
+                            >
 
                                 <span className={`${styles.icon} material-symbols-rounded`}>
                                     close
@@ -39,7 +49,7 @@ export const Alert = ({ text }) => {
 
                             </button>
 
-                            <p className={styles.text}>{text}</p>
+                            <p className={styles.text}>{message}</p>
 
                         </article>
 

@@ -4,15 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { fetchSpotifyData } from '../api';
 import { generateCodeChallenge, generateRandomString, serializeData } from "../helpers";
-import { resetPlaylistState, resetTrackState, resetUserState, setStatus } from '../store/slices';
+import { resetPlaylistState, resetStatus, resetTrackState, resetUserState, setStatus } from '../store/slices';
 import * as c from "../utils";
 
 export const useAuth = () => {
 
   // REACT HOOKS
   const [isLoading, setIsLoading] = useState(false);
-
-  const [isError, setIsError] = useState(false);
 
   // REACT-REDUX HOOKS
   const playlist = useSelector(state => state.playlist);
@@ -174,14 +172,22 @@ export const useAuth = () => {
        * error: The reason authorization failed, for example: "access_denied"
        * state: The value of the state parameter supplied in the request.
        */
-      if (params.error) throw new Error('Access denied');
+      if (params.error) {
+
+        throw new Error('Access denied');
+
+      };
 
       /**
        * Second validation:
        * Compares the state parameter that the app received in the redirection URI
        * with the state parameter it originally provided to Spotify in the authorization URI stored in the cookies.
        */
-      if (storedState !== params.state) throw new Error('State mismatch');
+      if (storedState !== params.state) {
+
+        throw new Error('State mismatch');
+
+      };
 
       const response = await requestAccessToken(params.code);
 
@@ -205,7 +211,11 @@ export const useAuth = () => {
 
       console.error(error);
 
-      setIsError(true);
+      dispatch(setStatus({
+        status: c.STATUS.FAILED, // The 'status' property within the Redux 'process' state.
+        code: error.status || null, // HTTP response status code.
+        message: !error.status ? 'Access denied. Please try again.' : null
+      }));
 
     } finally {
 
@@ -287,13 +297,12 @@ export const useAuth = () => {
 
     if (!track.isEmpty) dispatch(resetTrackState());
 
-    dispatch(setStatus(c.STATUS.IDLE));
+    dispatch(resetStatus());
 
   }; //!FUNC-HANDLELOGOUT
 
 
   return {
-    isError,
     isLoading,
     searchParams,
     checkTokenValidity,

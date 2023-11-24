@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Spinner } from '../components';
+import { Alert, Spinner } from '../components';
 import { useAuth } from '../hooks';
 import { Footer, NavBar, Overlay } from '../layouts';
 import { STATUS } from '../utils';
@@ -19,13 +19,7 @@ export const LoginPage = () => {
   const status = useSelector(state => state.process.status);
 
   // CUSTOM HOOK
-  const {
-    isError,
-    isLoading,
-    searchParams,
-    handleUserAuthResponse,
-    requestUserAuth
-  } = useAuth();
+  const { isLoading, searchParams, handleUserAuthResponse, requestUserAuth } = useAuth();
 
   // REACT HOOK
   useEffect(() => {
@@ -73,28 +67,23 @@ export const LoginPage = () => {
             Login with Spotify
           </button>
 
-          {
-            isLoading ? (
-
-              <Overlay>
-
-                <Spinner size={'48px'} color={'#1db954'} /> {/* Accent color */}
-
-              </Overlay>
-
-            ) : (
-
-              (isError || status === STATUS.FAILED) && (
-
-                <p className={styles.error}>Access denied. Please try again.</p>
-                
-              )
-
-            )
-
-          }
-
         </section>
+
+        {
+          isLoading ? (
+
+            <Overlay>
+
+              <Spinner size={'48px'} color={'#1db954'} /> {/* Accent color */}
+
+            </Overlay>
+
+          ) : (
+
+            status === STATUS.FAILED && (<Alert />)
+
+          )
+        }
 
       </main>
 
